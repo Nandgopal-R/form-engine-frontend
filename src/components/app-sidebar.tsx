@@ -1,11 +1,11 @@
 "use client"
 import * as React from "react"
 import {
-  BarChart3,
-  FileEdit,
   LayoutDashboard,
-  Plus,
+  FileEdit,
+  BarChart3,
   Settings,
+  Plus,
 } from "lucide-react"
 import { NavMain } from "@/components/nav-main"
 import {
@@ -28,20 +28,6 @@ const data = {
       title: "Editor",
       url: "/editor",
       icon: FileEdit,
-      items: [
-        {
-          title: "New Form",
-          url: "/editor/new",
-        },
-        {
-          title: "My Forms",
-          url: "/editor/forms",
-        },
-        {
-          title: "Templates",
-          url: "/editor/templates",
-        },
-      ],
     },
     {
       title: "Analytics",

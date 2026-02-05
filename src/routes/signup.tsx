@@ -254,7 +254,7 @@ function Signup() {
                         try {
                             await authClient.signIn.social({
                                 provider: "google",
-                                callbackURL: "/"
+                                callbackURL: "http://localhost:3000"
                             });
                         } catch (err: any) {
                             console.error("Google Signin Error:", err);

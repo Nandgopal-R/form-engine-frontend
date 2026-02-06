@@ -27,210 +27,211 @@ interface FieldPreviewProps {
 }
 
 // Theme Definitions for different field categories
-// Theme Definitions for different field categories (Unique Colors per Type)
+// Theme Definitions for different field categories
+// Theme Definitions for different field categories (Light Mode Glassmorphism)
 const getFieldTheme = (type: string) => {
     switch (type) {
         case "text":
             return {
-                card: "bg-blue-950/40 border-blue-500/30 hover:border-blue-400/80 shadow-lg shadow-blue-900/20",
-                active: "border-blue-400/90 ring-1 ring-blue-400/80 shadow-blue-500/50 bg-blue-950/80",
-                hover: "hover:shadow-blue-500/40 hover:bg-blue-900/20",
-                icon: "bg-blue-500/20 text-blue-300",
-                glow: "from-blue-600/30 to-cyan-600/30",
-                text: "text-blue-100",
-                muted: "text-blue-200/50"
+                card: "bg-blue-50/50 border-blue-400 hover:border-blue-500 shadow-sm hover:shadow-blue-500/10",
+                active: "border-blue-400 ring-4 ring-blue-500/10 shadow-blue-500/20 bg-blue-50",
+                hover: "hover:bg-blue-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-blue-100 text-blue-600",
+                glow: "from-blue-400/20 to-cyan-400/20",
+                text: "text-blue-900",
+                muted: "text-blue-700/60"
             }
         case "textarea":
             return {
-                card: "bg-slate-950/40 border-slate-500/30 hover:border-slate-400/80 shadow-lg shadow-slate-900/20",
-                active: "border-slate-400/90 ring-1 ring-slate-400/80 shadow-slate-500/50 bg-slate-950/80",
-                hover: "hover:shadow-slate-500/40 hover:bg-slate-900/20",
-                icon: "bg-slate-500/20 text-slate-300",
-                glow: "from-slate-600/30 to-gray-600/30",
-                text: "text-slate-100",
-                muted: "text-slate-200/50"
+                card: "bg-slate-50/50 border-slate-400 hover:border-slate-500 shadow-sm hover:shadow-slate-500/10",
+                active: "border-slate-400 ring-4 ring-slate-500/10 shadow-slate-500/20 bg-slate-50",
+                hover: "hover:bg-slate-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-slate-100 text-slate-600",
+                glow: "from-slate-400/20 to-gray-400/20",
+                text: "text-slate-900",
+                muted: "text-slate-700/60"
             }
         case "email":
             return {
-                card: "bg-indigo-950/40 border-indigo-500/30 hover:border-indigo-400/80 shadow-lg shadow-indigo-900/20",
-                active: "border-indigo-400/90 ring-1 ring-indigo-400/80 shadow-indigo-500/50 bg-indigo-950/80",
-                hover: "hover:shadow-indigo-500/40 hover:bg-indigo-900/20",
-                icon: "bg-indigo-500/20 text-indigo-300",
-                glow: "from-indigo-600/30 to-violet-600/30",
-                text: "text-indigo-100",
-                muted: "text-indigo-200/50"
+                card: "bg-indigo-50/50 border-indigo-400 hover:border-indigo-500 shadow-sm hover:shadow-indigo-500/10",
+                active: "border-indigo-400 ring-4 ring-indigo-500/10 shadow-indigo-500/20 bg-indigo-50",
+                hover: "hover:bg-indigo-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-indigo-100 text-indigo-600",
+                glow: "from-indigo-400/20 to-violet-400/20",
+                text: "text-indigo-900",
+                muted: "text-indigo-700/60"
             }
         case "phone":
             return {
-                card: "bg-cyan-950/40 border-cyan-500/30 hover:border-cyan-400/80 shadow-lg shadow-cyan-900/20",
-                active: "border-cyan-400/90 ring-1 ring-cyan-400/80 shadow-cyan-500/50 bg-cyan-950/80",
-                hover: "hover:shadow-cyan-500/40 hover:bg-cyan-900/20",
-                icon: "bg-cyan-500/20 text-cyan-300",
-                glow: "from-cyan-600/30 to-teal-600/30",
-                text: "text-cyan-100",
-                muted: "text-cyan-200/50"
+                card: "bg-cyan-50/50 border-cyan-400 hover:border-cyan-500 shadow-sm hover:shadow-cyan-500/10",
+                active: "border-cyan-400 ring-4 ring-cyan-500/10 shadow-cyan-500/20 bg-cyan-50",
+                hover: "hover:bg-cyan-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-cyan-100 text-cyan-600",
+                glow: "from-cyan-400/20 to-teal-400/20",
+                text: "text-cyan-900",
+                muted: "text-cyan-700/60"
             }
         case "url":
             return {
-                card: "bg-sky-950/40 border-sky-500/30 hover:border-sky-400/80 shadow-lg shadow-sky-900/20",
-                active: "border-sky-400/90 ring-1 ring-sky-400/80 shadow-sky-500/50 bg-sky-950/80",
-                hover: "hover:shadow-sky-500/40 hover:bg-sky-900/20",
-                icon: "bg-sky-500/20 text-sky-300",
-                glow: "from-sky-600/30 to-blue-600/30",
-                text: "text-sky-100",
-                muted: "text-sky-200/50"
+                card: "bg-sky-50/50 border-sky-400 hover:border-sky-500 shadow-sm hover:shadow-sky-500/10",
+                active: "border-sky-400 ring-4 ring-sky-500/10 shadow-sky-500/20 bg-sky-50",
+                hover: "hover:bg-sky-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-sky-100 text-sky-600",
+                glow: "from-sky-400/20 to-blue-400/20",
+                text: "text-sky-900",
+                muted: "text-sky-700/60"
             }
         case "password":
             return {
-                card: "bg-red-950/40 border-red-500/30 hover:border-red-400/80 shadow-lg shadow-red-900/20",
-                active: "border-red-400/90 ring-1 ring-red-400/80 shadow-red-500/50 bg-red-950/80",
-                hover: "hover:shadow-red-500/40 hover:bg-red-900/20",
-                icon: "bg-red-500/20 text-red-300",
-                glow: "from-red-600/30 to-rose-600/30",
-                text: "text-red-100",
-                muted: "text-red-200/50"
+                card: "bg-red-50/50 border-red-400 hover:border-red-500 shadow-sm hover:shadow-red-500/10",
+                active: "border-red-400 ring-4 ring-red-500/10 shadow-red-500/20 bg-red-50",
+                hover: "hover:bg-red-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-red-100 text-red-600",
+                glow: "from-red-400/20 to-rose-400/20",
+                text: "text-red-900",
+                muted: "text-red-700/60"
             }
         case "number":
             return {
-                card: "bg-lime-950/40 border-lime-500/30 hover:border-lime-400/80 shadow-lg shadow-lime-900/20",
-                active: "border-lime-400/90 ring-1 ring-lime-400/80 shadow-lime-500/50 bg-lime-950/80",
-                hover: "hover:shadow-lime-500/40 hover:bg-lime-900/20",
-                icon: "bg-lime-500/20 text-lime-300",
-                glow: "from-lime-600/30 to-green-600/30",
-                text: "text-lime-100",
-                muted: "text-lime-200/50"
+                card: "bg-lime-50/50 border-lime-400 hover:border-lime-500 shadow-sm hover:shadow-lime-500/10",
+                active: "border-lime-400 ring-4 ring-lime-500/10 shadow-lime-500/20 bg-lime-50",
+                hover: "hover:bg-lime-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-lime-100 text-lime-600",
+                glow: "from-lime-400/20 to-green-400/20",
+                text: "text-lime-900",
+                muted: "text-lime-700/60"
             }
         case "file":
             return {
-                card: "bg-violet-950/40 border-violet-500/30 hover:border-violet-400/80 shadow-lg shadow-violet-900/20",
-                active: "border-violet-400/90 ring-1 ring-violet-400/80 shadow-violet-500/50 bg-violet-950/80",
-                hover: "hover:shadow-violet-500/40 hover:bg-violet-900/20",
-                icon: "bg-violet-500/20 text-violet-300",
-                glow: "from-violet-600/30 to-purple-600/30",
-                text: "text-violet-100",
-                muted: "text-violet-200/50"
+                card: "bg-violet-50/50 border-violet-400 hover:border-violet-500 shadow-sm hover:shadow-violet-500/10",
+                active: "border-violet-400 ring-4 ring-violet-500/10 shadow-violet-500/20 bg-violet-50",
+                hover: "hover:bg-violet-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-violet-100 text-violet-600",
+                glow: "from-violet-400/20 to-purple-400/20",
+                text: "text-violet-900",
+                muted: "text-violet-700/60"
             }
         case "image":
             return {
-                card: "bg-fuchsia-950/40 border-fuchsia-500/30 hover:border-fuchsia-400/80 shadow-lg shadow-fuchsia-900/20",
-                active: "border-fuchsia-400/90 ring-1 ring-fuchsia-400/80 shadow-fuchsia-500/50 bg-fuchsia-950/80",
-                hover: "hover:shadow-fuchsia-500/40 hover:bg-fuchsia-900/20",
-                icon: "bg-fuchsia-500/20 text-fuchsia-300",
-                glow: "from-fuchsia-600/30 to-pink-600/30",
-                text: "text-fuchsia-100",
-                muted: "text-fuchsia-200/50"
+                card: "bg-fuchsia-50/50 border-fuchsia-400 hover:border-fuchsia-500 shadow-sm hover:shadow-fuchsia-500/10",
+                active: "border-fuchsia-400 ring-4 ring-fuchsia-500/10 shadow-fuchsia-500/20 bg-fuchsia-50",
+                hover: "hover:bg-fuchsia-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-fuchsia-100 text-fuchsia-600",
+                glow: "from-fuchsia-400/20 to-pink-400/20",
+                text: "text-fuchsia-900",
+                muted: "text-fuchsia-700/60"
             }
         case "date":
             return {
-                card: "bg-rose-950/40 border-rose-500/30 hover:border-rose-400/80 shadow-lg shadow-rose-900/20",
-                active: "border-rose-400/90 ring-1 ring-rose-400/80 shadow-rose-500/50 bg-rose-950/80",
-                hover: "hover:shadow-rose-500/40 hover:bg-rose-900/20",
-                icon: "bg-rose-500/20 text-rose-300",
-                glow: "from-rose-600/30 to-red-600/30",
-                text: "text-rose-100",
-                muted: "text-rose-200/50"
+                card: "bg-rose-50/50 border-rose-400 hover:border-rose-500 shadow-sm hover:shadow-rose-500/10",
+                active: "border-rose-400 ring-4 ring-rose-500/10 shadow-rose-500/20 bg-rose-50",
+                hover: "hover:bg-rose-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-rose-100 text-rose-600",
+                glow: "from-rose-400/20 to-red-400/20",
+                text: "text-rose-900",
+                muted: "text-rose-700/60"
             }
         case "time":
             return {
-                card: "bg-amber-950/40 border-amber-500/30 hover:border-amber-400/80 shadow-lg shadow-amber-900/20",
-                active: "border-amber-400/90 ring-1 ring-amber-400/80 shadow-amber-500/50 bg-amber-950/80",
-                hover: "hover:shadow-amber-500/40 hover:bg-amber-900/20",
-                icon: "bg-amber-500/20 text-amber-300",
-                glow: "from-amber-600/30 to-orange-600/30",
-                text: "text-amber-100",
-                muted: "text-amber-200/50"
+                card: "bg-amber-50/50 border-amber-400 hover:border-amber-500 shadow-sm hover:shadow-amber-500/10",
+                active: "border-amber-400 ring-4 ring-amber-500/10 shadow-amber-500/20 bg-amber-50",
+                hover: "hover:bg-amber-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-amber-100 text-amber-600",
+                glow: "from-amber-400/20 to-orange-400/20",
+                text: "text-amber-900",
+                muted: "text-amber-700/60"
             }
         case "datetime":
             return {
-                card: "bg-orange-950/40 border-orange-500/30 hover:border-orange-400/80 shadow-lg shadow-orange-900/20",
-                active: "border-orange-400/90 ring-1 ring-orange-400/80 shadow-orange-500/50 bg-orange-950/80",
-                hover: "hover:shadow-orange-500/40 hover:bg-orange-900/20",
-                icon: "bg-orange-500/20 text-orange-300",
-                glow: "from-orange-600/30 to-red-600/30",
-                text: "text-orange-100",
-                muted: "text-orange-200/50"
+                card: "bg-orange-50/50 border-orange-400 hover:border-orange-500 shadow-sm hover:shadow-orange-500/10",
+                active: "border-orange-400 ring-4 ring-orange-500/10 shadow-orange-500/20 bg-orange-50",
+                hover: "hover:bg-orange-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-orange-100 text-orange-600",
+                glow: "from-orange-400/20 to-red-400/20",
+                text: "text-orange-900",
+                muted: "text-orange-700/60"
             }
         case "multi-select":
             return {
-                card: "bg-emerald-950/40 border-emerald-500/30 hover:border-emerald-400/80 shadow-lg shadow-emerald-900/20",
-                active: "border-emerald-400/90 ring-1 ring-emerald-400/80 shadow-emerald-500/50 bg-emerald-950/80",
-                hover: "hover:shadow-emerald-500/40 hover:bg-emerald-900/20",
-                icon: "bg-emerald-500/20 text-emerald-300",
-                glow: "from-emerald-600/30 to-green-600/30",
-                text: "text-emerald-100",
-                muted: "text-emerald-200/50"
+                card: "bg-emerald-50/50 border-emerald-400 hover:border-emerald-500 shadow-sm hover:shadow-emerald-500/10",
+                active: "border-emerald-400 ring-4 ring-emerald-500/10 shadow-emerald-500/20 bg-emerald-50",
+                hover: "hover:bg-emerald-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-emerald-100 text-emerald-600",
+                glow: "from-emerald-400/20 to-green-400/20",
+                text: "text-emerald-900",
+                muted: "text-emerald-700/60"
             }
         case "dropdown":
             return {
-                card: "bg-teal-950/40 border-teal-500/30 hover:border-teal-400/80 shadow-lg shadow-teal-900/20",
-                active: "border-teal-400/90 ring-1 ring-teal-400/80 shadow-teal-500/50 bg-teal-950/80",
-                hover: "hover:shadow-teal-500/40 hover:bg-teal-900/20",
-                icon: "bg-teal-500/20 text-teal-300",
-                glow: "from-teal-600/30 to-cyan-600/30",
-                text: "text-teal-100",
-                muted: "text-teal-200/50"
+                card: "bg-teal-50/50 border-teal-400 hover:border-teal-500 shadow-sm hover:shadow-teal-500/10",
+                active: "border-teal-400 ring-4 ring-teal-500/10 shadow-teal-500/20 bg-teal-50",
+                hover: "hover:bg-teal-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-teal-100 text-teal-600",
+                glow: "from-teal-400/20 to-cyan-400/20",
+                text: "text-teal-900",
+                muted: "text-teal-700/60"
             }
         case "checkbox-group":
             return {
-                card: "bg-green-950/40 border-green-500/30 hover:border-green-400/80 shadow-lg shadow-green-900/20",
-                active: "border-green-400/90 ring-1 ring-green-400/80 shadow-green-500/50 bg-green-950/80",
-                hover: "hover:shadow-green-500/40 hover:bg-green-900/20",
-                icon: "bg-green-500/20 text-green-300",
-                glow: "from-green-600/30 to-emerald-600/30",
-                text: "text-green-100",
-                muted: "text-green-200/50"
+                card: "bg-green-50/50 border-green-400 hover:border-green-500 shadow-sm hover:shadow-green-500/10",
+                active: "border-green-400 ring-4 ring-green-500/10 shadow-green-500/20 bg-green-50",
+                hover: "hover:bg-green-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-green-100 text-green-600",
+                glow: "from-green-400/20 to-emerald-400/20",
+                text: "text-green-900",
+                muted: "text-green-700/60"
             }
         case "radio":
             return {
-                card: "bg-yellow-950/40 border-yellow-500/30 hover:border-yellow-400/80 shadow-lg shadow-yellow-900/20",
-                active: "border-yellow-400/90 ring-1 ring-yellow-400/80 shadow-yellow-500/50 bg-yellow-950/80",
-                hover: "hover:shadow-yellow-500/40 hover:bg-yellow-900/20",
-                icon: "bg-yellow-500/20 text-yellow-300",
-                glow: "from-yellow-600/30 to-amber-600/30",
-                text: "text-yellow-100",
-                muted: "text-yellow-200/50"
+                card: "bg-yellow-50/50 border-yellow-400 hover:border-yellow-500 shadow-sm hover:shadow-yellow-500/10",
+                active: "border-yellow-400 ring-4 ring-yellow-500/10 shadow-yellow-500/20 bg-yellow-50",
+                hover: "hover:bg-yellow-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-yellow-100 text-yellow-600",
+                glow: "from-yellow-400/20 to-amber-400/20",
+                text: "text-yellow-900",
+                muted: "text-yellow-700/60"
             }
         case "slider":
         case "range":
             return {
-                card: "bg-pink-950/40 border-pink-500/30 hover:border-pink-400/80 shadow-lg shadow-pink-900/20",
-                active: "border-pink-400/90 ring-1 ring-pink-400/80 shadow-pink-500/50 bg-pink-950/80",
-                hover: "hover:shadow-pink-500/40 hover:bg-pink-900/20",
-                icon: "bg-pink-500/20 text-pink-300",
-                glow: "from-pink-600/30 to-rose-600/30",
-                text: "text-pink-100",
-                muted: "text-pink-200/50"
+                card: "bg-pink-50/50 border-pink-400 hover:border-pink-500 shadow-sm hover:shadow-pink-500/10",
+                active: "border-pink-400 ring-4 ring-pink-500/10 shadow-pink-500/20 bg-pink-50",
+                hover: "hover:bg-pink-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-pink-100 text-pink-600",
+                glow: "from-pink-400/20 to-rose-400/20",
+                text: "text-pink-900",
+                muted: "text-pink-700/60"
             }
         case "rating":
             return {
-                card: "bg-yellow-950/40 border-yellow-500/30 hover:border-yellow-400/80 shadow-lg shadow-yellow-900/20",
-                active: "border-yellow-400/90 ring-1 ring-yellow-400/80 shadow-yellow-500/50 bg-yellow-950/80",
-                hover: "hover:shadow-yellow-500/40 hover:bg-yellow-900/20",
-                icon: "bg-yellow-500/20 text-yellow-300",
-                glow: "from-yellow-600/30 to-gold-600/30",
-                text: "text-yellow-100",
-                muted: "text-yellow-200/50"
+                card: "bg-yellow-50/50 border-yellow-400 hover:border-yellow-500 shadow-sm hover:shadow-yellow-500/10",
+                active: "border-yellow-400 ring-4 ring-yellow-500/10 shadow-yellow-500/20 bg-yellow-50",
+                hover: "hover:bg-yellow-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-yellow-100 text-yellow-600",
+                glow: "from-yellow-400/20 to-gold-400/20",
+                text: "text-yellow-900",
+                muted: "text-yellow-700/60"
             }
         case "switch":
         case "checkbox":
             return {
-                card: "bg-purple-950/40 border-purple-500/30 hover:border-purple-400/80 shadow-lg shadow-purple-900/20",
-                active: "border-purple-400/90 ring-1 ring-purple-400/80 shadow-purple-500/50 bg-purple-950/80",
-                hover: "hover:shadow-purple-500/40 hover:bg-purple-900/20",
-                icon: "bg-purple-500/20 text-purple-300",
-                glow: "from-purple-600/30 to-fuchsia-600/30",
-                text: "text-purple-100",
-                muted: "text-purple-200/50"
+                card: "bg-purple-50/50 border-purple-400 hover:border-purple-500 shadow-sm hover:shadow-purple-500/10",
+                active: "border-purple-400 ring-4 ring-purple-500/10 shadow-purple-500/20 bg-purple-50",
+                hover: "hover:bg-purple-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-purple-100 text-purple-600",
+                glow: "from-purple-400/20 to-fuchsia-400/20",
+                text: "text-purple-900",
+                muted: "text-purple-700/60"
             }
         default:
             return {
-                card: "bg-gray-950/40 border-white/10 hover:border-white/40 shadow-2xl shadow-white/5",
-                active: "border-white/60 ring-1 ring-white/40 shadow-[0_0_50px_-10px_rgba(255,255,255,0.2)] bg-black",
-                hover: "hover:shadow-white/10 hover:-translate-y-1 hover:scale-[1.01]",
-                icon: "bg-white/10 text-white",
-                glow: "from-white/10 to-gray-400/10",
-                text: "text-white",
-                muted: "text-gray-400"
+                card: "bg-gray-50/50 border-gray-400 hover:border-gray-500 shadow-sm hover:shadow-gray-500/10",
+                active: "border-gray-400 ring-4 ring-gray-500/10 shadow-gray-500/20 bg-white",
+                hover: "hover:bg-gray-50/80 hover:scale-[1.01] hover:shadow-md",
+                icon: "bg-gray-100 text-gray-600",
+                glow: "from-gray-200 to-slate-200",
+                text: "text-gray-900",
+                muted: "text-gray-500"
             }
     }
 }
@@ -241,39 +242,42 @@ export function FieldPreview({ field, onRemove, selected, onSelect }: FieldPrevi
     return (
         <Card
             className={cn(
-                "p-6 group relative border rounded-2xl cursor-pointer transition-all duration-500 ease-out overflow-hidden backdrop-blur-xl",
+                "p-6 group relative border rounded-3xl cursor-pointer transition-all duration-500 ease-out overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-700",
                 theme.card,
                 // Specific Theme Styles
                 selected
                     ? cn("z-10 scale-[1.02]", theme.active)
-                    : cn("bg-opacity-60", theme.hover)
+                    : cn("bg-opacity-80", theme.hover)
             )}
             onClick={(e) => {
                 e.stopPropagation()
                 onSelect?.(field.id)
             }}
         >
-            {/* Dark Mode Neon Glow */}
-            <div className={cn("absolute -top-[50%] -right-[50%] w-[150%] h-[150%] rounded-full bg-gradient-to-br blur-3xl opacity-20 pointer-events-none transition-all duration-1000", theme.glow, selected ? "opacity-30 rotate-180 scale-110" : "group-hover:opacity-30")} />
+            {/* Soft Gradient Glow */}
+            <div className={cn("absolute -top-[50%] -right-[50%] w-[150%] h-[150%] rounded-full bg-gradient-to-br blur-3xl opacity-30 pointer-events-none transition-all duration-1000", theme.glow, selected ? "opacity-60 rotate-180 scale-110" : "group-hover:opacity-50")} />
 
             <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-3 right-3 h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/10 hover:text-white z-20 rounded-xl shadow-sm hover:shadow-md hover:scale-105"
+                className={cn(
+                    "absolute top-3 right-3 h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 rounded-xl shadow-sm hover:shadow-md hover:scale-105",
+                    "bg-white/50 hover:bg-white text-gray-500 hover:text-red-500"
+                )}
                 onClick={(e) => {
                     e.stopPropagation()
                     onRemove?.(field.id)
                 }}
             >
-                <Trash2 className="h-4 w-4 text-white/70" />
+                <Trash2 className="h-4 w-4" />
             </Button>
 
             <div className="relative space-y-4 z-10 p-1">
                 <div className="flex items-center gap-2 mb-2">
                     <Label className={cn("text-base font-semibold tracking-tight transition-colors", theme.text)}>{field.label}</Label>
-                    {field.required && <span className="text-red-400 font-bold text-lg leading-3">*</span>}
+                    {field.required && <span className="text-red-500 font-bold text-lg leading-3">*</span>}
                 </div>
-                {renderFieldInput(field)}
+                {renderFieldInput(field, theme)}
             </div>
         </Card>
     )
@@ -350,12 +354,19 @@ const LOCATION_DATA: Record<string, { states: string[], cities: Record<string, s
 
 const COUNTRIES = [...Object.keys(LOCATION_DATA), "Australia", "Canada", "Germany", "France", "Japan", "Brazil", "Other"]
 
-function renderFieldInput(field: CanvasField) {
+function renderFieldInput(field: CanvasField, theme: any) {
     const { type, placeholder, options } = field
-    // DARK MODE INPUT STYLES
+    // THEME AWARE INPUT STYLES - High contrast 
     const commonProps = {
         placeholder: placeholder || `Enter ${type}...`,
-        className: "h-11 bg-white/5 backdrop-blur-md border-white/10 text-white placeholder:text-white/40 hover:border-white/20 hover:bg-white/10 focus:border-white/40 focus:ring-4 focus:ring-white/5 transition-all duration-300 shadow-inner rounded-xl"
+        className: cn(
+            "h-11 backdrop-blur-md border transition-all duration-300 shadow-inner rounded-xl",
+            "bg-white/40 hover:bg-white/60 focus:bg-white/80", // Lighter background for inputs
+            "border-gray-200 hover:border-gray-300 focus:border-gray-400", // Clearly visible borders
+            theme.text, // Text color matches field theme
+            "placeholder:text-gray-400", // Visible placeholder
+            "focus:ring-2 focus:ring-black/5" // Subtle ring
+        )
     }
 
     const [isValidEmail, setIsValidEmail] = React.useState(true)
@@ -390,7 +401,7 @@ function renderFieldInput(field: CanvasField) {
         case "text":
             return <Input {...commonProps} />
         case "textarea":
-            return <Textarea {...commonProps} className="min-h-[80px] bg-white/5 border-white/10 text-white placeholder:text-white/40 hover:border-white/20 focus:border-white/40 focus:ring-2 focus:ring-white/5 transition-all duration-200 shadow-sm rounded-xl resize-y" />
+            return <Textarea {...commonProps} className={cn(commonProps.className, "min-h-[80px] resize-y")} />
         case "email":
             return <Input
                 type="email"
@@ -453,18 +464,18 @@ function renderFieldInput(field: CanvasField) {
             return <Input type="date" {...commonProps} />
         case "time":
             return (
-                <div className="flex items-center gap-2 p-1.5 border border-white/10 rounded-xl bg-white/5 group/time hover:border-white/20 transition-colors cursor-text">
+                <div className="flex items-center gap-2 p-1.5 border border-gray-200 rounded-xl bg-white/40 group/time hover:border-gray-300 transition-colors cursor-text">
                     <Input
                         type="number"
                         placeholder="12"
-                        className="w-14 text-center h-9 bg-transparent border-transparent text-white focus:border-white/20 hover:bg-white/5 shadow-none font-mono placeholder:text-white/30"
+                        className={cn("w-14 text-center h-9 bg-transparent border-transparent focus:border-gray-300 hover:bg-white/40 shadow-none font-mono placeholder:text-gray-400", theme.text)}
                         min={1}
                         max={12}
                         onChange={(e) => {
                             if (parseInt(e.target.value) > 12) e.target.value = "12"
                         }}
                     />
-                    <span className="font-bold text-white/50 animate-pulse">:</span>
+                    <span className="font-bold text-gray-400 animate-pulse">:</span>
                     <Input
                         type="number"
                         placeholder="00"
@@ -485,29 +496,29 @@ function renderFieldInput(field: CanvasField) {
             return (
                 <div className="flex flex-col gap-3">
                     <Input type="date" className={commonProps.className} />
-                    <div className="flex items-center gap-2 p-1.5 border border-white/10 rounded-xl bg-white/5 group/time hover:border-white/20 transition-colors">
+                    <div className="flex items-center gap-2 p-1.5 border border-gray-200 rounded-xl bg-white/40 group/time hover:border-gray-300 transition-colors">
                         <Input
                             type="number"
                             placeholder="12"
-                            className="w-14 text-center h-9 bg-transparent border-transparent text-white focus:border-white/20 hover:bg-white/5 shadow-none font-mono placeholder:text-white/30"
+                            className={cn("w-14 text-center h-9 bg-transparent border-transparent focus:border-gray-300 hover:bg-white/40 shadow-none font-mono placeholder:text-gray-400", theme.text)}
                             min={1}
                             max={12}
                             onChange={(e) => {
                                 if (parseInt(e.target.value) > 12) e.target.value = "12"
                             }}
                         />
-                        <span className="font-bold text-white/50 animate-pulse">:</span>
+                        <span className="font-bold text-gray-400 animate-pulse">:</span>
                         <Input
                             type="number"
                             placeholder="00"
-                            className="w-14 text-center h-9 bg-transparent border-transparent text-white focus:border-white/20 hover:bg-white/5 shadow-none font-mono placeholder:text-white/30"
+                            className={cn("w-14 text-center h-9 bg-transparent border-transparent focus:border-gray-300 hover:bg-white/40 shadow-none font-mono placeholder:text-gray-400", theme.text)}
                             min={0}
                             max={59}
                             onChange={(e) => {
                                 if (parseInt(e.target.value) > 59) e.target.value = "59"
                             }}
                         />
-                        <select className="h-9 w-18 rounded-lg border border-white/10 bg-slate-900 px-2 text-sm text-white focus:ring-2 focus:ring-white/20 cursor-pointer hover:bg-white/5">
+                        <select className={cn("h-9 w-18 rounded-lg border border-gray-200 bg-white/50 px-2 text-sm focus:ring-2 focus:ring-black/5 cursor-pointer hover:bg-white/80", theme.text)}>
                             <option>AM</option>
                             <option>PM</option>
                         </select>
@@ -516,9 +527,9 @@ function renderFieldInput(field: CanvasField) {
             )
         case "switch":
             return (
-                <div className="flex items-center gap-3 p-3.5 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-sm transition-all duration-300 cursor-pointer group/switch">
+                <div className="flex items-center gap-3 p-3.5 border border-gray-200 rounded-xl bg-white/40 hover:bg-white/60 hover:border-gray-300 hover:shadow-sm transition-all duration-300 cursor-pointer group/switch">
                     <Switch id="switch-preview" className="data-[state=checked]:bg-orange-500 ring-offset-slate-950" />
-                    <Label htmlFor="switch-preview" className="text-sm font-medium cursor-pointer flex-1 text-white/80 group-hover/switch:text-white">Toggle Option</Label>
+                    <Label htmlFor="switch-preview" className={cn("text-sm font-medium cursor-pointer flex-1", theme.text)}>Toggle Option</Label>
                 </div>
             )
         case "checkbox":
@@ -544,9 +555,9 @@ function renderFieldInput(field: CanvasField) {
             return (
                 <div className="space-y-2">
                     {(options || ["Option 1", "Option 2", "Option 3"]).map((opt, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/5 hover:border-white/10 transition-all duration-200 cursor-pointer">
-                            <Checkbox id={`cb-group-${i}`} className="data-[state=checked]:bg-emerald-500 data-[state=checked]:text-white rounded-[4px] border-white/20" />
-                            <Label htmlFor={`cb-group-${i}`} className="text-sm font-medium cursor-pointer text-white/80 flex-1">{opt}</Label>
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/40 hover:border-gray-200 transition-all duration-200 cursor-pointer">
+                            <Checkbox id={`cb-group-${i}`} className={cn("data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground rounded-[4px] border-gray-400")} />
+                            <Label htmlFor={`cb-group-${i}`} className={cn("text-sm font-medium cursor-pointer flex-1", theme.text)}>{opt}</Label>
                         </div>
                     ))}
                 </div>
@@ -555,14 +566,14 @@ function renderFieldInput(field: CanvasField) {
             return (
                 <div className="space-y-2">
                     {(options || ["Option 1", "Option 2"]).map((opt, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/5 hover:border-white/10 transition-all duration-200 cursor-pointer group/radio">
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/40 hover:border-gray-200 transition-all duration-200 cursor-pointer group/radio">
                             <input
                                 type="radio"
                                 name="radio-preview"
                                 id={`radio-${i}`}
-                                className="h-4 w-4 text-emerald-500 border-white/30 focus:ring-emerald-500/20 bg-transparent"
+                                className="h-4 w-4 text-primary border-gray-400 focus:ring-primary/20 bg-transparent"
                             />
-                            <Label htmlFor={`radio-${i}`} className="text-sm font-medium cursor-pointer text-white/80 flex-1 group-hover/radio:text-white">{opt}</Label>
+                            <Label htmlFor={`radio-${i}`} className={cn("text-sm font-medium cursor-pointer flex-1", theme.text)}>{opt}</Label>
                         </div>
                     ))}
                 </div>
@@ -570,13 +581,13 @@ function renderFieldInput(field: CanvasField) {
         case "dropdown":
             return (
                 <div className="relative group/dropdown">
-                    <select className="w-full h-10 px-3 pr-8 rounded-lg border border-white/10 bg-slate-900/50 text-white text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-200 shadow-sm appearance-none cursor-pointer hover:border-emerald-500/50">
-                        <option className="bg-slate-900 text-white">{placeholder || "Select an option..."}</option>
+                    <select className={cn("w-full h-10 px-3 pr-8 rounded-lg border border-gray-200 bg-white/50 text-sm focus:ring-2 focus:ring-black/5 focus:border-gray-400 transition-all duration-200 shadow-sm appearance-none cursor-pointer hover:border-gray-300", theme.text)}>
+                        <option className="bg-white text-gray-900">{placeholder || "Select an option..."}</option>
                         {(options || ["Option 1", "Option 2"]).map((opt, i) => (
-                            <option key={i} className="bg-slate-900 text-white">{opt}</option>
+                            <option key={i} className="bg-white text-gray-900">{opt}</option>
                         ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-white/50 pointer-events-none group-hover/dropdown:text-emerald-400 transition-colors" />
+                    <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-500 pointer-events-none group-hover/dropdown:text-gray-700 transition-colors" />
                 </div>
             )
         case "multi-select":
@@ -588,35 +599,35 @@ function renderFieldInput(field: CanvasField) {
             return (
                 <div className="relative group/multiselect">
                     <div
-                        className="flex flex-wrap items-center gap-2 w-full min-h-[44px] px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-sm cursor-pointer hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_0_15px_-5px_rgba(16,185,129,0.1)] transition-all duration-300"
+                        className={cn("flex flex-wrap items-center gap-2 w-full min-h-[44px] px-3 py-2.5 rounded-xl border border-gray-200 bg-white/40 backdrop-blur-sm text-sm cursor-pointer hover:border-gray-300 hover:bg-white/60 hover:shadow-sm transition-all duration-300", theme.text)}
                         onClick={() => setIsMultiSelectOpen(!isMultiSelectOpen)}
                     >
                         {multiSelected.length > 0 ? (
                             multiSelected.map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-lg text-xs font-semibold text-emerald-200 shadow-sm animate-in zoom-in-75 duration-200"
+                                <div key={idx} className="flex items-center gap-1.5 bg-white/80 border border-gray-200 px-3 py-1 rounded-lg text-xs font-semibold text-gray-700 shadow-sm animate-in zoom-in-75 duration-200"
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         setMultiSelected(prev => prev.filter(p => p !== item))
                                     }}
                                 >
                                     {item}
-                                    <div className="bg-emerald-500/20 rounded-full p-0.5 hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer">
+                                    <div className="bg-black/5 rounded-full p-0.5 hover:bg-black/10 hover:text-red-500 transition-colors cursor-pointer">
                                         <X className="h-2.5 w-2.5" />
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <span className="text-white/40 italic px-1">{placeholder || "Select options..."}</span>
+                            <span className="text-gray-400 italic px-1">{placeholder || "Select options..."}</span>
                         )}
-                        <ChevronDown className={`ml-auto h-4 w-4 text-white/50 transition-transform duration-500 ease-spring ${isMultiSelectOpen ? 'rotate-180 text-emerald-400 scale-110' : ''}`} />
+                        <ChevronDown className={`ml-auto h-4 w-4 text-gray-400 transition-transform duration-500 ease-spring ${isMultiSelectOpen ? 'rotate-180 text-gray-600 scale-110' : ''}`} />
                     </div>
 
                     {isMultiSelectOpen && (
-                        <div className="absolute top-full left-0 w-full mt-2 border border-white/10 rounded-2xl bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/50 z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 overflow-hidden ring-1 ring-white/5">
-                            <div className="flex items-center border-b border-white/10 px-3 py-2.5 bg-white/5">
-                                <Search className="mr-2 h-4 w-4 shrink-0 text-white/40" />
+                        <div className="absolute top-full left-0 w-full mt-2 border border-gray-100 rounded-2xl bg-white/95 backdrop-blur-xl shadow-xl shadow-black/5 z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 overflow-hidden ring-1 ring-black/5">
+                            <div className="flex items-center border-b border-gray-100 px-3 py-2.5 bg-white/50">
+                                <Search className="mr-2 h-4 w-4 shrink-0 text-gray-400" />
                                 <input
-                                    className="flex h-9 w-full rounded-lg bg-transparent py-3 text-sm text-white outline-none placeholder:text-white/30 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="flex h-9 w-full rounded-lg bg-transparent py-3 text-sm text-gray-800 outline-none placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
                                     placeholder="Type to filter..."
                                     value={searchQuery}
                                     onClick={(e) => e.stopPropagation()}
@@ -625,8 +636,8 @@ function renderFieldInput(field: CanvasField) {
                             </div>
                             <div className="max-h-60 overflow-y-auto p-1.5 space-y-1">
                                 {filteredOptions.length === 0 ? (
-                                    <div className="py-8 text-center text-sm text-white/40 flex flex-col items-center gap-2">
-                                        <Search className="h-8 w-8 text-white/10" />
+                                    <div className="py-8 text-center text-sm text-gray-400 flex flex-col items-center gap-2">
+                                        <Search className="h-8 w-8 text-gray-200" />
                                         <p>No matches found</p>
                                     </div>
                                 ) : (
@@ -635,7 +646,7 @@ function renderFieldInput(field: CanvasField) {
                                         return (
                                             <div
                                                 key={i}
-                                                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${isSelected ? "bg-emerald-500/20 text-emerald-300 font-medium border border-emerald-500/20" : "hover:bg-white/5 hover:translate-x-1 text-white/80"}`}
+                                                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${isSelected ? "bg-primary/10 text-primary font-medium border border-primary/20" : "hover:bg-gray-50 hover:translate-x-1 text-gray-600"}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     if (isSelected) {
@@ -645,8 +656,8 @@ function renderFieldInput(field: CanvasField) {
                                                     }
                                                 }}
                                             >
-                                                <Checkbox id={`ms-${i}`} checked={isSelected} className="rounded-md data-[state=checked]:bg-emerald-500 data-[state=checked]:text-white border-white/20" />
-                                                <Label htmlFor={`ms-${i}`} className={`text-sm cursor-pointer flex-1 ${isSelected ? "text-emerald-300" : "text-white/80"}`}>{opt}</Label>
+                                                <Checkbox id={`ms-${i}`} checked={isSelected} className="rounded-md data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-gray-300" />
+                                                <Label htmlFor={`ms-${i}`} className={`text-sm cursor-pointer flex-1 ${isSelected ? "text-primary" : "text-gray-600"}`}>{opt}</Label>
                                             </div>
                                         )
                                     })
@@ -658,20 +669,20 @@ function renderFieldInput(field: CanvasField) {
             )
         case "file":
             return (
-                <div className="relative overflow-hidden border border-dashed border-white/20 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-gradient-to-b from-white/5 to-transparent gap-4 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all duration-500 group/file cursor-pointer">
+                <div className="relative overflow-hidden border border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-gradient-to-b from-white/40 to-transparent gap-4 hover:border-violet-500/50 hover:bg-violet-50/50 transition-all duration-500 group/file cursor-pointer">
                     {/* Animated Background Pattern */}
                     <div className="absolute inset-0 opacity-0 group-hover/file:opacity-100 transition-opacity duration-700 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
-                    <div className="relative p-5 bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg shadow-violet-500/10 group-hover/file:scale-110 group-hover/file:shadow-violet-500/20 transition-all duration-500 ring-1 ring-white/10 group-hover/file:ring-violet-500/30">
-                        <CloudUpload className="h-7 w-7 text-white/70 group-hover/file:text-violet-400 transition-colors duration-300" />
+                    <div className="relative p-5 bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg shadow-gray-200 group-hover/file:scale-110 group-hover/file:shadow-violet-200 transition-all duration-500 ring-1 ring-gray-100 group-hover/file:ring-violet-200">
+                        <CloudUpload className="h-7 w-7 text-gray-500 group-hover/file:text-violet-500 transition-colors duration-300" />
                     </div>
                     <div className="relative space-y-1.5 z-10">
-                        <p className="text-sm font-bold text-white group-hover/file:text-violet-300 transition-colors duration-300">{fileName || "Click to Upload File"}</p>
-                        <p className="text-xs font-medium text-white/50">SVG, PNG, JPG or GIF (max. 10MB)</p>
+                        <p className={cn("text-sm font-bold transition-colors duration-300 group-hover/file:text-violet-600", theme.text)}>{fileName || "Click to Upload File"}</p>
+                        <p className="text-xs font-medium text-gray-500">SVG, PNG, JPG or GIF (max. 10MB)</p>
                     </div>
                     <Button
                         variant="outline"
-                        className="relative w-full max-w-[200px] bg-white/5 backdrop-blur-md border-white/10 text-white hover:border-violet-500/50 hover:bg-violet-500 hover:text-white transition-all duration-300 rounded-xl shadow-sm z-10"
+                        className="relative w-full max-w-[200px] bg-white/60 backdrop-blur-md border-gray-200 text-gray-700 hover:border-violet-500/50 hover:bg-violet-500 hover:text-white transition-all duration-300 rounded-xl shadow-sm z-10"
                         size="sm"
                         onClick={() => fileInputRef.current?.click()}
                     >
@@ -691,15 +702,15 @@ function renderFieldInput(field: CanvasField) {
             )
         case "image":
             return (
-                <div className="relative overflow-hidden border border-dashed border-white/20 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-gradient-to-b from-white/5 to-transparent gap-4 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all duration-500 group/image cursor-pointer">
+                <div className="relative overflow-hidden border border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-gradient-to-b from-white/40 to-transparent gap-4 hover:border-violet-500/50 hover:bg-violet-50/50 transition-all duration-500 group/image cursor-pointer">
                     <div className="absolute inset-0 opacity-0 group-hover/image:opacity-100 transition-opacity duration-700 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
-                    <div className="relative p-5 bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg shadow-violet-500/10 group-hover/image:scale-110 group-hover/image:shadow-violet-500/20 transition-all duration-500 ring-1 ring-white/10 group-hover/image:ring-violet-500/30">
-                        <CloudUpload className="h-7 w-7 text-violet-400" />
+                    <div className="relative p-5 bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg shadow-gray-200 group-hover/image:scale-110 group-hover/image:shadow-violet-200 transition-all duration-500 ring-1 ring-gray-100 group-hover/image:ring-violet-200">
+                        <CloudUpload className="h-7 w-7 text-violet-500" />
                     </div>
                     <div className="relative space-y-1.5 z-10">
-                        <p className="text-sm font-bold text-white group-hover/image:text-violet-300 transition-colors duration-300">{imageName || "Click to Upload Image"}</p>
-                        <p className="text-xs font-medium text-white/50">High resolution recommended</p>
+                        <p className={cn("text-sm font-bold transition-colors duration-300 group-hover/image:text-violet-600", theme.text)}>{imageName || "Click to Upload Image"}</p>
+                        <p className="text-xs font-medium text-gray-500">High resolution recommended</p>
                     </div>
                     <Button
                         className="relative w-full max-w-[200px] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 rounded-xl z-10"
@@ -724,7 +735,7 @@ function renderFieldInput(field: CanvasField) {
         case "currency":
             return (
                 <div className="relative group/currency">
-                    <DollarSign className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground group-hover/currency:text-primary transition-colors" />
+                    <DollarSign className="absolute left-3 top-2.5 h-5 w-5 text-gray-500 group-hover/currency:text-primary transition-colors" />
                     <Input
                         type="number"
                         {...commonProps}
@@ -762,7 +773,7 @@ function renderFieldInput(field: CanvasField) {
                             }
                         }}
                     />
-                    <Percent className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground group-hover/percent:text-primary transition-colors" />
+                    <Percent className="absolute right-3 top-2.5 h-5 w-5 text-gray-500 group-hover/percent:text-primary transition-colors" />
                 </div>
             )
         case "rating":

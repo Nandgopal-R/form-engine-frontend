@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Trash2, Star, DollarSign, Percent, CreditCard, ChevronDown, CloudUpload, Search, X } from "lucide-react"
+import { Trash2, Star, DollarSign, Percent, CreditCard, ChevronDown, CloudUpload, Search, X, Eye, EyeOff, Calendar } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 
 import { cn } from "@/lib/utils"
@@ -242,11 +242,11 @@ export function FieldPreview({ field, onRemove, selected, onSelect }: FieldPrevi
     return (
         <Card
             className={cn(
-                "p-6 group relative border rounded-3xl cursor-pointer transition-all duration-500 ease-out overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-700",
+                "p-6 group relative border rounded-3xl cursor-pointer transition-all duration-500 ease-out backdrop-blur-xl animate-fade-slide-up",
                 theme.card,
                 // Specific Theme Styles
                 selected
-                    ? cn("z-10 scale-[1.02]", theme.active)
+                    ? cn("z-10 scale-[1.02] -translate-y-0.5 shadow-xl shadow-primary/5", theme.active)
                     : cn("bg-opacity-80", theme.hover)
             )}
             onClick={(e) => {
@@ -254,6 +254,15 @@ export function FieldPreview({ field, onRemove, selected, onSelect }: FieldPrevi
                 onSelect?.(field.id)
             }}
         >
+            {/* Active Gradient Border & Glow - using pseudo-element technique for performance */}
+            {selected && (
+                <>
+                    <div className="absolute inset-0 rounded-3xl pointer-events-none border-2 border-transparent [background:linear-gradient(var(--card),var(--card))_padding-box,linear-gradient(135deg,theme(colors.indigo.500),theme(colors.purple.500),theme(colors.pink.500))_border-box] [mask:linear-gradient(#fff_0_0)_padding-box,linear-gradient(#fff_0_0)] [-webkit-mask-composite:destination-out] mask-composite:exclude opacity-50 animate-glow-pulse" />
+                    {/* Left Accent Bar */}
+                    <div className="absolute left-0 top-6 bottom-6 w-1 bg-gradient-to-b from-transparent via-primary to-transparent rounded-r-full animate-slide-in-left shadow-[2px_0_8px_rgba(var(--color-primary),0.4)]" />
+                </>
+            )}
+
             {/* Soft Gradient Glow */}
             <div className={cn("absolute -top-[50%] -right-[50%] w-[150%] h-[150%] rounded-full bg-gradient-to-br blur-3xl opacity-30 pointer-events-none transition-all duration-1000", theme.glow, selected ? "opacity-60 rotate-180 scale-110" : "group-hover:opacity-50")} />
 
@@ -272,12 +281,13 @@ export function FieldPreview({ field, onRemove, selected, onSelect }: FieldPrevi
                 <Trash2 className="h-4 w-4" />
             </Button>
 
-            <div className="relative space-y-4 z-10 p-1">
+            <div className={cn("relative space-y-4 z-10 p-1 transition-transform duration-300", selected ? "translate-x-1" : "")}>
                 <div className="flex items-center gap-2 mb-2">
                     <Label className={cn("text-base font-semibold tracking-tight transition-colors", theme.text)}>{field.label}</Label>
                     {field.required && <span className="text-red-500 font-bold text-lg leading-3">*</span>}
                 </div>
-                {renderFieldInput(field, theme)}
+                {/* Render Field Input Component */}
+                <FieldInput field={field} theme={theme} />
             </div>
         </Card>
     )
@@ -354,27 +364,80 @@ const LOCATION_DATA: Record<string, { states: string[], cities: Record<string, s
 
 const COUNTRIES = [...Object.keys(LOCATION_DATA), "Australia", "Canada", "Germany", "France", "Japan", "Brazil", "Other"]
 
-function renderFieldInput(field: CanvasField, theme: any) {
+// Modern Floating Label Input Wrapper
+const ModernInput = ({ label, children, active }: { label?: string, children: React.ReactNode, active?: boolean }) => (
+    <div className="relative group/input pt-1">
+        {children}
+        {label && (
+            <label className={cn(
+                "absolute left-3 top-0 text-[10px] uppercase font-bold tracking-wider text-gray-400 bg-white/80 px-1 rounded-sm transition-all duration-300 pointer-events-none",
+                active ? "text-primary -translate-y-1/2 scale-105" : "group-hover/input:text-gray-500 opacity-0 group-focus-within/input:opacity-100 group-focus-within/input:-translate-y-1/2 group-focus-within/input:text-primary"
+            )}>
+                {label}
+            </label>
+        )}
+    </div>
+)
+
+const FieldInput = ({ field, theme }: { field: CanvasField, theme: any }) => {
     const { type, placeholder, options } = field
-    // THEME AWARE INPUT STYLES - High contrast 
+
+    // Updated Modern Input Props
+    // Updated Modern Input Props
+    // Dynamic Field Styling
+    const getFieldTheme = (t: string) => {
+        switch (t) {
+            case "currency": return "bg-green-50/60 border-green-300 hover:border-green-400 focus:border-green-500 focus:ring-green-500/20"
+            case "percent": return "bg-yellow-50/60 border-yellow-300 hover:border-yellow-400 focus:border-yellow-500 focus:ring-yellow-500/20"
+            case "country": return "bg-blue-50/60 border-blue-300 hover:border-blue-400 focus:border-blue-500 focus:ring-blue-500/20"
+            case "city":
+            case "state": return "bg-indigo-50/60 border-indigo-300 hover:border-indigo-400 focus:border-indigo-500 focus:ring-indigo-500/20"
+            case "zip": return "bg-purple-50/60 border-purple-300 hover:border-purple-400 focus:border-purple-500 focus:ring-purple-500/20"
+            case "address": return "bg-pink-50/60 border-pink-300 hover:border-pink-400 focus:border-pink-500 focus:ring-pink-500/20"
+            case "payment": return "bg-rose-50/60 border-rose-300 hover:border-rose-400 focus:border-rose-500 focus:ring-rose-500/20"
+            case "date":
+            case "time":
+            case "datetime":
+            case "datetime-local": return "bg-amber-50/60 border-amber-300 hover:border-amber-400 focus:border-amber-500 focus:ring-amber-500/20"
+            default: return "bg-white/90 border-gray-300 hover:border-gray-400 focus:border-primary focus:ring-primary/10"
+        }
+    }
+
+    const fieldThemeClass = getFieldTheme(type)
+
     const commonProps = {
         placeholder: placeholder || `Enter ${type}...`,
         className: cn(
-            "h-11 backdrop-blur-md border transition-all duration-300 shadow-inner rounded-xl",
-            "bg-white/40 hover:bg-white/60 focus:bg-white/80", // Lighter background for inputs
-            "border-gray-200 hover:border-gray-300 focus:border-gray-400", // Clearly visible borders
-            theme.text, // Text color matches field theme
-            "placeholder:text-gray-400", // Visible placeholder
-            "focus:ring-2 focus:ring-black/5" // Subtle ring
+            "h-12 text-gray-900 placeholder:text-gray-400 rounded-xl transition-all duration-300 shadow-sm backdrop-blur-sm border",
+            fieldThemeClass,
+            "hover:shadow-md hover:bg-white/80",
+            "focus:bg-white focus:ring-4 focus:shadow-md focus:scale-[1.01]",
+            theme.text
         )
     }
 
-    const [isValidEmail, setIsValidEmail] = React.useState(true)
+    const [emailValue, setEmailValue] = React.useState("")
+    const [emailError, setEmailError] = React.useState<string | null>(null)
+
     const [phoneValue, setPhoneValue] = React.useState("")
-    const [isValidPassword, setIsValidPassword] = React.useState(true)
-    const [isValidUrl, setIsValidUrl] = React.useState(true)
+    const [phoneError, setPhoneError] = React.useState<string | null>(null)
+
+    const [showPassword, setShowPassword] = React.useState(false)
+    const [passwordError, setPasswordError] = React.useState<string | null>(null)
+
+    const [urlValue, setUrlValue] = React.useState("")
+    const [urlError, setUrlError] = React.useState<string | null>(null)
+
+    const [passwordValue, setPasswordValue] = React.useState("")
+
     const [isMultiSelectOpen, setIsMultiSelectOpen] = React.useState(false)
     const [multiSelected, setMultiSelected] = React.useState<string[]>([])
+
+    // Selection States
+    const [checkboxSelected, setCheckboxSelected] = React.useState<string[]>([])
+    const [radioSelected, setRadioSelected] = React.useState<string>("")
+    const [dropdownSelected, setDropdownSelected] = React.useState<string>("")
+
     const [cardValue, setCardValue] = React.useState("")
     const [expiryValue, setExpiryValue] = React.useState("")
     const [cvcValue, setCvcValue] = React.useState("")
@@ -386,6 +449,7 @@ function renderFieldInput(field: CanvasField, theme: any) {
     const [addressState, setAddressState] = React.useState("")
     const [addressCity, setAddressCity] = React.useState("")
     const [isPercentValid, setIsPercentValid] = React.useState(true)
+    const [percentValue, setPercentValue] = React.useState("") // Strict controlled state
     const [currencyValue, setCurrencyValue] = React.useState("")
     const [ratingValue, setRatingValue] = React.useState(0)
     const [sliderMin, setSliderMin] = React.useState(0)
@@ -397,71 +461,205 @@ function renderFieldInput(field: CanvasField, theme: any) {
     const [fileName, setFileName] = React.useState("")
     const [imageName, setImageName] = React.useState("")
 
+    // Custom Time Picker State
+    const [timeHour, setTimeHour] = React.useState("12")
+    const [timeMinute, setTimeMinute] = React.useState("00")
+    const [timePeriod, setTimePeriod] = React.useState("AM")
+
     switch (type) {
         case "text":
-            return <Input {...commonProps} />
+            return (
+                <ModernInput label={type} active={!!field.placeholder}>
+                    <Input {...commonProps} />
+                </ModernInput>
+            )
         case "textarea":
-            return <Textarea {...commonProps} className={cn(commonProps.className, "min-h-[80px] resize-y")} />
+            return (
+                <ModernInput label={type} active={!!field.placeholder}>
+                    <Textarea {...commonProps} className={cn(commonProps.className, "min-h-[80px] resize-y")} />
+                </ModernInput>
+            )
         case "email":
-            return <Input
-                type="email"
-                {...commonProps}
-                className={cn(commonProps.className, !isValidEmail ? "border-destructive focus-visible:ring-destructive bg-destructive/5" : "")}
-                onChange={(e) => {
-                    const val = e.target.value
-                    if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-                        setIsValidEmail(false)
-                    } else {
-                        setIsValidEmail(true)
-                    }
-                }}
-            />
+            return (
+                <ModernInput label="Email" active={!!emailValue}>
+                    <Input
+                        {...commonProps}
+                        type="text"
+                        value={emailValue}
+                        className={cn(
+                            commonProps.className,
+                            emailError ? "border-red-500 focus:border-red-500 focus-visible:ring-red-500/50 bg-red-50/10" : ""
+                        )}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\s/g, "")
+                            setEmailValue(val)
+
+                            // Strict Gmail Validation
+                            const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/
+
+                            if (!gmailRegex.test(val)) {
+                                setEmailError("Email must be a valid @gmail.com address")
+                            } else {
+                                setEmailError(null)
+                            }
+                        }}
+                        onBlur={() => {
+                            if (!emailValue.endsWith("@gmail.com")) {
+                                setEmailError("Email must be a valid @gmail.com address")
+                            }
+                        }}
+                    />
+                    {emailError && (
+                        <p className="text-xs text-red-500 mt-1 font-medium ml-1">
+                            {emailError}
+                        </p>
+                    )}
+                </ModernInput>
+            )
+
+
         case "phone":
-            return <Input
-                type="tel"
-                {...commonProps}
-                value={phoneValue}
-                onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '').slice(0, 10)
-                    setPhoneValue(val)
-                }}
-            />
+            return (
+                <ModernInput label="Phone" active={!!phoneValue}>
+                    <Input
+                        type="tel"
+                        {...commonProps}
+                        value={phoneValue}
+                        maxLength={10}
+                        inputMode="numeric"
+                        className={cn(
+                            commonProps.className,
+                            phoneError ? "border-red-500 focus:border-red-500 focus-visible:ring-red-500/50 bg-red-50/10" : ""
+                        )}
+                        onChange={(e) => {
+                            const numeric = e.target.value.replace(/\D/g, "")
+                            const limited = numeric.slice(0, 10)
+                            setPhoneValue(limited)
+
+                            // Clear error if valid, but don't error regular typing
+                            if (phoneError && limited.length === 10) {
+                                setPhoneError(null)
+                            }
+                        }}
+                        onBlur={() => {
+                            if (phoneValue.length > 0 && phoneValue.length !== 10) {
+                                setPhoneError("Please enter a valid 10-digit phone number")
+                            }
+                        }}
+                    />
+                    {phoneError && (
+                        <p className="text-xs text-red-500 mt-1 font-medium ml-1">
+                            {phoneError}
+                        </p>
+                    )}
+                </ModernInput>
+            )
+
         case "password":
-            return <Input
-                type="password"
-                {...commonProps}
-                className={cn(commonProps.className, !isValidPassword ? "border-destructive focus-visible:ring-destructive bg-destructive/5" : "")}
-                onChange={(e) => {
-                    const val = e.target.value
-                    // Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
-                    const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,})");
-                    if (val && !strongRegex.test(val)) {
-                        setIsValidPassword(false)
-                    } else {
-                        setIsValidPassword(true)
-                    }
-                }}
-            />
+            return (
+                <ModernInput label="Password" active={!!passwordValue}>
+                    <div className="relative">
+                        <Input
+                            type={showPassword ? "text" : "password"}
+                            {...commonProps}
+                            value={passwordValue}
+                            className={cn(
+                                commonProps.className,
+                                passwordError ? "border-red-500 focus:border-red-500 focus-visible:ring-red-500/50 bg-red-50/10" : "",
+                                "pr-10"
+                            )}
+                            onChange={(e) => {
+                                const val = e.target.value
+                                setPasswordValue(val)
+
+                                const strongRegex =
+                                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+
+                                if (!strongRegex.test(val)) {
+                                    setPasswordError(
+                                        "Min 8 chars, 1 upper, 1 lower, 1 number, 1 special char"
+                                    )
+                                } else {
+                                    setPasswordError(null)
+                                }
+                            }}
+                        />
+
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                            {showPassword ? (
+                                <EyeOff className="h-4 w-4" />
+                            ) : (
+                                <Eye className="h-4 w-4" />
+                            )}
+                        </button>
+                    </div>
+
+                    {passwordError && (
+                        <p className="text-xs text-red-500 mt-1 font-medium ml-1">
+                            {passwordError}
+                        </p>
+                    )}
+                </ModernInput>
+            )
+
         case "url":
-            return <Input
-                type="url"
-                {...commonProps}
-                placeholder={placeholder || "https://example.com"}
-                className={cn(commonProps.className, !isValidUrl ? "border-destructive focus-visible:ring-destructive bg-destructive/5" : "")}
-                onChange={(e) => {
-                    const val = e.target.value
-                    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-                    if (val && !urlRegex.test(val)) {
-                        setIsValidUrl(false)
-                    } else {
-                        setIsValidUrl(true)
-                    }
-                }}
-            />
+            return (
+                <ModernInput label="Website" active={!!urlValue}>
+                    <Input
+                        type="url"
+                        {...commonProps}
+                        value={urlValue}
+                        placeholder="https://example.com"
+                        className={cn(
+                            commonProps.className,
+                            urlError ? "border-red-500 focus:border-red-500 focus-visible:ring-red-500/50 bg-red-50/10" : ""
+                        )}
+                        onChange={(e) => {
+                            const val = e.target.value
+                            setUrlValue(val)
+
+                            const urlRegex =
+                                /^(https?:\/\/)([\w-]+\.)+[\w-]{2,}(\/.*)?$/
+
+                            if (!urlRegex.test(val)) {
+                                setUrlError("URL must start with http:// or https://")
+                            } else {
+                                setUrlError(null)
+                            }
+                        }}
+                    />
+                    {urlError && (
+                        <p className="text-xs text-red-500 mt-1 font-medium ml-1">
+                            {urlError}
+                        </p>
+                    )}
+                </ModernInput>
+            )
+
         case "number":
-            return <Input type="number" {...commonProps} />
+            return (
+                <ModernInput label="Number" active={!!field.placeholder}>
+                    <Input
+                        type="number"
+                        {...commonProps}
+                        onKeyDown={(e) => {
+                            if (["e", "E", "+", "-"].includes(e.key)) {
+                                e.preventDefault()
+                            }
+                        }}
+                    />
+                </ModernInput>
+            )
         case "date":
-            return <Input type="date" {...commonProps} />
+            return (
+                <ModernInput label="Date" active={true}>
+                    <Input type="date" {...commonProps} />
+                </ModernInput>
+            )
         case "time":
             return (
                 <div className="flex items-center gap-2 p-1.5 border border-gray-200 rounded-xl bg-white/40 group/time hover:border-gray-300 transition-colors cursor-text">
@@ -533,61 +731,93 @@ function renderFieldInput(field: CanvasField, theme: any) {
                 </div>
             )
         case "checkbox":
-            if (options && options.length > 0) {
-                return (
-                    <div className="space-y-2">
-                        {options.map((opt, i) => (
-                            <div key={i} className="flex items-center gap-2">
-                                <Checkbox id={`cb-${i}`} />
-                                <Label htmlFor={`cb-${i}`} className="text-sm font-normal">{opt}</Label>
-                            </div>
-                        ))}
-                    </div>
-                )
-            }
+            const cbOptions = options && options.length > 0 ? options : ["Option 1", "Option 2", "Option 3"]
             return (
-                <div className="flex items-center gap-2">
-                    <Checkbox id="checkbox-preview" />
-                    <Label htmlFor="checkbox-preview" className="text-sm font-normal">{placeholder || "Option"}</Label>
+                <div className="space-y-2">
+                    {cbOptions.map((opt, i) => {
+                        const isSelected = checkboxSelected.includes(opt)
+                        return (
+                            <div key={i} className="flex items-center gap-2">
+                                <Checkbox
+                                    id={`cb-${field.id}-${i}`}
+                                    checked={isSelected}
+                                    onCheckedChange={(checked) => {
+                                        if (checked) {
+                                            setCheckboxSelected([...checkboxSelected, opt])
+                                        } else {
+                                            setCheckboxSelected(checkboxSelected.filter(o => o !== opt))
+                                        }
+                                    }}
+                                />
+                                <Label htmlFor={`cb-${field.id}-${i}`} className="text-sm font-normal cursor-pointer select-none">{opt}</Label>
+                            </div>
+                        )
+                    })}
                 </div>
             )
         case "checkbox-group":
+            // Reuse checkbox logic for checkbox-group if distinct, else map to similar
+            const cgOptions = options && options.length > 0 ? options : ["Option 1", "Option 2", "Option 3"]
             return (
                 <div className="space-y-2">
-                    {(options || ["Option 1", "Option 2", "Option 3"]).map((opt, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/40 hover:border-gray-200 transition-all duration-200 cursor-pointer">
-                            <Checkbox id={`cb-group-${i}`} className={cn("data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground rounded-[4px] border-gray-400")} />
-                            <Label htmlFor={`cb-group-${i}`} className={cn("text-sm font-medium cursor-pointer flex-1", theme.text)}>{opt}</Label>
-                        </div>
-                    ))}
+                    {cgOptions.map((opt, i) => {
+                        const isSelected = checkboxSelected.includes(opt)
+                        return (
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/40 hover:border-gray-200 transition-all duration-200 cursor-pointer">
+                                <Checkbox
+                                    id={`cb-group-${field.id}-${i}`}
+                                    className={cn("data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground rounded-[4px] border-gray-400")}
+                                    checked={isSelected}
+                                    onCheckedChange={(checked) => {
+                                        if (checked) {
+                                            setCheckboxSelected([...checkboxSelected, opt])
+                                        } else {
+                                            setCheckboxSelected(checkboxSelected.filter(o => o !== opt))
+                                        }
+                                    }}
+                                />
+                                <Label htmlFor={`cb-group-${field.id}-${i}`} className={cn("text-sm font-medium cursor-pointer flex-1 select-none", theme.text)}>{opt}</Label>
+                            </div>
+                        )
+                    })}
                 </div>
             )
         case "radio":
+            const radioOptions = options && options.length > 0 ? options : ["Option 1", "Option 2"]
             return (
-                <div className="space-y-2">
-                    {(options || ["Option 1", "Option 2"]).map((opt, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-white/40 hover:border-gray-200 transition-all duration-200 cursor-pointer group/radio">
-                            <input
-                                type="radio"
-                                name="radio-preview"
-                                id={`radio-${i}`}
-                                className="h-4 w-4 text-primary border-gray-400 focus:ring-primary/20 bg-transparent"
-                            />
-                            <Label htmlFor={`radio-${i}`} className={cn("text-sm font-medium cursor-pointer flex-1", theme.text)}>{opt}</Label>
+                <div className="space-y-3">
+                    {radioOptions.map((opt, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-transparent bg-white/40 hover:bg-white/60 hover:border-primary/20 hover:shadow-sm transition-all duration-200 cursor-pointer group/radio"
+                            onClick={() => setRadioSelected(opt)}>
+                            <div className="relative flex items-center justify-center">
+                                <input
+                                    type="radio"
+                                    name={`radio-${field.id}`}
+                                    id={`radio-${field.id}-${i}`}
+                                    className="peer h-5 w-5 border-2 border-gray-400 text-primary focus:ring-offset-0 focus:ring-0 checked:border-primary checked:bg-primary transition-all cursor-pointer appearance-none rounded-full"
+                                    checked={radioSelected === opt}
+                                    onChange={() => setRadioSelected(opt)}
+                                />
+                                <div className="absolute h-2.5 w-2.5 bg-white rounded-full opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                            </div>
+                            <Label htmlFor={`radio-${field.id}-${i}`} className={cn("text-sm font-medium cursor-pointer flex-1 text-gray-700", theme.text)}>{opt}</Label>
                         </div>
                     ))}
                 </div>
             )
         case "dropdown":
+            const ddOptions = options && options.length > 0 ? options : ["Option 1", "Option 2", "Option 3"]
             return (
                 <div className="relative group/dropdown">
-                    <select className={cn("w-full h-10 px-3 pr-8 rounded-lg border border-gray-200 bg-white/50 text-sm focus:ring-2 focus:ring-black/5 focus:border-gray-400 transition-all duration-200 shadow-sm appearance-none cursor-pointer hover:border-gray-300", theme.text)}>
-                        <option className="bg-white text-gray-900">{placeholder || "Select an option..."}</option>
-                        {(options || ["Option 1", "Option 2"]).map((opt, i) => (
-                            <option key={i} className="bg-white text-gray-900">{opt}</option>
-                        ))}
+                    <select
+                        className={cn("w-full h-12 px-3 pr-8 rounded-xl border border-gray-200 bg-white/50 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 shadow-sm appearance-none cursor-pointer hover:border-gray-300", theme.text)}
+                        value={dropdownSelected}
+                        onChange={(e) => setDropdownSelected(e.target.value)}
+                    >
+                        <option value="" disabled>Select an option...</option>
+                        {ddOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                     </select>
-                    <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-500 pointer-events-none group-hover/dropdown:text-gray-700 transition-colors" />
+                    <ChevronDown className="absolute right-3 top-4 h-4 w-4 text-gray-500 pointer-events-none group-hover/dropdown:text-gray-700 transition-colors" />
                 </div>
             )
         case "multi-select":
@@ -758,24 +988,38 @@ function renderFieldInput(field: CanvasField, theme: any) {
             return (
                 <div className="relative group/percent">
                     <Input
-                        type="number"
-                        {...commonProps}
-                        className={cn(commonProps.className, "pr-10 text-right font-mono", !isPercentValid ? "border-destructive focus-visible:ring-destructive bg-destructive/5" : "")}
+                        type="text"
+                        value={percentValue}
                         placeholder="0"
-                        min={0}
-                        max={100}
+                        className={cn(
+                            commonProps.className,
+                            "pr-10 text-right font-mono"
+                        )}
                         onChange={(e) => {
-                            const val = parseFloat(e.target.value)
-                            if (val > 100 || val < 0) {
-                                setIsPercentValid(false)
-                            } else {
-                                setIsPercentValid(true)
+                            let val = e.target.value
+
+                            // Remove everything except digits
+                            val = val.replace(/\D/g, "")
+
+                            // Allow empty
+                            if (val === "") {
+                                setPercentValue("")
+                                return
                             }
+
+                            let num = parseInt(val, 10)
+
+                            // Clamp between 0 and 100
+                            if (num > 100) num = 100
+                            if (num < 0) num = 0
+
+                            setPercentValue(num.toString())
                         }}
                     />
-                    <Percent className="absolute right-3 top-2.5 h-5 w-5 text-gray-500 group-hover/percent:text-primary transition-colors" />
+                    <Percent className="absolute right-3 top-2.5 h-5 w-5 text-gray-600 pointer-events-none" />
                 </div>
             )
+
         case "rating":
             return (
                 <div className="flex gap-2 p-2.5 bg-muted/5 rounded-full w-fit border border-transparent hover:border-muted/20 transition-all duration-300">
@@ -878,11 +1122,14 @@ function renderFieldInput(field: CanvasField, theme: any) {
             )
         case "country":
             return (
-                <div>
-                    <Input list="country-list" placeholder={placeholder || "Select or type country..."} />
-                    <datalist id="country-list">
-                        {COUNTRIES.map(c => <option key={c} value={c} />)}
-                    </datalist>
+                <div className="space-y-1">
+                    <select
+                        className={cn("flex h-10 w-full rounded-xl border border-gray-200 bg-white/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50", theme.text)}
+                        defaultValue=""
+                    >
+                        <option value="" disabled>Select Country...</option>
+                        {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                 </div>
             )
         case "city":
@@ -1057,6 +1304,114 @@ function renderFieldInput(field: CanvasField, theme: any) {
                     </div>
                     {!isCardValid && <span className="text-[0.8rem] text-destructive font-medium">Card number must be 16 digits</span>}
                 </div>
+            )
+        case "time":
+            return (
+                <ModernInput label={type} active={!!field.placeholder}>
+                    <div className="flex gap-2">
+                        {/* Hour Select */}
+                        <div className="relative w-full">
+                            <select
+                                className={cn(commonProps.className, "appearance-none w-full px-3 py-2 pr-8")}
+                                value={timeHour}
+                                onChange={(e) => setTimeHour(e.target.value)}
+                            >
+                                {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                    <option key={h} value={h < 10 ? `0${h}` : `${h}`}>{h < 10 ? `0${h}` : h}</option>
+                                ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        </div>
+
+                        <span className="flex items-center text-muted-foreground font-bold">:</span>
+
+                        {/* Minute Select */}
+                        <div className="relative w-full">
+                            <select
+                                className={cn(commonProps.className, "appearance-none w-full px-3 py-2 pr-8")}
+                                value={timeMinute}
+                                onChange={(e) => setTimeMinute(e.target.value)}
+                            >
+                                {Array.from({ length: 60 }, (_, i) => i).map(m => (
+                                    <option key={m} value={m < 10 ? `0${m}` : `${m}`}>{m < 10 ? `0${m}` : m}</option>
+                                ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        </div>
+
+                        {/* Period Select */}
+                        <div className="relative w-24">
+                            <select
+                                className={cn(commonProps.className, "appearance-none w-full px-3 py-2 pr-8 bg-muted/50 text-center font-bold")}
+                                value={timePeriod}
+                                onChange={(e) => setTimePeriod(e.target.value)}
+                            >
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        </div>
+                    </div>
+                </ModernInput>
+            )
+        case "datetime":
+        case "datetime-local":
+            return (
+                <ModernInput label={type === "datetime-local" ? "Date & Time" : type} active={!!field.placeholder}>
+                    <div className="flex flex-col gap-2">
+                        {/* Date Component */}
+                        <div className="relative">
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                            <Input
+                                type="date"
+                                className={cn(commonProps.className, "pl-10")}
+                                onChange={() => {
+                                    // Handle date change
+                                }}
+                            />
+                        </div>
+
+                        {/* Time Component (Reused Logic) */}
+                        <div className="flex gap-2">
+                            <div className="relative w-full">
+                                <select
+                                    className={cn(commonProps.className, "appearance-none w-full px-3 py-2 pr-8 text-center")}
+                                    value={timeHour}
+                                    onChange={(e) => setTimeHour(e.target.value)}
+                                >
+                                    {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                        <option key={h} value={h < 10 ? `0${h}` : `${h}`}>{h < 10 ? `0${h}` : h}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                            </div>
+                            <span className="flex items-center text-muted-foreground font-bold">:</span>
+                            <div className="relative w-full">
+                                <select
+                                    className={cn(commonProps.className, "appearance-none w-full px-3 py-2 pr-8 text-center")}
+                                    value={timeMinute}
+                                    onChange={(e) => setTimeMinute(e.target.value)}
+                                >
+                                    {Array.from({ length: 60 }, (_, i) => i).map(m => (
+                                        <option key={m} value={m < 10 ? `0${m}` : `${m}`}>{m < 10 ? `0${m}` : m}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                            </div>
+                            <div className="relative w-24">
+                                <select
+                                    className={cn(commonProps.className, "appearance-none w-full px-3 py-2 pr-8 bg-muted/50 text-center font-bold")}
+                                    value={timePeriod}
+                                    onChange={(e) => setTimePeriod(e.target.value)}
+                                >
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                            </div>
+                        </div>
+                    </div>
+                </ModernInput>
             )
         default:
             return <Input {...commonProps} />

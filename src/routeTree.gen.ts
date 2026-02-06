@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as FormFormIdRouteImport } from './routes/form.$formId'
 import { Route as LayoutEditorRouteImport } from './routes/_layout.editor'
 import { Route as LayoutAnalyticsRouteImport } from './routes/_layout.analytics'
 
@@ -22,6 +23,11 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
+} as any)
+const FormFormIdRoute = FormFormIdRouteImport.update({
+  id: '/form/$formId',
+  path: '/form/$formId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutEditorRoute = LayoutEditorRouteImport.update({
   id: '/editor',
@@ -38,10 +44,12 @@ export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/analytics': typeof LayoutAnalyticsRoute
   '/editor': typeof LayoutEditorRoute
+  '/form/$formId': typeof FormFormIdRoute
 }
 export interface FileRoutesByTo {
   '/analytics': typeof LayoutAnalyticsRoute
   '/editor': typeof LayoutEditorRoute
+  '/form/$formId': typeof FormFormIdRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -49,23 +57,26 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/analytics': typeof LayoutAnalyticsRoute
   '/_layout/editor': typeof LayoutEditorRoute
+  '/form/$formId': typeof FormFormIdRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/editor'
+  fullPaths: '/' | '/analytics' | '/editor' | '/form/$formId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/analytics' | '/editor' | '/'
+  to: '/analytics' | '/editor' | '/form/$formId' | '/'
   id:
     | '__root__'
     | '/_layout'
     | '/_layout/analytics'
     | '/_layout/editor'
+    | '/form/$formId'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
+  FormFormIdRoute: typeof FormFormIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -83,6 +94,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
+    }
+    '/form/$formId': {
+      id: '/form/$formId'
+      path: '/form/$formId'
+      fullPath: '/form/$formId'
+      preLoaderRoute: typeof FormFormIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_layout/editor': {
       id: '/_layout/editor'
@@ -118,6 +136,7 @@ const LayoutRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
+  FormFormIdRoute: FormFormIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

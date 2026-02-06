@@ -13,7 +13,7 @@ export const Route = createFileRoute('/form/$formId')({
 // Types for the form and fields
 interface FormField {
     id: string
-    type: 'text' | 'number' | 'checkbox' | 'radio' | 'dropdown' | 'date' | 'submit'
+    type: 'text' | 'number' | 'checkbox' | 'radio' | 'dropdown' | 'date'
     label: string
     required?: boolean
     options?: string[] // For radio/dropdown
@@ -42,7 +42,6 @@ async function fetchForm(formId: string): Promise<Form> {
             { id: '3', type: 'number', label: 'Age' },
             { id: '4', type: 'checkbox', label: 'Subscribe to newsletter' },
             { id: '5', type: 'date', label: 'Preferred Contact Date' },
-            { id: '6', type: 'submit', label: 'Submit Response' },
         ],
     }
 }
@@ -149,10 +148,29 @@ function FormResponsePage() {
                                         field={field}
                                         value={responses[field.id]}
                                         onChange={(value) => updateResponse(field.id, value)}
-                                        isSubmitting={submitMutation.isPending}
                                     />
                                 </div>
                             ))}
+                        </div>
+
+                        <div className="mt-8">
+                            <Button
+                                type="submit"
+                                className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-white h-11 px-6 rounded-lg font-medium text-sm transition-colors"
+                                disabled={submitMutation.isPending}
+                            >
+                                {submitMutation.isPending ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    <>
+                                        Submit
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </>
+                                )}
+                            </Button>
                         </div>
                     </form>
                 </div>

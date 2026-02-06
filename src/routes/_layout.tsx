@@ -25,7 +25,7 @@ function LayoutComponent() {
       return { parent: null, current: 'Dashboard' }
     }
     if (currentPath.startsWith('/editor')) {
-      return { parent: 'Editor', current: 'Form Editor' }
+      return { parent: null, current: 'Editor' }
     }
     if (currentPath.startsWith('/analytics')) {
       return { parent: 'Analytics', current: 'Reports' }

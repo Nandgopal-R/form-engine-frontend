@@ -9,12 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
+import { Route as EmailVerifiedRouteImport } from './routes/email-verified'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
 import { Route as FormFormIdRouteImport } from './routes/form.$formId'
 import { Route as LayoutEditorRouteImport } from './routes/_layout.editor'
 import { Route as LayoutAnalyticsRouteImport } from './routes/_layout.analytics'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailVerifiedRoute = EmailVerifiedRouteImport.update({
+  id: '/email-verified',
+  path: '/email-verified',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
@@ -42,11 +60,17 @@ const LayoutAnalyticsRoute = LayoutAnalyticsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
+  '/email-verified': typeof EmailVerifiedRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/analytics': typeof LayoutAnalyticsRoute
   '/editor': typeof LayoutEditorRoute
   '/form/$formId': typeof FormFormIdRoute
 }
 export interface FileRoutesByTo {
+  '/email-verified': typeof EmailVerifiedRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/analytics': typeof LayoutAnalyticsRoute
   '/editor': typeof LayoutEditorRoute
   '/form/$formId': typeof FormFormIdRoute
@@ -55,6 +79,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/email-verified': typeof EmailVerifiedRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/_layout/analytics': typeof LayoutAnalyticsRoute
   '/_layout/editor': typeof LayoutEditorRoute
   '/form/$formId': typeof FormFormIdRoute
@@ -62,12 +89,29 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/editor' | '/form/$formId'
+  fullPaths:
+    | '/'
+    | '/email-verified'
+    | '/signin'
+    | '/signup'
+    | '/analytics'
+    | '/editor'
+    | '/form/$formId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/analytics' | '/editor' | '/form/$formId' | '/'
+  to:
+    | '/email-verified'
+    | '/signin'
+    | '/signup'
+    | '/analytics'
+    | '/editor'
+    | '/form/$formId'
+    | '/'
   id:
     | '__root__'
     | '/_layout'
+    | '/email-verified'
+    | '/signin'
+    | '/signup'
     | '/_layout/analytics'
     | '/_layout/editor'
     | '/form/$formId'
@@ -76,11 +120,35 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
+  EmailVerifiedRoute: typeof EmailVerifiedRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
   FormFormIdRoute: typeof FormFormIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-verified': {
+      id: '/email-verified'
+      path: '/email-verified'
+      fullPath: '/email-verified'
+      preLoaderRoute: typeof EmailVerifiedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout': {
       id: '/_layout'
       path: ''
@@ -136,6 +204,9 @@ const LayoutRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
+  EmailVerifiedRoute: EmailVerifiedRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
   FormFormIdRoute: FormFormIdRoute,
 }
 export const routeTree = rootRouteImport

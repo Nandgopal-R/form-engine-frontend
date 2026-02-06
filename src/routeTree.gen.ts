@@ -14,6 +14,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as EmailVerifiedRouteImport } from './routes/email-verified'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as FormFormIdRouteImport } from './routes/form.$formId'
 import { Route as LayoutEditorRouteImport } from './routes/_layout.editor'
 import { Route as LayoutAnalyticsRouteImport } from './routes/_layout.analytics'
 
@@ -41,6 +42,11 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const FormFormIdRoute = FormFormIdRouteImport.update({
+  id: '/form/$formId',
+  path: '/form/$formId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutEditorRoute = LayoutEditorRouteImport.update({
   id: '/editor',
   path: '/editor',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/analytics': typeof LayoutAnalyticsRoute
   '/editor': typeof LayoutEditorRoute
+  '/form/$formId': typeof FormFormIdRoute
 }
 export interface FileRoutesByTo {
   '/email-verified': typeof EmailVerifiedRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/analytics': typeof LayoutAnalyticsRoute
   '/editor': typeof LayoutEditorRoute
+  '/form/$formId': typeof FormFormIdRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -76,35 +84,45 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_layout/analytics': typeof LayoutAnalyticsRoute
   '/_layout/editor': typeof LayoutEditorRoute
+  '/form/$formId': typeof FormFormIdRoute
   '/_layout/': typeof LayoutIndexRoute
 }
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
+fileRoutesByFullPath: FileRoutesByFullPath
+fullPaths:
     | '/'
+  | '/email-verified'
+  | '/signin'
+  | '/signup'
+  | '/analytics'
+  | '/editor'
+  | '/form/$formId'
+fileRoutesByTo: FileRoutesByTo
+to:
     | '/email-verified'
-    | '/signin'
-    | '/signup'
-    | '/analytics'
-    | '/editor'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/email-verified' | '/signin' | '/signup' | '/analytics' | '/editor' | '/'
-  id:
+  | '/signin'
+  | '/signup'
+  | '/analytics'
+  | '/editor'
+  | '/form/$formId'
+  | '/'
+id:
     | '__root__'
-    | '/_layout'
-    | '/email-verified'
-    | '/signin'
-    | '/signup'
-    | '/_layout/analytics'
-    | '/_layout/editor'
-    | '/_layout/'
-  fileRoutesById: FileRoutesById
+  | '/_layout'
+  | '/email-verified'
+  | '/signin'
+  | '/signup'
+  | '/_layout/analytics'
+  | '/_layout/editor'
+  | '/form/$formId'
+  | '/_layout/'
+fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   EmailVerifiedRoute: typeof EmailVerifiedRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  FormFormIdRoute: typeof FormFormIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/form/$formId': {
+      id: '/form/$formId'
+      path: '/form/$formId'
+      fullPath: '/form/$formId'
+      preLoaderRoute: typeof FormFormIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout/editor': {
       id: '/_layout/editor'
       path: '/editor'
@@ -181,6 +206,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailVerifiedRoute: EmailVerifiedRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  FormFormIdRoute: FormFormIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

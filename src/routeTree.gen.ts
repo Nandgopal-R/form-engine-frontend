@@ -87,35 +87,36 @@ export interface FileRoutesById {
   '/form/$formId': typeof FormFormIdRoute
   '/_layout/': typeof LayoutIndexRoute
 }
-fileRoutesByFullPath: FileRoutesByFullPath
-fullPaths:
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
     | '/'
-  | '/email-verified'
-  | '/signin'
-  | '/signup'
-  | '/analytics'
-  | '/editor'
-  | '/form/$formId'
-fileRoutesByTo: FileRoutesByTo
-to:
     | '/email-verified'
-  | '/signin'
-  | '/signup'
-  | '/analytics'
-  | '/editor'
-  | '/form/$formId'
-  | '/'
-id:
+    | '/signin'
+    | '/signup'
+    | '/analytics'
+    | '/editor'
+    | '/form/$formId'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/email-verified'
+    | '/signin'
+    | '/signup'
+    | '/analytics'
+    | '/editor'
+    | '/form/$formId'
+    | '/'
+  id:
     | '__root__'
-  | '/_layout'
-  | '/email-verified'
-  | '/signin'
-  | '/signup'
-  | '/_layout/analytics'
-  | '/_layout/editor'
-  | '/form/$formId'
-  | '/_layout/'
-fileRoutesById: FileRoutesById
+    | '/_layout'
+    | '/email-verified'
+    | '/signin'
+    | '/signup'
+    | '/_layout/analytics'
+    | '/_layout/editor'
+    | '/form/$formId'
+    | '/_layout/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren

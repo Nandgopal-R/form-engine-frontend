@@ -4,6 +4,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Trash2, Star, Settings } from "lucide-react"
+import { Field, FieldLabel, FieldContent } from "@/components/ui/field"
+import { Slider } from "@/components/ui/slider"
 
 export interface CanvasField {
     id: string
@@ -11,6 +13,10 @@ export interface CanvasField {
     label: string
     placeholder?: string
     required?: boolean
+    min?: number
+    max?: number
+    step?: number
+    options?: string[]
 }
 
 interface FieldPreviewProps {
@@ -22,7 +28,7 @@ interface FieldPreviewProps {
 export function FieldPreview({ field, onRemove, onEdit }: FieldPreviewProps) {
     return (
         <Card className="p-4 group relative border-dashed border-2 shadow-none">
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
                 <Button
                     variant="ghost"
                     size="icon"
@@ -47,13 +53,15 @@ export function FieldPreview({ field, onRemove, onEdit }: FieldPreviewProps) {
                 </Button>
             </div>
 
-            <div className="space-y-2">
-                <div className="flex gap-2 items-center">
-                    <Label>{field.label}</Label>
-                    {field.required && <span className="text-destructive text-sm">*</span>}
-                </div>
-                {renderFieldInput(field)}
-            </div>
+            <Field>
+                <FieldLabel className="flex items-center gap-1">
+                    {field.label}
+                    {field.required && <span className="text-destructive">*</span>}
+                </FieldLabel>
+                <FieldContent>
+                    {renderFieldInput(field)}
+                </FieldContent>
+            </Field>
         </Card>
     )
 }
@@ -61,7 +69,12 @@ export function FieldPreview({ field, onRemove, onEdit }: FieldPreviewProps) {
 
 
 function renderFieldInput(field: CanvasField) {
-    const { type, placeholder } = field
+    const { type, placeholder, min, max, step, options } = field
+
+    // Default options if none provided
+    const defaultOptions = ["Option 1", "Option 2", "Option 3"]
+    const fieldOptions = options && options.length > 0 ? options : defaultOptions
+
     switch (type) {
         case "text":
             return <Input placeholder={placeholder || "Enter text..."} />
@@ -73,7 +86,7 @@ function renderFieldInput(field: CanvasField) {
                 />
             )
         case "number":
-            return <Input type="number" placeholder={placeholder || "Enter number..."} />
+            return <Input type="number" placeholder={placeholder || "Enter number..."} min={min} max={max} step={step} />
         case "email":
             return <Input type="email" placeholder={placeholder || "name@example.com"} />
         case "url":
@@ -81,31 +94,42 @@ function renderFieldInput(field: CanvasField) {
         case "phone":
             return <Input type="tel" placeholder={placeholder || "+1 (555) 000-0000"} />
         case "checkbox":
+            if (options && options.length > 0) {
+                return (
+                    <div className="flex flex-col gap-2">
+                        {options.map((opt, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                                <Checkbox id={`checkbox-${field.id}-${idx}`} />
+                                <Label htmlFor={`checkbox-${field.id}-${idx}`} className="text-sm font-normal">{opt}</Label>
+                            </div>
+                        ))}
+                    </div>
+                )
+            }
             return (
                 <div className="flex items-center gap-2">
-                    <Checkbox id="checkbox-preview" />
-                    <Label htmlFor="checkbox-preview" className="text-sm font-normal">Option</Label>
+                    <Checkbox id={`checkbox-${field.id}`} />
+                    <Label htmlFor={`checkbox-${field.id}`} className="text-sm font-normal">{field.label}</Label>
                 </div>
             )
         case "radio":
             return (
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                        <input type="radio" name="radio-preview" id="radio-1" className="h-4 w-4" />
-                        <Label htmlFor="radio-1" className="text-sm font-normal">Option 1</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input type="radio" name="radio-preview" id="radio-2" className="h-4 w-4" />
-                        <Label htmlFor="radio-2" className="text-sm font-normal">Option 2</Label>
-                    </div>
+                    {fieldOptions.map((opt, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                            <input type="radio" name={`radio-${field.id}`} id={`radio-${field.id}-${idx}`} className="h-4 w-4" />
+                            <Label htmlFor={`radio-${field.id}-${idx}`} className="text-sm font-normal">{opt}</Label>
+                        </div>
+                    ))}
                 </div>
             )
         case "dropdown":
             return (
                 <select className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm">
-                    <option>Select an option...</option>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
+                    <option value="">Select an option...</option>
+                    {fieldOptions.map((opt, idx) => (
+                        <option key={idx} value={opt}>{opt}</option>
+                    ))}
                 </select>
             )
         case "date":
@@ -115,17 +139,23 @@ function renderFieldInput(field: CanvasField) {
         case "toggle":
             return (
                 <div className="flex items-center space-x-2">
-                    <Checkbox id="toggle-preview" className="h-6 w-11 rounded-full data-[state=checked]:bg-primary data-[state=unchecked]:bg-input transition-colors cursor-pointer" />
-                    <Label htmlFor="toggle-preview">Toggle me</Label>
+                    <Checkbox id={`toggle-${field.id}`} className="h-6 w-11 rounded-full data-[state=checked]:bg-primary data-[state=unchecked]:bg-input transition-colors cursor-pointer" />
+                    <Label htmlFor={`toggle-${field.id}`}>Toggle</Label>
                 </div>
             )
         case "slider":
             return (
-                <div className="w-full">
-                    <input type="range" className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer" />
-                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                        <span>1</span>
-                        <span>10</span>
+                <div className="w-full pt-2">
+                    <Slider
+                        defaultValue={[min || 0]}
+                        max={max || 100}
+                        step={step || 1}
+                        min={min || 0}
+                        className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                        <span>{min || 0}</span>
+                        <span>{max || 100}</span>
                     </div>
                 </div>
             )

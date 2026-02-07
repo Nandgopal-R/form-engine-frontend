@@ -68,7 +68,7 @@ export function FieldPreview({ field, onRemove, onEdit }: FieldPreviewProps) {
 
 
 
-function renderFieldInput(field: CanvasField) {
+export function renderFieldInput(field: CanvasField) {
     const { type, placeholder, min, max, step, options } = field
 
     // Default options if none provided

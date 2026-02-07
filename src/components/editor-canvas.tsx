@@ -3,9 +3,10 @@ import { FieldPreview, type CanvasField } from "./fields/field-preview"
 interface EditorCanvasProps {
     fields: CanvasField[]
     onRemoveField?: (id: string) => void
+    onEditField?: (field: CanvasField) => void
 }
 
-export function EditorCanvas({ fields, onRemoveField }: EditorCanvasProps) {
+export function EditorCanvas({ fields, onRemoveField, onEditField }: EditorCanvasProps) {
     if (fields.length === 0) {
         return (
             <div className="h-full flex items-center justify-center">
@@ -25,6 +26,7 @@ export function EditorCanvas({ fields, onRemoveField }: EditorCanvasProps) {
                         key={field.id}
                         field={field}
                         onRemove={onRemoveField}
+                        onEdit={onEditField}
                     />
                 ))}
             </div>

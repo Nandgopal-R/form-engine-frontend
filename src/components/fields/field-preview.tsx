@@ -3,34 +3,56 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Trash2, Star } from "lucide-react"
+import { Trash2, Star, Settings } from "lucide-react"
 
 export interface CanvasField {
     id: string
     type: string
     label: string
+    placeholder?: string
+    required?: boolean
 }
 
 interface FieldPreviewProps {
     field: CanvasField
     onRemove?: (id: string) => void
+    onEdit?: (field: CanvasField) => void
 }
 
-export function FieldPreview({ field, onRemove }: FieldPreviewProps) {
+export function FieldPreview({ field, onRemove, onEdit }: FieldPreviewProps) {
     return (
         <Card className="p-4 group relative border-dashed border-2 shadow-none">
-            <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => onRemove?.(field.id)}
-            >
-                <Trash2 className="h-4 w-4 text-muted-foreground" />
-            </Button>
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onEdit?.(field)
+                    }}
+                >
+                    <Settings className="h-4 w-4" />
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onRemove?.(field.id)
+                    }}
+                >
+                    <Trash2 className="h-4 w-4" />
+                </Button>
+            </div>
 
             <div className="space-y-2">
-                <Label>{field.label}</Label>
-                {renderFieldInput(field.type)}
+                <div className="flex gap-2 items-center">
+                    <Label>{field.label}</Label>
+                    {field.required && <span className="text-destructive text-sm">*</span>}
+                </div>
+                {renderFieldInput(field)}
             </div>
         </Card>
     )
@@ -38,25 +60,26 @@ export function FieldPreview({ field, onRemove }: FieldPreviewProps) {
 
 
 
-function renderFieldInput(type: string) {
+function renderFieldInput(field: CanvasField) {
+    const { type, placeholder } = field
     switch (type) {
         case "text":
-            return <Input placeholder="Enter text..." />
+            return <Input placeholder={placeholder || "Enter text..."} />
         case "textarea":
             return (
                 <textarea
                     className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="Enter long text..."
+                    placeholder={placeholder || "Enter long text..."}
                 />
             )
         case "number":
-            return <Input type="number" placeholder="Enter number..." />
+            return <Input type="number" placeholder={placeholder || "Enter number..."} />
         case "email":
-            return <Input type="email" placeholder="name@example.com" />
+            return <Input type="email" placeholder={placeholder || "name@example.com"} />
         case "url":
-            return <Input type="url" placeholder="https://example.com" />
+            return <Input type="url" placeholder={placeholder || "https://example.com"} />
         case "phone":
-            return <Input type="tel" placeholder="+1 (555) 000-0000" />
+            return <Input type="tel" placeholder={placeholder || "+1 (555) 000-0000"} />
         case "checkbox":
             return (
                 <div className="flex items-center gap-2">

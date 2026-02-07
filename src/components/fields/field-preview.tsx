@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Trash2 } from "lucide-react"
+import { Trash2, Star } from "lucide-react"
 
 export interface CanvasField {
     id: string
@@ -36,12 +36,27 @@ export function FieldPreview({ field, onRemove }: FieldPreviewProps) {
     )
 }
 
+
+
 function renderFieldInput(type: string) {
     switch (type) {
         case "text":
             return <Input placeholder="Enter text..." />
+        case "textarea":
+            return (
+                <textarea
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Enter long text..."
+                />
+            )
         case "number":
             return <Input type="number" placeholder="Enter number..." />
+        case "email":
+            return <Input type="email" placeholder="name@example.com" />
+        case "url":
+            return <Input type="url" placeholder="https://example.com" />
+        case "phone":
+            return <Input type="tel" placeholder="+1 (555) 000-0000" />
         case "checkbox":
             return (
                 <div className="flex items-center gap-2">
@@ -72,6 +87,37 @@ function renderFieldInput(type: string) {
             )
         case "date":
             return <Input type="date" />
+        case "time":
+            return <Input type="time" />
+        case "toggle":
+            return (
+                <div className="flex items-center space-x-2">
+                    <Checkbox id="toggle-preview" className="h-6 w-11 rounded-full data-[state=checked]:bg-primary data-[state=unchecked]:bg-input transition-colors cursor-pointer" />
+                    <Label htmlFor="toggle-preview">Toggle me</Label>
+                </div>
+            )
+        case "slider":
+            return (
+                <div className="w-full">
+                    <input type="range" className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer" />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        <span>1</span>
+                        <span>10</span>
+                    </div>
+                </div>
+            )
+        case "rating":
+            return (
+                <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="h-6 w-6 text-muted-foreground hover:text-yellow-400 cursor-pointer transition-colors" />
+                    ))}
+                </div>
+            )
+        case "file":
+            return <Input type="file" className="cursor-pointer" />
+        case "section":
+            return <div className="h-px w-full bg-border my-2" />
         default:
             return <Input placeholder="Enter value..." />
     }

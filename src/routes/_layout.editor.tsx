@@ -20,6 +20,16 @@ const FIELD_LABELS: Record<string, string> = {
   radio: "Radio Group",
   dropdown: "Dropdown",
   date: "Date Picker",
+  textarea: "Long Text",
+  email: "Email",
+  url: "Website",
+  phone: "Phone Number",
+  time: "Time Picker",
+  toggle: "Toggle Switch",
+  slider: "Scale",
+  rating: "Rating",
+  file: "File Upload",
+  section: "Section Header",
 }
 
 function EditorComponent() {

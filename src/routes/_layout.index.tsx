@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { FormCard } from '@/components/form-card'
-import { Button } from '@/components/ui/button'
-import { Filter } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/_layout/')({
   component: DashboardPage,
@@ -44,6 +45,12 @@ const sampleForms = [
 ]
 
 function DashboardPage() {
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredForms = sampleForms.filter((form) =>
+    form.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -53,14 +60,19 @@ function DashboardPage() {
             Manage and track your active form responses
           </p>
         </div>
-        <Button variant="outline" className="border-gray-300">
-          <Filter className="mr-2 h-4 w-4" />
-          Filter
-        </Button>
+        <div className="relative w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search forms..."
+            className="pl-9 bg-white"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {sampleForms.map((form) => (
+        {filteredForms.map((form) => (
           <FormCard
             key={form.id}
             {...form}
@@ -69,6 +81,11 @@ function DashboardPage() {
             onAnalytics={() => console.log('Analytics:', form.id)}
           />
         ))}
+        {filteredForms.length === 0 && (
+          <div className="col-span-full py-12 text-center text-muted-foreground">
+            <p>No forms found matching "{searchQuery}"</p>
+          </div>
+        )}
       </div>
     </div>
   )

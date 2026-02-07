@@ -5,16 +5,36 @@ import {
   CircleDot,
   ChevronDown,
   Calendar,
-  Hash
+  Hash,
+  AlignLeft,
+  Mail,
+  Link,
+  Phone,
+  Clock,
+  ToggleLeft,
+  SlidersHorizontal,
+  Star,
+  Upload,
+  Heading
 } from "lucide-react"
 
 const FIELDS = [
-  { id: "text", label: "Text", icon: Type },
+  { id: "text", label: "Short Text", icon: Type },
+  { id: "textarea", label: "Long Text", icon: AlignLeft },
   { id: "number", label: "Number", icon: Hash },
+  { id: "email", label: "Email", icon: Mail },
+  { id: "url", label: "Website", icon: Link },
+  { id: "phone", label: "Phone", icon: Phone },
   { id: "checkbox", label: "Checkbox", icon: CheckSquare },
   { id: "radio", label: "Radio", icon: CircleDot },
   { id: "dropdown", label: "Dropdown", icon: ChevronDown },
   { id: "date", label: "Date", icon: Calendar },
+  { id: "time", label: "Time", icon: Clock },
+  { id: "toggle", label: "Toggle", icon: ToggleLeft },
+  { id: "slider", label: "Scale", icon: SlidersHorizontal },
+  { id: "rating", label: "Rating", icon: Star },
+  { id: "file", label: "File Upload", icon: Upload },
+  { id: "section", label: "Section Header", icon: Heading },
 ]
 
 interface FieldItemsProps {

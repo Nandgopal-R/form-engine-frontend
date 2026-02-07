@@ -14,7 +14,7 @@ export function TabsLine({ onFieldClick }: TabsLineProps) {
         <TabsTrigger value="generate">Generate</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="fields" className="mt-0">
+      <TabsContent value="fields" className="mt-0 flex-1 overflow-y-auto min-h-0">
         <FieldItems onFieldClick={onFieldClick} />
       </TabsContent>
 

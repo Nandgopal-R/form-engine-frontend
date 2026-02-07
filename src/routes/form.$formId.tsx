@@ -4,288 +4,383 @@ import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Field, FieldLabel, FieldContent } from "@/components/ui/field"
 import { Loader2, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 
 export const Route = createFileRoute('/form/$formId')({
-    component: FormResponsePage,
+  component: FormResponsePage,
 })
 
-// Types for the form and fields
+// Types for the form and fields, aligned with CanvasField
 interface FormField {
-    id: string
-    type: 'text' | 'number' | 'checkbox' | 'radio' | 'dropdown' | 'date'
-    label: string
-    required?: boolean
-    options?: string[] // For radio/dropdown
+  id: string
+  type: string
+  label: string
+  placeholder?: string
+  required?: boolean
+  options?: string[]
+  min?: number
+  max?: number
+  step?: number
 }
 
 interface Form {
-    id: string
-    title: string
-    description?: string
-    fields: FormField[]
+  id: string
+  title: string
+  description?: string
+  fields: FormField[]
 }
 
 // Mock API functions - replace with actual API calls
 async function fetchForm(formId: string): Promise<Form> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500))
+  await new Promise(resolve => setTimeout(resolve, 500))
 
-    // Mock data - replace with actual API call
-    return {
-        id: formId,
-        title: 'Sample Form',
-        description: 'Please fill out this form to submit your response.',
-        fields: [
-            { id: '1', type: 'text', label: 'Full Name', required: true },
-            { id: '2', type: 'text', label: 'Email Address', required: true },
-            { id: '3', type: 'number', label: 'Age' },
-            { id: '4', type: 'checkbox', label: 'Subscribe to newsletter' },
-            { id: '5', type: 'date', label: 'Preferred Contact Date' },
-        ],
-    }
+  // Mock data
+  return {
+    id: formId,
+    title: 'Sample Form',
+    description: 'Please fill out this form to submit your response.',
+    fields: [
+      { id: '1', type: 'text', label: 'Full Name', placeholder: 'John Doe', required: true },
+      { id: '2', type: 'email', label: 'Email Address', placeholder: 'john@example.com', required: true },
+      { id: '3', type: 'number', label: 'Age', placeholder: '25' },
+      { id: '4', type: 'checkbox', label: 'Subscribe to newsletter' },
+      { id: '5', type: 'date', label: 'Preferred Contact Date', required: true },
+      { id: '6', type: 'dropdown', label: 'Experience Level', options: ['Junior', 'Mid', 'Senior'] },
+      { id: '7', type: 'radio', label: 'Availability', options: ['Full-time', 'Part-time', 'Contract'] },
+      { id: '8', type: 'textarea', label: 'Bio', placeholder: 'Tell us about yourself...' },
+    ],
+  }
 }
 
 async function submitResponse(formId: string, responses: Record<string, unknown>): Promise<{ success: boolean }> {
-    // TODO: Implement actual API call
-    return { success: true }
+  console.log('Submitted responses for form', formId, responses)
+  return { success: true }
 }
 
 function FormResponsePage() {
-    const { formId } = Route.useParams()
-    const [responses, setResponses] = useState<Record<string, unknown>>({})
-    const [submitted, setSubmitted] = useState(false)
+  const { formId } = Route.useParams()
+  const [responses, setResponses] = useState<Record<string, unknown>>({})
+  const [submitted, setSubmitted] = useState(false)
 
-    // Fetch form data
-    const { data: form, isLoading, error } = useQuery({
-        queryKey: ['form', formId],
-        queryFn: () => fetchForm(formId),
-    })
+  // Fetch form data
+  const { data: form, isLoading, error } = useQuery({
+    queryKey: ['form', formId],
+    queryFn: () => fetchForm(formId),
+  })
 
-    // Submit mutation
-    const submitMutation = useMutation({
-        mutationFn: (data: Record<string, unknown>) => submitResponse(formId, data),
-        onSuccess: () => {
-            setSubmitted(true)
-        },
-    })
+  // Submit mutation
+  const submitMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => submitResponse(formId, data),
+    onSuccess: () => {
+      setSubmitted(true)
+    },
+  })
 
-    const updateResponse = (fieldId: string, value: unknown) => {
-        setResponses(prev => ({ ...prev, [fieldId]: value }))
-    }
+  const updateResponse = (fieldId: string, value: unknown) => {
+    setResponses(prev => ({ ...prev, [fieldId]: value }))
+  }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        submitMutation.mutate(responses)
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    submitMutation.mutate(responses)
+  }
 
-    // Loading state
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
-                <div className="bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl p-10 text-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-zinc-400 mx-auto mb-4" />
-                    <p className="text-zinc-500 font-medium">Loading form...</p>
-                </div>
-            </div>
-        )
-    }
-
-    // Error state
-    if (error || !form) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
-                <div className="bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl p-10 max-w-md text-center">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-50 dark:bg-red-900/20 mb-5">
-                        <AlertCircle className="h-7 w-7 text-red-500" />
-                    </div>
-                    <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">Form Not Found</h2>
-                    <p className="text-zinc-500">
-                        The form you're looking for doesn't exist or has been removed.
-                    </p>
-                </div>
-            </div>
-        )
-    }
-
-    // Success state
-    if (submitted) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
-                <div className="bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl p-10 max-w-md text-center">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-50 dark:bg-green-900/20 mb-5">
-                        <CheckCircle className="h-7 w-7 text-green-500" />
-                    </div>
-                    <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">Response Submitted!</h2>
-                    <p className="text-zinc-500">
-                        Thank you for your response. Your submission has been recorded.
-                    </p>
-                </div>
-            </div>
-        )
-    }
-
+  // Loading state
+  if (isLoading) {
     return (
-        <div className="min-h-screen bg-white dark:bg-zinc-950 py-10 sm:py-16 px-4 sm:px-6">
-            <div className="max-w-lg mx-auto">
-                <div className="mb-8">
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-3">
-                        {form.title}
-                    </h1>
-                    {form.description && (
-                        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                            {form.description}
-                        </p>
-                    )}
-                </div>
-
-                <div className="bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl p-6 sm:p-8">
-                    <form onSubmit={handleSubmit}>
-                        <div className="space-y-6">
-                            {form.fields.map((field) => (
-                                <div key={field.id}>
-                                    <FormFieldRenderer
-                                        field={field}
-                                        value={responses[field.id]}
-                                        onChange={(value) => updateResponse(field.id, value)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="mt-8">
-                            <Button
-                                type="submit"
-                                className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-white h-11 px-6 rounded-lg font-medium text-sm transition-colors"
-                                disabled={submitMutation.isPending}
-                            >
-                                {submitMutation.isPending ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Submitting...
-                                    </>
-                                ) : (
-                                    <>
-                                        Submit
-                                        <ArrowRight className="ml-2 h-4 w-4" />
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      <div className="min-h-screen flex items-center justify-center bg-muted/20">
+        <div className="bg-card rounded-xl p-10 text-center shadow-sm border">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground font-medium">Loading form...</p>
         </div>
+      </div>
     )
+  }
+
+  // Error state
+  if (error || !form) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/20">
+        <div className="bg-card rounded-xl p-10 max-w-md text-center shadow-sm border">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-destructive/10 mb-5">
+            <AlertCircle className="h-7 w-7 text-destructive" />
+          </div>
+          <h2 className="text-xl font-bold mb-2">Form Not Found</h2>
+          <p className="text-muted-foreground">
+            The form you're looking for doesn't exist or has been removed.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Success state
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/20">
+        <div className="bg-card rounded-xl p-10 max-w-md text-center shadow-sm border">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-500/10 mb-5">
+            <CheckCircle className="h-7 w-7 text-green-500" />
+          </div>
+          <h2 className="text-xl font-bold mb-2">Response Submitted!</h2>
+          <p className="text-muted-foreground">
+            Thank you for your response. Your submission has been recorded.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-muted/20 py-10 sm:py-16 px-4 sm:px-6">
+      <div className="max-w-2xl mx-auto p-8 bg-card rounded-xl shadow-sm border space-y-6">
+        <div className="space-y-2 mb-8">
+          <h1 className="text-2xl font-bold tracking-tight">{form.title}</h1>
+          {form.description && (
+            <p className="text-muted-foreground">
+              {form.description}
+            </p>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {form.fields.map((field) => (
+            <Field key={field.id} className="space-y-2">
+              <FieldLabel className="flex items-center gap-1">
+                {field.label}
+                {field.required && <span className="text-destructive">*</span>}
+              </FieldLabel>
+              <FieldContent>
+                <FormFieldRenderer
+                  field={field}
+                  value={responses[field.id]}
+                  onChange={(value) => updateResponse(field.id, value)}
+                />
+              </FieldContent>
+            </Field>
+          ))}
+
+          <div className="pt-4">
+            <Button
+              type="submit"
+              className="w-full sm:w-auto"
+              disabled={submitMutation.isPending}
+            >
+              {submitMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  Submit Response
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }
 
 // Field renderer component
 interface FormFieldRendererProps {
-    field: FormField
-    value: unknown
-    onChange: (value: unknown) => void
+  field: FormField
+  value: unknown
+  onChange: (value: unknown) => void
 }
 
 function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
-    const labelId = `field-${field.id}`
+  const { type, placeholder, options, min, max, step } = field
+  const fieldOptions = options && options.length > 0 ? options : ["Option 1", "Option 2", "Option 3"]
 
-    return (
-        <div className="space-y-2">
-            <label
-                htmlFor={labelId}
-                className="block text-xs font-semibold tracking-wide text-zinc-600 dark:text-zinc-400 uppercase"
-            >
-                {field.label}
-                {field.required && <span className="text-red-500 ml-0.5">*</span>}
-            </label>
+  switch (type) {
+    case 'text':
+      return (
+        <Input
+          placeholder={placeholder || `Enter ${field.label.toLowerCase()}...`}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'textarea':
+      // Using basic textarea with styles matching Input
+      return (
+        <textarea
+          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder={placeholder || "Enter long text..."}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'number':
+      return (
+        <Input
+          type="number"
+          placeholder={placeholder || "Enter a number..."}
+          value={(value as number) || ''}
+          onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
+          required={field.required}
+          min={min}
+          max={max}
+          step={step}
+        />
+      )
+    case 'email':
+      return (
+        <Input
+          type="email"
+          placeholder={placeholder || "name@example.com"}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'url':
+      return (
+        <Input
+          type="url"
+          placeholder={placeholder || "https://example.com"}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'phone':
+      return (
+        <Input
+          type="tel"
+          placeholder={placeholder || "+1 (555) 000-0000"}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'checkbox':
+      if (options && options.length > 0) {
+        // Checkbox Group
+        // In this simple implementation, value is array of strings
+        const currentValues = Array.isArray(value) ? value : []
 
-            {field.type === 'text' && (
-                <Input
-                    id={labelId}
-                    type="text"
-                    placeholder={`Enter ${field.label.toLowerCase()}...`}
-                    value={(value as string) || ''}
-                    onChange={(e) => onChange(e.target.value)}
-                    required={field.required}
-                    className="h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-0 transition-colors placeholder:text-zinc-400"
+        const toggleValue = (val: string) => {
+          // Check if already selected
+          if (currentValues.includes(val)) {
+            onChange(currentValues.filter((v: string) => v !== val))
+          } else {
+            onChange([...currentValues, val])
+          }
+        }
+
+        return (
+          <div className="flex flex-col gap-2">
+            {options.map((opt, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <Checkbox
+                  id={`${field.id}-${idx}`}
+                  checked={currentValues.includes(opt)}
+                  onCheckedChange={() => toggleValue(opt)}
                 />
-            )}
-
-            {field.type === 'number' && (
-                <Input
-                    id={labelId}
-                    type="number"
-                    placeholder="Enter a number..."
-                    value={(value as number) || ''}
-                    onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
-                    required={field.required}
-                    className="h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-0 transition-colors placeholder:text-zinc-400"
-                />
-            )}
-
-            {field.type === 'checkbox' && (
-                <div className="flex items-center gap-3 pt-1">
-                    <Checkbox
-                        id={labelId}
-                        checked={(value as boolean) || false}
-                        onCheckedChange={(checked) => onChange(checked)}
-                        className="border-zinc-300 dark:border-zinc-600"
-                    />
-                    <label htmlFor={labelId} className="text-sm text-zinc-700 dark:text-zinc-300 cursor-pointer">
-                        Yes
-                    </label>
-                </div>
-            )}
-
-            {field.type === 'radio' && field.options && (
-                <div className="flex flex-col gap-2.5 pt-1">
-                    {field.options.map((option, idx) => (
-                        <div key={idx} className="flex items-center gap-3">
-                            <input
-                                type="radio"
-                                id={`${labelId}-${idx}`}
-                                name={labelId}
-                                value={option}
-                                checked={value === option}
-                                onChange={(e) => onChange(e.target.value)}
-                                className="h-4 w-4 border-zinc-300 dark:border-zinc-600 text-zinc-900 focus:ring-zinc-500"
-                                required={field.required && !value}
-                            />
-                            <label htmlFor={`${labelId}-${idx}`} className="text-sm text-zinc-700 dark:text-zinc-300 cursor-pointer">
-                                {option}
-                            </label>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {field.type === 'dropdown' && field.options && (
-                <select
-                    id={labelId}
-                    value={(value as string) || ''}
-                    onChange={(e) => onChange(e.target.value)}
-                    className="w-full h-11 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-0 focus:outline-none transition-colors cursor-pointer"
-                    required={field.required}
-                >
-                    <option value="">Select an option...</option>
-                    {field.options.map((option, idx) => (
-                        <option key={idx} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-            )}
-
-            {field.type === 'date' && (
-                <Input
-                    id={labelId}
-                    type="date"
-                    value={(value as string) || ''}
-                    onChange={(e) => onChange(e.target.value)}
-                    required={field.required}
-                    className="h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-0 transition-colors"
-                />
-            )}
+                <Label htmlFor={`${field.id}-${idx}`} className="text-sm font-normal cursor-pointer">{opt}</Label>
+              </div>
+            ))}
+          </div>
+        )
+      }
+      // Single Checkbox
+      return (
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id={field.id}
+            checked={(value as boolean) || false}
+            onCheckedChange={(checked) => onChange(checked)}
+          />
+          <Label htmlFor={field.id} className="text-sm font-normal cursor-pointer">{field.label}</Label>
         </div>
-    )
+      )
+    case 'radio':
+      return (
+        <div className="flex flex-col gap-2">
+          {fieldOptions.map((opt, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <input
+                type="radio"
+                id={`${field.id}-${idx}`}
+                name={field.id}
+                value={opt}
+                checked={value === opt}
+                onChange={(e) => onChange(e.target.value)}
+                className="h-4 w-4 border-primary text-primary focus:ring-1 focus:ring-primary cursor-pointer"
+                required={field.required}
+              />
+              <Label htmlFor={`${field.id}-${idx}`} className="text-sm font-normal cursor-pointer">
+                {opt}
+              </Label>
+            </div>
+          ))}
+        </div>
+      )
+    case 'dropdown':
+      return (
+        <select
+          id={field.id}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          required={field.required}
+        >
+          <option value="">Select an option...</option>
+          {fieldOptions.map((option, idx) => (
+            <option key={idx} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      )
+    case 'date':
+      return (
+        <Input
+          type="date"
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'time':
+      return (
+        <Input
+          type="time"
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+    case 'file':
+      return (
+        <Input
+          type="file"
+          onChange={(e) => {
+            // Simple file handling for now - just storing filename
+            const file = e.target.files?.[0]
+            if (file) onChange(file.name)
+          }}
+          required={field.required}
+          className="cursor-pointer"
+        />
+      )
+    default:
+      return (
+        <Input
+          placeholder={placeholder || `Enter ${field.label.toLowerCase()}...`}
+          value={(value as string) || ''}
+          onChange={(e) => onChange(e.target.value)}
+          required={field.required}
+        />
+      )
+  }
 }

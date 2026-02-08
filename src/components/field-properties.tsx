@@ -18,6 +18,14 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import { ChevronDown } from 'lucide-react'
+import { ValidationRuleBuilder } from './validation-rule-builder'
+import type { ValidationConfig } from '@/lib/validation-engine'
 
 interface FieldPropertiesProps {
   field: CanvasField | null
@@ -39,21 +47,42 @@ export function FieldProperties({
   const [max, setMax] = useState<number | undefined>(undefined)
   const [step, setStep] = useState<number | undefined>(undefined)
   const [optionsString, setOptionsString] = useState('')
+  const [validation, setValidation] = useState<ValidationConfig>({})
+  const [showValidation, setShowValidation] = useState(false)
 
   useEffect(() => {
     if (field) {
       setLabel(field.label || '')
-      setRequired(field.required || false)
+      setRequired(field.required || field.validation?.required || false)
       setPlaceholder(field.placeholder || '')
       setMin(field.min)
       setMax(field.max)
       setStep(field.step)
       setOptionsString(field.options ? field.options.join('\n') : '')
+      setValidation(field.validation || {})
+      setShowValidation(false)
     }
   }, [field])
 
   const handleSave = () => {
     if (!field) return
+    
+    // Merge validation with required flag and min/max from number fields
+    const finalValidation: ValidationConfig = {
+      ...validation,
+      required,
+    }
+    
+    // For number/slider fields, include min/max in validation
+    if (['number', 'slider'].includes(field.type)) {
+      if (min !== undefined && !isNaN(min)) {
+        finalValidation.min = Number(min)
+      }
+      if (max !== undefined && !isNaN(max)) {
+        finalValidation.max = Number(max)
+      }
+    }
+    
     onSave({
       ...field,
       label,
@@ -65,6 +94,7 @@ export function FieldProperties({
       options: optionsString
         ? optionsString.split('\n').filter((s) => s.trim() !== '')
         : undefined,
+      validation: finalValidation,
     })
     onOpenChange(false)
   }
@@ -73,7 +103,7 @@ export function FieldProperties({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Field Properties</DialogTitle>
           <DialogDescription>
@@ -186,6 +216,39 @@ export function FieldProperties({
               </div>
               <Switch checked={required} onCheckedChange={setRequired} />
             </Field>
+
+            {/* Validation Rules - Show for text-like fields */}
+            {['text', 'textarea', 'email', 'url', 'phone', 'number', 'input'].includes(
+              field.type.toLowerCase(),
+            ) && (
+              <Collapsible open={showValidation} onOpenChange={setShowValidation}>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-between p-4 h-auto border rounded-lg"
+                  >
+                    <div className="flex flex-col items-start">
+                      <span className="text-base font-medium">Validation Rules</span>
+                      <span className="text-xs text-muted-foreground font-normal">
+                        Add pattern and format validation
+                      </span>
+                    </div>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${
+                        showValidation ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pt-4">
+                  <ValidationRuleBuilder
+                    fieldType={field.type}
+                    currentValidation={validation}
+                    onChange={setValidation}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+            )}
           </FieldGroup>
         </div>
         <DialogFooter>

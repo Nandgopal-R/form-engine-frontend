@@ -62,6 +62,19 @@ export interface CreateFieldInput {
   validation?: FieldValidation
 }
 
+export interface UpdateFieldInput {
+  fieldName?: string
+  label?: string
+  fieldValueType?: string
+  fieldType?: string
+  validation?: FieldValidation
+  placeholder?: string
+  min?: number
+  max?: number
+  step?: number
+  options?: Array<string>
+}
+
 const API_URL = 'http://localhost:8000'
 
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -207,5 +220,16 @@ export const fieldsApi = {
         errorData.message || `Request failed: ${response.statusText}`,
       )
     }
+  },
+
+  // PUT /fields/:id - Update a field
+  update: async (id: string, data: UpdateFieldInput): Promise<FormField> => {
+    const response = await fetch(`${API_URL}/fields/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    })
+    return handleResponse<FormField>(response)
   },
 }

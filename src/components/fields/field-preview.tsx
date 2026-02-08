@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { Slider } from '@/components/ui/slider'
+import type { ValidationConfig } from '@/lib/validation-engine'
 
 export interface CanvasField {
   id: string
@@ -17,6 +18,7 @@ export interface CanvasField {
   max?: number
   step?: number
   options?: Array<string>
+  validation?: ValidationConfig
 }
 
 interface FieldPreviewProps {

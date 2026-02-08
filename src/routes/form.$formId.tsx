@@ -11,6 +11,7 @@ import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { useToast } from '@/hooks/use-toast'
+import { validateForm, validateField, type ValidationError } from '@/lib/validation-engine'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
@@ -22,6 +23,8 @@ function FormResponsePage() {
   const [responses, setResponses] = useState<Record<string, unknown>>({})
   const [submitted, setSubmitted] = useState(false)
   const [draftResponseId, setDraftResponseId] = useState<string | null>(null)
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
   // Fetch form data using public endpoint (doesn't require ownership)
   const {
@@ -127,10 +130,67 @@ function FormResponsePage() {
 
   const updateResponse = (fieldId: string, value: unknown) => {
     setResponses((prev) => ({ ...prev, [fieldId]: value }))
+    // Mark field as touched
+    setTouchedFields((prev) => new Set(prev).add(fieldId))
+    
+    // Validate the field on change
+    if (formWithFields?.fields) {
+      const field = formWithFields.fields.find((f) => f.id === fieldId)
+      if (field) {
+        // Merge field-level min/max with validation config
+        const validationConfig = {
+          ...field.validation,
+          min: field.validation?.min ?? field.min,
+          max: field.validation?.max ?? field.max,
+        }
+        const fieldErrors = validateField(value, fieldId, field.label || fieldId, validationConfig)
+        setValidationErrors((prev) => {
+          // Remove existing errors for this field
+          const filtered = prev.filter((e) => e.field !== fieldId)
+          // Add new errors if any
+          return [...filtered, ...fieldErrors]
+        })
+      }
+    }
+  }
+
+  // Get error for a specific field
+  const getFieldError = (fieldId: string): string | null => {
+    // Only show error if field has been touched
+    if (!touchedFields.has(fieldId)) return null
+    const error = validationErrors.find((e) => e.field === fieldId)
+    return error?.message || null
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate all fields before submission
+    if (formWithFields?.fields) {
+      const result = validateForm(responses, formWithFields.fields.map((f) => ({
+        id: f.id,
+        label: f.label || f.fieldName,
+        fieldType: f.fieldType,
+        validation: {
+          ...f.validation,
+          min: f.validation?.min ?? f.min,
+          max: f.validation?.max ?? f.max,
+        },
+      })))
+      
+      if (!result.isValid) {
+        setValidationErrors(result.errors)
+        // Mark all fields as touched to show all errors
+        setTouchedFields(new Set(formWithFields.fields.map((f) => f.id)))
+        toast({
+          title: 'Validation Error',
+          description: `Please fix ${result.errors.length} error${result.errors.length > 1 ? 's' : ''} before submitting.`,
+          variant: 'destructive',
+        })
+        return
+      }
+    }
+    
     submitMutation.mutate(responses)
   }
 
@@ -206,23 +266,33 @@ function FormResponsePage() {
               This form has no fields yet.
             </div>
           ) : (
-            formWithFields.fields.map((field) => (
-              <Field key={field.id} className="space-y-2">
-                <FieldLabel className="flex items-center gap-1">
-                  {field.label}
-                  {field.validation?.required && (
-                    <span className="text-destructive">*</span>
+            formWithFields.fields.map((field) => {
+              const fieldError = getFieldError(field.id)
+              return (
+                <Field key={field.id} className="space-y-2">
+                  <FieldLabel className="flex items-center gap-1">
+                    {field.label}
+                    {field.validation?.required && (
+                      <span className="text-destructive">*</span>
+                    )}
+                  </FieldLabel>
+                  <FieldContent>
+                    <FormFieldRenderer
+                      field={field}
+                      value={responses[field.id]}
+                      onChange={(value) => updateResponse(field.id, value)}
+                      hasError={!!fieldError}
+                    />
+                  </FieldContent>
+                  {fieldError && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3.5 w-3.5" />
+                      {fieldError}
+                    </p>
                   )}
-                </FieldLabel>
-                <FieldContent>
-                  <FormFieldRenderer
-                    field={field}
-                    value={responses[field.id]}
-                    onChange={(value) => updateResponse(field.id, value)}
-                  />
-                </FieldContent>
-              </Field>
-            ))
+                </Field>
+              )
+            })
           )}
 
           {formWithFields.fields && formWithFields.fields.length > 0 && (
@@ -276,18 +346,23 @@ interface FormFieldRendererProps {
   field: FormField
   value: unknown
   onChange: (value: unknown) => void
+  hasError?: boolean
 }
 
-function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
+function FormFieldRenderer({ field, value, onChange, hasError }: FormFieldRendererProps) {
   // Map API fields to UI properties
   // The API returns 'fieldType' but our renderer logic was based on 'type'
-  const type = field.fieldType || (field as any).type || 'text'
+  // Normalize to lowercase for consistent matching
+  const type = (field.fieldType || (field as any).type || 'text').toLowerCase()
   const placeholder = field.placeholder
   const options = field.options
   const min = field.min || field.validation?.min
   const max = field.max || field.validation?.max
   const step = field.step
   const required = field.validation?.required || false
+  
+  // Error styling class
+  const errorClass = hasError ? 'border-destructive focus-visible:ring-destructive' : ''
 
   const fieldOptions =
     options && options.length > 0
@@ -296,20 +371,21 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
 
   switch (type) {
     case 'text':
-    case 'Input': // handling potentially different casing from API
+    case 'input':
       return (
         <Input
           placeholder={placeholder || `Enter ${field.label.toLowerCase()}...`}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
     case 'textarea':
       // Using basic textarea with styles matching Input
       return (
         <textarea
-          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className={`flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errorClass}`}
           placeholder={placeholder || 'Enter long text...'}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
@@ -329,6 +405,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           min={min}
           max={max}
           step={step}
+          className={errorClass}
         />
       )
     case 'email':
@@ -339,6 +416,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
     case 'url':
@@ -350,6 +428,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
     case 'phone':
@@ -361,6 +440,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
     case 'checkbox':
@@ -464,6 +544,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
     case 'time':
@@ -473,6 +554,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
     case 'file':
@@ -485,7 +567,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
             if (file) onChange(file.name)
           }}
           required={required}
-          className="cursor-pointer"
+          className={`cursor-pointer ${errorClass}`}
         />
       )
     default:
@@ -495,6 +577,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           required={required}
+          className={errorClass}
         />
       )
   }

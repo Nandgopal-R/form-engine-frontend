@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { authClient } from '@/lib/auth-client'
+import { useEffect } from 'react'
 import { AlertCircle, FileX, Filter } from 'lucide-react'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
@@ -36,6 +38,21 @@ function FormCardSkeleton() {
 
 function DashboardPage() {
   const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const session = await authClient.getSession()
+        if (!session.data) {
+          navigate({ to: '/signin' })
+        }
+      } catch (error) {
+        navigate({ to: '/signin' })
+      }
+    }
+    checkAuth()
+  }, [navigate])
 
   const {
     data: forms,
@@ -123,7 +140,7 @@ function DashboardPage() {
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <FormCardSkeleton key={i} />
+            <FormCardSkeleton key={`skeleton-${i}`} />
           ))}
         </div>
       ) : isError ? (

@@ -17,6 +17,7 @@ interface EditorCanvasProps {
   onSave?: () => void
   onUpdateTitle?: () => void
   isSaving?: boolean
+  showFormTitleInput?: boolean
 }
 
 export function EditorCanvas({
@@ -30,6 +31,7 @@ export function EditorCanvas({
   onSave,
   onUpdateTitle,
   isSaving,
+  showFormTitleInput = false,
 }: EditorCanvasProps) {
   return (
     <div className="h-full flex flex-col">
@@ -54,33 +56,65 @@ export function EditorCanvas({
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Form Title & Description */}
             <div className="space-y-4 pb-6 border-b">
-              <div className="flex items-center gap-2">
-                <Input
-                  value={formTitle}
-                  onChange={(e) => onTitleChange(e.target.value)}
-                  placeholder="Form Title"
-                  className="text-2xl font-bold h-auto py-2 border-0 border-b rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 flex-1"
-                />
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={onUpdateTitle}
-                  disabled={isSaving || !formTitle.trim()}
-                >
-                  Change Title
-                </Button>
-              </div>
+              {showFormTitleInput ? (
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="form-title-input" className="block text-sm font-medium mb-2">
+                      Form Title <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      id="form-title-input"
+                      value={formTitle}
+                      onChange={(e) => onTitleChange(e.target.value)}
+                      placeholder="Enter form title..."
+                      className="text-lg font-semibold"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="form-description-input" className="block text-sm font-medium mb-2">
+                      Description <span className="text-muted-foreground text-xs">(optional)</span>
+                    </label>
+                    <textarea
+                      id="form-description-input"
+                      value={formDescription || ''}
+                      onChange={(e) => onDescriptionChange(e.target.value)}
+                      placeholder="Describe what this form is for..."
+                      className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={formTitle}
+                    onChange={(e) => onTitleChange(e.target.value)}
+                    placeholder="Form Title"
+                    className="text-2xl font-bold h-auto py-2 border-0 border-b rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 flex-1"
+                  />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={onUpdateTitle}
+                    disabled={isSaving || !formTitle.trim()}
+                  >
+                    Change Title
+                  </Button>
+                </div>
+              )}
 
-              <div className="space-y-2">
-                <textarea
-                  // Adding || "" ensures the value is never undefined
-                  value={formDescription || ''}
-                  onChange={(e) => onDescriptionChange(e.target.value)}
-                  placeholder="Add a description for your form (optional)"
-                  className="w-full text-sm text-muted-foreground bg-transparent border-0 resize-none focus:outline-none focus:ring-0 min-h-[60px] px-0"
-                  rows={2}
-                />
-              </div>
+              {!showFormTitleInput && (
+                <div className="space-y-2">
+                  <textarea
+                    // Adding || "" ensures the value is never undefined
+                    value={formDescription || ''}
+                    onChange={(e) => onDescriptionChange(e.target.value)}
+                    placeholder="Add a description for your form (optional)"
+                    className="w-full text-sm text-muted-foreground bg-transparent border-0 resize-none focus:outline-none focus:ring-0 min-h-[60px] px-0"
+                    rows={2}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Fields */}

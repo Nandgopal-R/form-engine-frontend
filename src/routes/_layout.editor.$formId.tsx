@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
@@ -13,6 +13,7 @@ import { FieldSidebar } from '@/components/field-sidebar'
 import { EditorCanvas } from '@/components/editor-canvas'
 import { FieldProperties } from '@/components/field-properties'
 import { fieldsApi, formsApi } from '@/api/forms'
+import { useToast } from '@/hooks/use-toast'
 
 export const Route = createFileRoute('/_layout/editor/$formId')({
   component: EditFormComponent,
@@ -39,6 +40,8 @@ const FIELD_LABELS: Record<string, string> = {
 
 function EditFormComponent() {
   const { formId } = Route.useParams()
+  const navigate = useNavigate()
+  const { toast } = useToast()
 
   // Fetch existing form data
   const {
@@ -100,11 +103,23 @@ function EditFormComponent() {
   // useMutation for updating the form
   const updateForm = useMutation({
     mutationFn: (data: UpdateFormInput) => formsApi.update(formId, data),
-    onSuccess: (data) => {
-      console.log('Form updated successfully!', data)
+    onSuccess: () => {
+      toast({
+        title: 'Form saved successfully!',
+        description: 'Redirecting to dashboard...',
+        variant: 'success',
+      })
+      // Navigate to dashboard after a short delay to show toast
+      setTimeout(() => {
+        navigate({ to: '/' })
+      }, 1500)
     },
     onError: (error) => {
-      console.error('Failed to update form:', error.message)
+      toast({
+        title: 'Failed to save form',
+        description: error.message,
+        variant: 'destructive',
+      })
     },
   })
 
@@ -149,8 +164,8 @@ function EditFormComponent() {
     console.log('Field clicked:', fieldId)
 
     const fieldData: CreateFieldInput = {
-      fieldName: 'email',
-      label: 'What is your email?',
+      fieldName: fieldId,
+      label: FIELD_LABELS[fieldId] || fieldId,
       fieldValueType: 'string',
       fieldType: 'Input',
       // prevFieldId is handled as null in backend

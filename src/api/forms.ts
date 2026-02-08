@@ -111,10 +111,10 @@ export const formsApi = {
     return handleResponse<Form>(response)
   },
 
-  // PATCH /forms/:id - Update an existing form
+  // PUT /forms/:id - Update an existing form
   update: async (id: string, data: UpdateFormInput): Promise<Form> => {
     const response = await fetch(`${API_URL}/forms/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
       credentials: 'include',

@@ -1,39 +1,44 @@
-import { useState, useEffect } from "react"
-import { createFileRoute } from "@tanstack/react-router"
-import { useQuery, useMutation } from "@tanstack/react-query"
+import { useState, useEffect } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { FieldSidebar } from "@/components/field-sidebar"
-import { EditorCanvas } from "@/components/editor-canvas"
-import type { CanvasField } from "@/components/fields/field-preview"
-import { FieldProperties } from "@/components/field-properties"
-import { formsApi, fieldsApi, type UpdateFormInput } from "@/api/forms"
-import { Loader2, AlertCircle } from "lucide-react"
+} from '@/components/ui/resizable'
+import { FieldSidebar } from '@/components/field-sidebar'
+import { EditorCanvas } from '@/components/editor-canvas'
+import type { CanvasField } from '@/components/fields/field-preview'
+import { FieldProperties } from '@/components/field-properties'
+import {
+  formsApi,
+  fieldsApi,
+  type UpdateFormInput,
+  type CreateFieldInput,
+} from '@/api/forms'
+import { Loader2, AlertCircle } from 'lucide-react'
 
-export const Route = createFileRoute("/_layout/editor/$formId")({
+export const Route = createFileRoute('/_layout/editor/$formId')({
   component: EditFormComponent,
 })
 
 const FIELD_LABELS: Record<string, string> = {
-  text: "Text Input",
-  number: "Number Input",
-  checkbox: "Checkbox",
-  radio: "Radio Group",
-  dropdown: "Dropdown",
-  date: "Date Picker",
-  textarea: "Long Text",
-  email: "Email",
-  url: "Website",
-  phone: "Phone Number",
-  time: "Time Picker",
-  toggle: "Toggle Switch",
-  slider: "Scale",
-  rating: "Rating",
-  file: "File Upload",
-  section: "Section Header",
+  text: 'Text Input',
+  number: 'Number Input',
+  checkbox: 'Checkbox',
+  radio: 'Radio Group',
+  dropdown: 'Dropdown',
+  date: 'Date Picker',
+  textarea: 'Long Text',
+  email: 'Email',
+  url: 'Website',
+  phone: 'Phone Number',
+  time: 'Time Picker',
+  toggle: 'Toggle Switch',
+  slider: 'Scale',
+  rating: 'Rating',
+  file: 'File Upload',
+  section: 'Section Header',
 }
 
 function EditFormComponent() {
@@ -45,44 +50,40 @@ function EditFormComponent() {
     isLoading: isFormLoading,
     error: formError,
   } = useQuery({
-    queryKey: ["form", formId],
+    queryKey: ['form', formId],
     queryFn: () => formsApi.getById(formId),
   })
 
   // Fetch existing fields
-  const {
-    data: existingFields,
-    isLoading: isFieldsLoading,
-    error: fieldsError,
-  } = useQuery({
-    queryKey: ["form-fields", formId],
-    queryFn: () => fieldsApi.getAll(formId),
+  const { data: existingFields, isLoading: isFieldsLoading } = useQuery({
+    queryKey: ['form-fields', formId],
+    queryFn: () => fieldsApi.getById(formId),
   })
 
   const [fields, setFields] = useState<CanvasField[]>([])
   const [editingField, setEditingField] = useState<CanvasField | null>(null)
-  const [formTitle, setFormTitle] = useState("")
-  const [formDescription, setFormDescription] = useState("")
+  const [formTitle, setFormTitle] = useState('')
+  const [formDescription, setFormDescription] = useState('')
 
   // Populate state when form data is loaded
   useEffect(() => {
     if (form) {
-      console.log("Form Title:", form.title)
-      console.log("Form Description:", form.description)
-      setFormTitle(form.title || form.name || "")
-      setFormDescription(form.description || "")
+      console.log('Form Title:', form.title)
+      console.log('Form Description:', form.description)
+      setFormTitle(form.title || form.name || '')
+      setFormDescription(form.description || '')
     }
   }, [form])
 
   // populate fields when data is loaded
   useEffect(() => {
-    const sourceFields = existingFields || form?.fields;
+    const sourceFields = existingFields || form?.fields
     if (sourceFields && sourceFields.length > 0) {
       setFields(
         sourceFields.map((f) => {
-          const rawType = f.fieldType || (f as any).type || 'text';
-          let type = rawType.toLowerCase();
-          if (type === 'input') type = 'text';
+          const rawType = f.fieldType || (f as any).type || 'text'
+          let type = rawType.toLowerCase()
+          if (type === 'input') type = 'text'
 
           return {
             id: f.id,
@@ -95,7 +96,7 @@ function EditFormComponent() {
             step: f.step,
             options: f.options,
           }
-        })
+        }),
       )
     }
   }, [existingFields, form])
@@ -104,20 +105,53 @@ function EditFormComponent() {
   const updateForm = useMutation({
     mutationFn: (data: UpdateFormInput) => formsApi.update(formId, data),
     onSuccess: (data) => {
-      console.log("Form updated successfully!", data)
+      console.log('Form updated successfully!', data)
     },
     onError: (error) => {
-      console.error("Failed to update form:", error.message)
+      console.error('Failed to update form:', error.message)
+    },
+  })
+
+  // useMutation for creating fields
+  const createField = useMutation({
+    mutationFn: (data: CreateFieldInput) => fieldsApi.create(formId, data),
+    onSuccess: (newField) => {
+      console.log('Field created successfully!', newField)
+      // Convert the new field to CanvasField format and add to state
+      const canvasField: CanvasField = {
+        id: newField.id,
+        type: newField.fieldType.toLowerCase(),
+        label: newField.label,
+        placeholder: newField.placeholder,
+        required: newField.validation?.required ?? false,
+        min: newField.validation?.min,
+        max: newField.validation?.max,
+        step: newField.step,
+        options: newField.options,
+      }
+      setFields((prev) => [...prev, canvasField])
+    },
+    onError: (error, variables) => {
+      console.error('Failed to create field:', error.message)
+      console.error('Error details:', error)
+      console.error('Data sent:', JSON.stringify(variables, null, 2))
     },
   })
 
   const handleFieldClick = (fieldId: string) => {
-    const newField: CanvasField = {
-      id: `${fieldId}-${Date.now()}`,
-      type: fieldId,
-      label: FIELD_LABELS[fieldId] || fieldId,
+    console.log('Field clicked:', fieldId)
+
+    // Use format matching backend API expectations
+    const fieldData: CreateFieldInput = {
+      fieldName: 'email',
+      label: 'What is your email?',
+      fieldValueType: 'string',
+      fieldType: 'Input',
+      // prevFieldId is handled as null in backend
     }
-    setFields((prev) => [...prev, newField])
+
+    console.log('Creating field with data:', JSON.stringify(fieldData, null, 2))
+    createField.mutate(fieldData)
   }
 
   const handleRemoveField = (id: string) => {
@@ -130,7 +164,7 @@ function EditFormComponent() {
 
   const handleSaveField = (updatedField: CanvasField) => {
     setFields((prev) =>
-      prev.map((f) => (f.id === updatedField.id ? updatedField : f))
+      prev.map((f) => (f.id === updatedField.id ? updatedField : f)),
     )
     setEditingField(null)
   }

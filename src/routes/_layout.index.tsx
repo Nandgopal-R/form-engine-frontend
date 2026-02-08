@@ -1,5 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AlertCircle, FileX, Filter } from 'lucide-react'
 import { FormCard } from '@/components/form-card'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { formsApi } from '@/api/forms'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { useState } from 'react'
@@ -8,48 +13,92 @@ export const Route = createFileRoute('/_layout/')({
   component: DashboardPage,
 })
 
-//temp
-const sampleForms = [
-  {
-    id: "1",
-    name: "Customer Feedback 2024",
-    lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    isPublished: true,
-    responseCount: 1240,
-    completionRate: 82,
-  },
-  {
-    id: "2",
-    name: "Event Registration",
-    lastUpdated: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    isPublished: false,
-    responseCount: 0,
-    completionRate: 0,
-  },
-  {
-    id: "3",
-    name: "Employee Satisfaction...",
-    lastUpdated: new Date(Date.now() - 3 * 60 * 60 * 1000),
-    isPublished: true,
-    responseCount: 45,
-    completionRate: 95,
-  },
-  {
-    id: "4",
-    name: "Contact Us - Landing Page",
-    lastUpdated: new Date(Date.now() - 2 * 7 * 24 * 60 * 60 * 1000),
-    isPublished: true,
-    responseCount: 312,
-    completionRate: 48,
-  },
-]
+function FormCardSkeleton() {
+  return (
+    <Card className="overflow-hidden p-0 gap-0 border-border/60 animate-pulse">
+      <div className="h-32 w-full bg-muted/50" />
+      <div className="p-5 pt-4">
+        <div className="mb-6">
+          <div className="h-5 bg-muted/50 rounded w-3/4 mb-3" />
+          <div className="space-y-2">
+            <div className="h-4 bg-muted/50 rounded w-1/2" />
+            <div className="h-4 bg-muted/50 rounded w-2/3" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between pt-4 border-t border-border/50">
+          <div className="h-8 w-8 bg-muted/50 rounded" />
+          <div className="h-9 bg-muted/50 rounded-full w-28" />
+        </div>
+      </div>
+    </Card>
+  )
+}
 
 function DashboardPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const navigate = useNavigate()
 
-  const filteredForms = sampleForms.filter((form) =>
-    form.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const {
+    data: forms,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['forms'],
+    queryFn: formsApi.getAll,
+  })
+
+  const queryClient = useQueryClient()
+
+  const deleteFormMutation = useMutation({
+    mutationFn: formsApi.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
+  })
+
+  const publishFormMutation = useMutation({
+    mutationFn: formsApi.publish,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
+    onError: (publishError) => {
+      console.error('Failed to publish form:', publishError)
+      alert(
+        'Failed to publish form. The backend endpoint may not be available yet.',
+      )
+    },
+  })
+
+  const unpublishFormMutation = useMutation({
+    mutationFn: formsApi.unpublish,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
+    onError: (unpublishError) => {
+      console.error('Failed to unpublish form:', unpublishError)
+      alert(
+        'Failed to unpublish form. The backend endpoint may not be available yet.',
+      )
+    },
+  })
+
+  const handleDelete = (id: string, name: string) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+      )
+    ) {
+      deleteFormMutation.mutate(id)
+    }
+  }
+
+  const handlePublish = (id: string, name: string) => {
+    publishFormMutation.mutate(id)
+  }
+
+  const handleUnpublish = (id: string, name: string) => {
+    unpublishFormMutation.mutate(id)
+  }
 
   return (
     <div className="space-y-6">
@@ -71,22 +120,79 @@ function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredForms.map((form) => (
-          <FormCard
-            key={form.id}
-            {...form}
-            onEdit={() => console.log('Edit:', form.id)}
-            onView={() => console.log('View:', form.id)}
-            onAnalytics={() => console.log('Analytics:', form.id)}
-          />
-        ))}
-        {filteredForms.length === 0 && (
-          <div className="col-span-full py-12 text-center text-muted-foreground">
-            <p>No forms found matching "{searchQuery}"</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <FormCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="rounded-full bg-destructive/10 p-4 mb-4">
+            <AlertCircle className="h-8 w-8 text-destructive" />
           </div>
-        )}
-      </div>
+          <h3 className="text-lg font-semibold text-foreground mb-1">
+            Failed to load forms
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            {error instanceof Error
+              ? error.message
+              : 'Something went wrong. Please try again.'}
+          </p>
+        </div>
+      ) : forms && forms.length > 0 ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {forms.map((form) => (
+            <FormCard
+              key={form.id}
+              id={form.id}
+              name={form.title || form.name || 'Untitled Form'}
+              lastUpdated={new Date(form.createdAt)}
+              isPublished={form.isPublished}
+              responseCount={0}
+              isPublishing={publishFormMutation.isPending}
+              isUnpublishing={unpublishFormMutation.isPending}
+              onEdit={() =>
+                navigate({ to: '/editor/$formId', params: { formId: form.id } })
+              }
+              onView={() =>
+                navigate({ to: '/form/$formId', params: { formId: form.id } })
+              }
+              onAnalytics={() => console.log('Analytics:', form.id)}
+              onDelete={() =>
+                handleDelete(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
+              onPublish={() =>
+                handlePublish(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
+              onUnpublish={() =>
+                handleUnpublish(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="rounded-full bg-muted p-4 mb-4">
+            <FileX className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-1">
+            No forms yet
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            Create your first form to get started collecting responses.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

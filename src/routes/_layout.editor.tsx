@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useMutation } from "@tanstack/react-query"
 import {
   ResizableHandle,
@@ -36,9 +36,10 @@ const FIELD_LABELS: Record<string, string> = {
 }
 
 function EditorComponent() {
+  const navigate = useNavigate()
   const [fields, setFields] = useState<CanvasField[]>([])
   const [editingField, setEditingField] = useState<CanvasField | null>(null)
-  const [formTitle, setFormTitle] = useState("Untitled Form")
+  const [formTitle, setFormTitle] = useState("")
   const [formDescription, setFormDescription] = useState("")
 
   // useMutation for creating a form - used directly, no custom hook needed!
@@ -46,7 +47,7 @@ function EditorComponent() {
     mutationFn: (data: CreateFormInput) => formsApi.create(data),
     onSuccess: (data) => {
       console.log("Form created successfully!", data)
-      // TODO: You can navigate to the form or show a success toast here
+      navigate({ to: "/editor/$formId", params: { formId: data.id } })
     },
     onError: (error) => {
       console.error("Failed to create form:", error.message)

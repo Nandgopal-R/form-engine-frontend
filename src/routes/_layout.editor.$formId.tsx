@@ -57,22 +57,28 @@ function EditFormComponent() {
     // Populate state when form data is loaded
     useEffect(() => {
         if (form) {
-            setFormTitle(form.title)
+            setFormTitle(form.title || form.name || "")
             setFormDescription(form.description || "")
             // If form has fields, convert them to CanvasField format
             if (form.fields && form.fields.length > 0) {
                 setFields(
-                    form.fields.map((f) => ({
-                        id: f.id,
-                        type: f.type,
-                        label: f.label,
-                        placeholder: f.placeholder,
-                        required: f.required,
-                        min: f.min,
-                        max: f.max,
-                        step: f.step,
-                        options: f.options,
-                    }))
+                    form.fields.map((f) => {
+                        const rawType = f.fieldType || (f as any).type || 'text';
+                        let type = rawType.toLowerCase();
+                        if (type === 'input') type = 'text';
+
+                        return {
+                            id: f.id,
+                            type: type,
+                            label: f.label,
+                            placeholder: f.placeholder,
+                            required: f.validation?.required ?? f.required ?? false,
+                            min: f.validation?.min ?? f.min,
+                            max: f.validation?.max ?? f.max,
+                            step: f.step,
+                            options: f.options,
+                        }
+                    })
                 )
             }
         }

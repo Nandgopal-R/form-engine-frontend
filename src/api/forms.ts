@@ -1,9 +1,24 @@
+export interface FieldValidation {
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+    pattern?: string;
+}
+
 export interface FormField {
     id: string;
-    type: string;
+    fieldName: string;
     label: string;
+    fieldValueType: string;
+    fieldType: string;
+    validation?: FieldValidation;
+    formId: string;
+    prevFieldId: string | null;
+    createdAt: string;
+    // Legacy properties for UI compatibility
     placeholder?: string;
-    required?: boolean;
     min?: number;
     max?: number;
     step?: number;
@@ -13,6 +28,7 @@ export interface FormField {
 export interface Form {
     id: string;
     title: string;
+    name?: string;
     description?: string;
     ownerId?: string;
     isPublished: boolean;
@@ -35,6 +51,15 @@ export interface CreateFormInput {
 export interface UpdateFormInput {
     title?: string;
     description?: string;
+}
+
+export interface CreateFieldInput {
+    fieldName: string;
+    label: string;
+    fieldValueType: string;
+    fieldType: string;
+    prevFieldId?: string | null;
+    validation?: FieldValidation;
 }
 
 const API_URL = "http://localhost:8000";
@@ -122,5 +147,31 @@ export const formsApi = {
             credentials: "include",
         });
         return handleResponse<Form>(response);
+    },
+};
+
+export const fieldsApi = {
+    // POST /fields/:formId - Create a new field
+    create: async (formId: string, data: CreateFieldInput): Promise<FormField> => {
+        const response = await fetch(`${API_URL}/fields/${formId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+            credentials: "include",
+        });
+        return handleResponse<FormField>(response);
+    },
+
+    // DELETE /fields/:id - Delete a field
+    delete: async (id: string): Promise<void> => {
+        const response = await fetch(`${API_URL}/fields/${id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Request failed: ${response.statusText}`);
+        }
     },
 };

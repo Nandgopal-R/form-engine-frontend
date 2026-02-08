@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Filter, FileX, Loader2, AlertCircle } from 'lucide-react'
+import { Filter, FileX, AlertCircle } from 'lucide-react'
 import { formsApi } from '@/api/forms'
 
 export const Route = createFileRoute('/_layout/')({
@@ -78,7 +78,7 @@ function DashboardPage() {
             <FormCard
               key={form.id}
               id={form.id}
-              name={form.title}
+              name={form.title || form.name || "Untitled Form"}
               lastUpdated={new Date(form.createdAt)}
               isPublished={form.isPublished}
               responseCount={0}

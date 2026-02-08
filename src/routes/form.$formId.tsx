@@ -7,53 +7,16 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Field, FieldLabel, FieldContent } from "@/components/ui/field"
 import { Loader2, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
+import { formsApi, type FormField } from '@/api/forms'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
 })
 
-interface FormField {
-  id: string
-  type: string
-  label: string
-  placeholder?: string
-  required?: boolean
-  options?: string[]
-  min?: number
-  max?: number
-  step?: number
-}
-
-interface Form {
-  id: string
-  title: string
-  description?: string
-  fields: FormField[]
-}
-
-async function fetchForm(formId: string): Promise<Form> {
-  await new Promise(resolve => setTimeout(resolve, 500))
-
-  // Mock data
-  return {
-    id: formId,
-    title: 'Sample Form',
-    description: 'Please fill out this form to submit your response.',
-    fields: [
-      { id: '1', type: 'text', label: 'Full Name', placeholder: 'John Doe', required: true },
-      { id: '2', type: 'email', label: 'Email Address', placeholder: 'john@example.com', required: true },
-      { id: '3', type: 'number', label: 'Age', placeholder: '25' },
-      { id: '4', type: 'checkbox', label: 'Subscribe to newsletter' },
-      { id: '5', type: 'date', label: 'Preferred Contact Date', required: true },
-      { id: '6', type: 'dropdown', label: 'Experience Level', options: ['Junior', 'Mid', 'Senior'] },
-      { id: '7', type: 'radio', label: 'Availability', options: ['Full-time', 'Part-time', 'Contract'] },
-      { id: '8', type: 'textarea', label: 'Bio', placeholder: 'Tell us about yourself...' },
-    ],
-  }
-}
-
 async function submitResponse(formId: string, responses: Record<string, unknown>): Promise<{ success: boolean }> {
   console.log('Submitted responses for form', formId, responses)
+  // TODO: Implement actual API call for submission
+  await new Promise(resolve => setTimeout(resolve, 1000))
   return { success: true }
 }
 
@@ -65,7 +28,7 @@ function FormResponsePage() {
   // Fetch form data
   const { data: form, isLoading, error } = useQuery({
     queryKey: ['form', formId],
-    queryFn: () => fetchForm(formId),
+    queryFn: () => formsApi.getById(formId),
   })
 
   // Submit mutation
@@ -107,7 +70,7 @@ function FormResponsePage() {
           </div>
           <h2 className="text-xl font-bold mb-2">Form Not Found</h2>
           <p className="text-muted-foreground">
-            The form you're looking for doesn't exist or has been removed.
+            {error instanceof Error ? error.message : "The form you're looking for doesn't exist or has been removed."}
           </p>
         </div>
       </div>
@@ -135,7 +98,7 @@ function FormResponsePage() {
     <div className="min-h-screen bg-muted/20 py-10 sm:py-16 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto p-8 bg-card rounded-xl shadow-sm border space-y-6">
         <div className="space-y-2 mb-8">
-          <h1 className="text-2xl font-bold tracking-tight">{form.title}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{form.title || form.name || "Untitled Form"}</h1>
           {form.description && (
             <p className="text-muted-foreground">
               {form.description}
@@ -144,41 +107,49 @@ function FormResponsePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {form.fields.map((field) => (
-            <Field key={field.id} className="space-y-2">
-              <FieldLabel className="flex items-center gap-1">
-                {field.label}
-                {field.required && <span className="text-destructive">*</span>}
-              </FieldLabel>
-              <FieldContent>
-                <FormFieldRenderer
-                  field={field}
-                  value={responses[field.id]}
-                  onChange={(value) => updateResponse(field.id, value)}
-                />
-              </FieldContent>
-            </Field>
-          ))}
+          {!form.fields || form.fields.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              This form has no fields yet.
+            </div>
+          ) : (
+            form.fields.map((field) => (
+              <Field key={field.id} className="space-y-2">
+                <FieldLabel className="flex items-center gap-1">
+                  {field.label}
+                  {field.validation?.required && <span className="text-destructive">*</span>}
+                </FieldLabel>
+                <FieldContent>
+                  <FormFieldRenderer
+                    field={field}
+                    value={responses[field.id]}
+                    onChange={(value) => updateResponse(field.id, value)}
+                  />
+                </FieldContent>
+              </Field>
+            ))
+          )}
 
-          <div className="pt-4">
-            <Button
-              type="submit"
-              className="w-full sm:w-auto"
-              disabled={submitMutation.isPending}
-            >
-              {submitMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  Submit Response
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </div>
+          {form.fields && form.fields.length > 0 && (
+            <div className="pt-4">
+              <Button
+                type="submit"
+                className="w-full sm:w-auto"
+                disabled={submitMutation.isPending}
+              >
+                {submitMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    Submit Response
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </div>
@@ -193,17 +164,27 @@ interface FormFieldRendererProps {
 }
 
 function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
-  const { type, placeholder, options, min, max, step } = field
+  // Map API fields to UI properties
+  // The API returns 'fieldType' but our renderer logic was based on 'type'
+  const type = field.fieldType || (field as any).type || 'text';
+  const placeholder = field.placeholder;
+  const options = field.options;
+  const min = field.min || field.validation?.min;
+  const max = field.max || field.validation?.max;
+  const step = field.step;
+  const required = field.validation?.required || false;
+
   const fieldOptions = options && options.length > 0 ? options : ["Option 1", "Option 2", "Option 3"]
 
   switch (type) {
     case 'text':
+    case 'Input': // handling potentially different casing from API
       return (
         <Input
           placeholder={placeholder || `Enter ${field.label.toLowerCase()}...`}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'textarea':
@@ -214,7 +195,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           placeholder={placeholder || "Enter long text..."}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'number':
@@ -224,7 +205,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           placeholder={placeholder || "Enter a number..."}
           value={(value as number) || ''}
           onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
-          required={field.required}
+          required={required}
           min={min}
           max={max}
           step={step}
@@ -237,27 +218,29 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           placeholder={placeholder || "name@example.com"}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'url':
+    case 'website':
       return (
         <Input
           type="url"
           placeholder={placeholder || "https://example.com"}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'phone':
+    case 'tel':
       return (
         <Input
           type="tel"
           placeholder={placeholder || "+1 (555) 000-0000"}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'checkbox':
@@ -314,7 +297,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
                 checked={value === opt}
                 onChange={(e) => onChange(e.target.value)}
                 className="h-4 w-4 border-primary text-primary focus:ring-1 focus:ring-primary cursor-pointer"
-                required={field.required}
+                required={required}
               />
               <Label htmlFor={`${field.id}-${idx}`} className="text-sm font-normal cursor-pointer">
                 {opt}
@@ -324,13 +307,14 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
         </div>
       )
     case 'dropdown':
+    case 'select':
       return (
         <select
           id={field.id}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
           className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-          required={field.required}
+          required={required}
         >
           <option value="">Select an option...</option>
           {fieldOptions.map((option, idx) => (
@@ -346,7 +330,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           type="date"
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'time':
@@ -355,7 +339,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           type="time"
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
     case 'file':
@@ -367,7 +351,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
             const file = e.target.files?.[0]
             if (file) onChange(file.name)
           }}
-          required={field.required}
+          required={required}
           className="cursor-pointer"
         />
       )
@@ -377,7 +361,7 @@ function FormFieldRenderer({ field, value, onChange }: FormFieldRendererProps) {
           placeholder={placeholder || `Enter ${field.label.toLowerCase()}...`}
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
-          required={field.required}
+          required={required}
         />
       )
   }

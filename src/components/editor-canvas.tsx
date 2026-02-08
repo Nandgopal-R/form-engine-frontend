@@ -14,6 +14,7 @@ interface EditorCanvasProps {
     onRemoveField?: (id: string) => void
     onEditField?: (field: CanvasField) => void
     onSave?: () => void
+    onUpdateTitle?: () => void
     isSaving?: boolean
 }
 
@@ -26,6 +27,7 @@ export function EditorCanvas({
     onRemoveField,
     onEditField,
     onSave,
+    onUpdateTitle,
     isSaving,
 }: EditorCanvasProps) {
     return (
@@ -51,14 +53,24 @@ export function EditorCanvas({
                     <div className="max-w-2xl mx-auto space-y-6">
                         {/* Form Title & Description */}
                         <div className="space-y-4 pb-6 border-b">
-                            <div className="space-y-2">
+
+                            <div className="flex items-center gap-2">
                                 <Input
                                     value={formTitle}
                                     onChange={(e) => onTitleChange(e.target.value)}
                                     placeholder="Form Title"
-                                    className="text-2xl font-bold h-auto py-2 border-0 border-b rounded-none focus-visible:ring-0 focus-visible:border-primary px-0"
+                                    className="text-2xl font-bold h-auto py-2 border-0 border-b rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 flex-1"
                                 />
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={onUpdateTitle}
+                                    disabled={isSaving || !formTitle.trim()}
+                                >
+                                    Change Title
+                                </Button>
                             </div>
+
                             <div className="space-y-2">
                                 <textarea
                                     value={formDescription}
@@ -67,6 +79,7 @@ export function EditorCanvas({
                                     className="w-full text-sm text-muted-foreground bg-transparent border-0 resize-none focus:outline-none focus:ring-0 min-h-[60px] px-0"
                                     rows={2}
                                 />
+                                {/* REMOVED: <h3 className="..."> {formDescription}</h3> */}
                             </div>
                         </div>
 
@@ -121,6 +134,6 @@ export function EditorCanvas({
                     </div>
                 </TabsContent>
             </Tabs>
-        </div>
+        </div >
     )
 }

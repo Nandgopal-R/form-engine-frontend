@@ -189,6 +189,7 @@ function EditFormComponent() {
             onRemoveField={handleRemoveField}
             onEditField={handleEditField}
             onSave={handleSaveForm}
+            onUpdateTitle={handleSaveForm}
             isSaving={updateForm.isPending}
           />
         </ResizablePanel>

@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { FileText, Loader2, Sparkles } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
-import type {CreateFormInput} from '@/api/forms';
+import type { CreateFormInput } from '@/api/forms'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -12,7 +12,7 @@ import {
 import { FieldSidebar } from '@/components/field-sidebar'
 import { EditorCanvas } from '@/components/editor-canvas'
 import { FieldProperties } from '@/components/field-properties'
-import {  formsApi } from '@/api/forms'
+import { formsApi } from '@/api/forms'
 import {
   Dialog,
   DialogContent,

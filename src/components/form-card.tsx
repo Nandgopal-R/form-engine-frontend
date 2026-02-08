@@ -4,6 +4,7 @@ import {
   Calendar,
   Edit,
   Eye,
+  EyeOff,
   MoreVertical,
   Send,
   Trash2,
@@ -31,6 +32,9 @@ interface FormCardProps {
   onAnalytics?: () => void
   onDelete?: () => void
   onPublish?: () => void
+  onUnpublish?: () => void
+  isPublishing?: boolean
+  isUnpublishing?: boolean
 }
 
 export function FormCard({
@@ -43,6 +47,9 @@ export function FormCard({
   onAnalytics,
   onDelete,
   onPublish,
+  onUnpublish,
+  isPublishing = false,
+  isUnpublishing = false,
 }: FormCardProps) {
   return (
     <Card className="group relative overflow-hidden transition-all hover:shadow-lg hover:border-primary/50 p-0 gap-0 border-border/60">
@@ -125,10 +132,41 @@ export function FormCard({
                 onClick={onPublish}
                 size="sm"
                 variant="outline"
+                disabled={isPublishing}
                 className="rounded-full px-3 h-9 shadow-sm transition-all"
               >
-                <Send className="mr-1.5 h-3.5 w-3.5" />
-                Publish
+                {isPublishing ? (
+                  <>
+                    <div className="mr-1.5 h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-1.5 h-3.5 w-3.5" />
+                    Publish
+                  </>
+                )}
+              </Button>
+            )}
+            {isPublished && onUnpublish && (
+              <Button
+                onClick={onUnpublish}
+                size="sm"
+                variant="outline"
+                disabled={isUnpublishing}
+                className="rounded-full px-3 h-9 shadow-sm transition-all border-orange-200 hover:border-orange-300 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+              >
+                {isUnpublishing ? (
+                  <>
+                    <div className="mr-1.5 h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Unpublishing...
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="mr-1.5 h-3.5 w-3.5" />
+                    Unpublish
+                  </>
+                )}
               </Button>
             )}
             <Button

@@ -1,4 +1,9 @@
-import { Link, Outlet, createFileRoute, useMatches  } from '@tanstack/react-router'
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useMatches,
+} from '@tanstack/react-router'
 import {
   SidebarInset,
   SidebarProvider,

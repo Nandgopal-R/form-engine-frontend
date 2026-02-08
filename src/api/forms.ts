@@ -147,10 +147,10 @@ export const formsApi = {
     return handleResponse<Form>(response)
   },
 
-  // PATCH /forms/:id/unpublish - Unpublish a form
+  // POST /forms/unpublish/:formId - Unpublish a form
   unpublish: async (id: string): Promise<Form> => {
-    const response = await fetch(`${API_URL}/forms/${id}/unpublish`, {
-      method: 'PATCH',
+    const response = await fetch(`${API_URL}/forms/unpublish/${id}`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })

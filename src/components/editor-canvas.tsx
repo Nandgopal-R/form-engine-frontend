@@ -1,10 +1,6 @@
 import { Save } from 'lucide-react'
-import {
-  
-  FieldPreview,
-  renderFieldInput
-} from './fields/field-preview'
-import type {CanvasField} from './fields/field-preview';
+import { FieldPreview, renderFieldInput } from './fields/field-preview'
+import type { CanvasField } from './fields/field-preview'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'

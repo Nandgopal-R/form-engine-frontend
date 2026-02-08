@@ -58,6 +58,25 @@ function DashboardPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['forms'] })
     },
+    onError: (publishError) => {
+      console.error('Failed to publish form:', publishError)
+      alert(
+        'Failed to publish form. The backend endpoint may not be available yet.',
+      )
+    },
+  })
+
+  const unpublishFormMutation = useMutation({
+    mutationFn: formsApi.unpublish,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
+    onError: (unpublishError) => {
+      console.error('Failed to unpublish form:', unpublishError)
+      alert(
+        'Failed to unpublish form. The backend endpoint may not be available yet.',
+      )
+    },
   })
 
   const handleDelete = (id: string, name: string) => {
@@ -72,6 +91,10 @@ function DashboardPage() {
 
   const handlePublish = (id: string, name: string) => {
     publishFormMutation.mutate(id)
+  }
+
+  const handleUnpublish = (id: string, name: string) => {
+    unpublishFormMutation.mutate(id)
   }
 
   return (
@@ -119,6 +142,8 @@ function DashboardPage() {
               lastUpdated={new Date(form.createdAt)}
               isPublished={form.isPublished}
               responseCount={0}
+              isPublishing={publishFormMutation.isPending}
+              isUnpublishing={unpublishFormMutation.isPending}
               onEdit={() =>
                 navigate({ to: '/editor/$formId', params: { formId: form.id } })
               }
@@ -134,6 +159,12 @@ function DashboardPage() {
               }
               onPublish={() =>
                 handlePublish(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
+              onUnpublish={() =>
+                handleUnpublish(
                   form.id,
                   form.title || form.name || 'Untitled Form',
                 )

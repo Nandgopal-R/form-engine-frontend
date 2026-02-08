@@ -151,6 +151,16 @@ export const formsApi = {
 };
 
 export const fieldsApi = {
+    // GET /fields/:formId - Fetch all fields for a form
+    getAll: async (formId: string): Promise<FormField[]> => {
+        const response = await fetch(`${API_URL}/fields/${formId}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+        return handleResponse<FormField[]>(response);
+    },
+
     // POST /fields/:formId - Create a new field
     create: async (formId: string, data: CreateFieldInput): Promise<FormField> => {
         const response = await fetch(`${API_URL}/fields/${formId}`, {

@@ -1,12 +1,13 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MoreVertical, Eye, Edit, BarChart, Calendar, ArrowRight } from "lucide-react"
+import { MoreVertical, Eye, Edit, BarChart, Calendar, ArrowRight, Trash2 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { formatDistanceToNow } from "date-fns"
 
@@ -19,6 +20,7 @@ interface FormCardProps {
   onEdit?: () => void
   onView?: () => void
   onAnalytics?: () => void
+  onDelete?: () => void
 }
 
 export function FormCard({
@@ -29,6 +31,7 @@ export function FormCard({
   onEdit,
   onView,
   onAnalytics,
+  onDelete,
 }: FormCardProps) {
   return (
     <Card className="group relative overflow-hidden transition-all hover:shadow-lg hover:border-primary/50 p-0 gap-0 border-border/60">
@@ -85,6 +88,10 @@ export function FormCard({
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onView}>
                 <Eye className="mr-2 h-4 w-4" /> View Form
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

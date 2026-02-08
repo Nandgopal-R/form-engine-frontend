@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -38,6 +38,21 @@ function DashboardPage() {
     queryKey: ['forms'],
     queryFn: formsApi.getAll,
   })
+
+  const queryClient = useQueryClient()
+
+  const deleteFormMutation = useMutation({
+    mutationFn: formsApi.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
+  })
+
+  const handleDelete = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+      deleteFormMutation.mutate(id)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -85,6 +100,7 @@ function DashboardPage() {
               onEdit={() => navigate({ to: '/editor/$formId', params: { formId: form.id } })}
               onView={() => navigate({ to: '/form/$formId', params: { formId: form.id } })}
               onAnalytics={() => console.log('Analytics:', form.id)}
+              onDelete={() => handleDelete(form.id, form.title || form.name || "Untitled Form")}
             />
           ))}
         </div>

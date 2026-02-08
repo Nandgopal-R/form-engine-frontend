@@ -1,22 +1,22 @@
-import { Button } from '@/components/ui/button'
 import {
-  Type,
-  CheckSquare,
-  CircleDot,
-  ChevronDown,
-  Calendar,
-  Hash,
   AlignLeft,
-  Mail,
-  Link,
-  Phone,
+  Calendar,
+  CheckSquare,
+  ChevronDown,
+  CircleDot,
   Clock,
-  ToggleLeft,
+  Hash,
+  Heading,
+  Link,
+  Mail,
+  Phone,
   SlidersHorizontal,
   Star,
+  ToggleLeft,
+  Type,
   Upload,
-  Heading,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const FIELDS = [
   { id: 'text', label: 'Short Text', icon: Type },

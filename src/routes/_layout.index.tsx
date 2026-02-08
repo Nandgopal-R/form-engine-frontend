@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AlertCircle, FileX, Filter } from 'lucide-react'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Filter, FileX, AlertCircle } from 'lucide-react'
 import { formsApi } from '@/api/forms'
 
 export const Route = createFileRoute('/_layout/')({
@@ -34,7 +34,12 @@ function FormCardSkeleton() {
 function DashboardPage() {
   const navigate = useNavigate()
 
-  const { data: forms, isLoading, isError, error } = useQuery({
+  const {
+    data: forms,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ['forms'],
     queryFn: formsApi.getAll,
   })
@@ -48,10 +53,25 @@ function DashboardPage() {
     },
   })
 
+  const publishFormMutation = useMutation({
+    mutationFn: formsApi.publish,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
+  })
+
   const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+      )
+    ) {
       deleteFormMutation.mutate(id)
     }
+  }
+
+  const handlePublish = (id: string, name: string) => {
+    publishFormMutation.mutate(id)
   }
 
   return (
@@ -84,7 +104,9 @@ function DashboardPage() {
             Failed to load forms
           </h3>
           <p className="text-sm text-muted-foreground max-w-sm">
-            {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
+            {error instanceof Error
+              ? error.message
+              : 'Something went wrong. Please try again.'}
           </p>
         </div>
       ) : forms && forms.length > 0 ? (
@@ -93,14 +115,29 @@ function DashboardPage() {
             <FormCard
               key={form.id}
               id={form.id}
-              name={form.title || form.name || "Untitled Form"}
+              name={form.title || form.name || 'Untitled Form'}
               lastUpdated={new Date(form.createdAt)}
               isPublished={form.isPublished}
               responseCount={0}
-              onEdit={() => navigate({ to: '/editor/$formId', params: { formId: form.id } })}
-              onView={() => navigate({ to: '/form/$formId', params: { formId: form.id } })}
+              onEdit={() =>
+                navigate({ to: '/editor/$formId', params: { formId: form.id } })
+              }
+              onView={() =>
+                navigate({ to: '/form/$formId', params: { formId: form.id } })
+              }
               onAnalytics={() => console.log('Analytics:', form.id)}
-              onDelete={() => handleDelete(form.id, form.title || form.name || "Untitled Form")}
+              onDelete={() =>
+                handleDelete(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
+              onPublish={() =>
+                handlePublish(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
             />
           ))}
         </div>
@@ -120,4 +157,3 @@ function DashboardPage() {
     </div>
   )
 }
-

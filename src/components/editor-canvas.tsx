@@ -1,12 +1,17 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Field, FieldLabel, FieldContent } from "@/components/ui/field"
-import { FieldPreview, renderFieldInput, type CanvasField } from "./fields/field-preview"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Save } from "lucide-react"
+import { Save } from 'lucide-react'
+import {
+  
+  FieldPreview,
+  renderFieldInput
+} from './fields/field-preview'
+import type {CanvasField} from './fields/field-preview';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface EditorCanvasProps {
-  fields: CanvasField[]
+  fields: Array<CanvasField>
   formTitle: string
   formDescription: string
   onTitleChange: (title: string) => void
@@ -41,7 +46,7 @@ export function EditorCanvas({
             disabled={isSaving || !formTitle.trim()}
           >
             <Save className="h-4 w-4" />
-            {isSaving ? "Saving..." : "Save Form"}
+            {isSaving ? 'Saving...' : 'Save Form'}
           </Button>
           <TabsList>
             <TabsTrigger value="edit">Edit</TabsTrigger>
@@ -53,7 +58,6 @@ export function EditorCanvas({
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Form Title & Description */}
             <div className="space-y-4 pb-6 border-b">
-
               <div className="flex items-center gap-2">
                 <Input
                   value={formTitle}
@@ -74,7 +78,7 @@ export function EditorCanvas({
               <div className="space-y-2">
                 <textarea
                   // Adding || "" ensures the value is never undefined
-                  value={formDescription || ""}
+                  value={formDescription || ''}
                   onChange={(e) => onDescriptionChange(e.target.value)}
                   placeholder="Add a description for your form (optional)"
                   className="w-full text-sm text-muted-foreground bg-transparent border-0 resize-none focus:outline-none focus:ring-0 min-h-[60px] px-0"
@@ -87,7 +91,9 @@ export function EditorCanvas({
             {fields.length === 0 ? (
               <div className="py-16 text-center text-muted-foreground">
                 <p className="text-lg font-medium">No fields added</p>
-                <p className="text-sm">Click on fields from the sidebar to add them here</p>
+                <p className="text-sm">
+                  Click on fields from the sidebar to add them here
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -104,11 +110,14 @@ export function EditorCanvas({
           </div>
         </TabsContent>
 
-        <TabsContent value="preview" className="flex-1 overflow-y-auto p-6 mt-0 bg-muted/20">
+        <TabsContent
+          value="preview"
+          className="flex-1 overflow-y-auto p-6 mt-0 bg-muted/20"
+        >
           <div className="max-w-2xl mx-auto p-8 bg-card rounded-xl shadow-sm border space-y-6">
             <div className="space-y-2 mb-8">
               <h1 className="text-2xl font-bold tracking-tight">
-                {formTitle || "Untitled Form"}
+                {formTitle || 'Untitled Form'}
               </h1>
               {formDescription && (
                 <p className="text-muted-foreground">{formDescription}</p>
@@ -123,17 +132,17 @@ export function EditorCanvas({
                 <Field key={field.id} className="space-y-2">
                   <FieldLabel className="flex items-center gap-1">
                     {field.label}
-                    {field.required && <span className="text-destructive">*</span>}
+                    {field.required && (
+                      <span className="text-destructive">*</span>
+                    )}
                   </FieldLabel>
-                  <FieldContent>
-                    {renderFieldInput(field)}
-                  </FieldContent>
+                  <FieldContent>{renderFieldInput(field)}</FieldContent>
                 </Field>
               ))
             )}
           </div>
         </TabsContent>
       </Tabs>
-    </div >
+    </div>
   )
 }

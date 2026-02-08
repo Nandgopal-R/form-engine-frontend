@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from 'react'
+import type { CanvasField } from './fields/field-preview'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -8,11 +9,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Field, FieldGroup, FieldLabel, FieldDescription } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import type { CanvasField } from "./fields/field-preview"
-import { Switch } from "@/components/ui/switch"
+} from '@/components/ui/dialog'
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 
 interface FieldPropertiesProps {
   field: CanvasField | null
@@ -21,24 +26,29 @@ interface FieldPropertiesProps {
   onSave: (field: CanvasField) => void
 }
 
-export function FieldProperties({ field, open, onOpenChange, onSave }: FieldPropertiesProps) {
-  const [label, setLabel] = useState("")
+export function FieldProperties({
+  field,
+  open,
+  onOpenChange,
+  onSave,
+}: FieldPropertiesProps) {
+  const [label, setLabel] = useState('')
   const [required, setRequired] = useState(false)
-  const [placeholder, setPlaceholder] = useState("")
+  const [placeholder, setPlaceholder] = useState('')
   const [min, setMin] = useState<number | undefined>(undefined)
   const [max, setMax] = useState<number | undefined>(undefined)
   const [step, setStep] = useState<number | undefined>(undefined)
-  const [optionsString, setOptionsString] = useState("")
+  const [optionsString, setOptionsString] = useState('')
 
   useEffect(() => {
     if (field) {
-      setLabel(field.label || "")
+      setLabel(field.label || '')
       setRequired(field.required || false)
-      setPlaceholder(field.placeholder || "")
+      setPlaceholder(field.placeholder || '')
       setMin(field.min)
       setMax(field.max)
       setStep(field.step)
-      setOptionsString(field.options ? field.options.join("\n") : "")
+      setOptionsString(field.options ? field.options.join('\n') : '')
     }
   }, [field])
 
@@ -52,7 +62,9 @@ export function FieldProperties({ field, open, onOpenChange, onSave }: FieldProp
       min: min !== undefined && !isNaN(min) ? Number(min) : undefined,
       max: max !== undefined && !isNaN(max) ? Number(max) : undefined,
       step: step !== undefined && !isNaN(step) ? Number(step) : undefined,
-      options: optionsString ? optionsString.split("\n").filter(s => s.trim() !== "") : undefined
+      options: optionsString
+        ? optionsString.split('\n').filter((s) => s.trim() !== '')
+        : undefined,
     })
     onOpenChange(false)
   }
@@ -84,7 +96,9 @@ export function FieldProperties({ field, open, onOpenChange, onSave }: FieldProp
             </Field>
 
             {/* Placeholder for text-like inputs */}
-            {["text", "textarea", "email", "url", "phone", "number"].includes(field.type) && (
+            {['text', 'textarea', 'email', 'url', 'phone', 'number'].includes(
+              field.type,
+            ) && (
               <Field>
                 <FieldLabel htmlFor="placeholder">Placeholder</FieldLabel>
                 <Input
@@ -97,15 +111,21 @@ export function FieldProperties({ field, open, onOpenChange, onSave }: FieldProp
             )}
 
             {/* Min/Max/Step for number and slider */}
-            {["number", "slider"].includes(field.type) && (
+            {['number', 'slider'].includes(field.type) && (
               <div className="grid grid-cols-3 gap-4">
                 <Field>
                   <FieldLabel htmlFor="min">Min</FieldLabel>
                   <Input
                     id="min"
                     type="number"
-                    value={min ?? ""}
-                    onChange={(e) => setMin(e.target.value === "" ? undefined : Number(e.target.value))}
+                    value={min ?? ''}
+                    onChange={(e) =>
+                      setMin(
+                        e.target.value === ''
+                          ? undefined
+                          : Number(e.target.value),
+                      )
+                    }
                   />
                 </Field>
                 <Field>
@@ -113,8 +133,14 @@ export function FieldProperties({ field, open, onOpenChange, onSave }: FieldProp
                   <Input
                     id="max"
                     type="number"
-                    value={max ?? ""}
-                    onChange={(e) => setMax(e.target.value === "" ? undefined : Number(e.target.value))}
+                    value={max ?? ''}
+                    onChange={(e) =>
+                      setMax(
+                        e.target.value === ''
+                          ? undefined
+                          : Number(e.target.value),
+                      )
+                    }
                   />
                 </Field>
                 <Field>
@@ -122,17 +148,25 @@ export function FieldProperties({ field, open, onOpenChange, onSave }: FieldProp
                   <Input
                     id="step"
                     type="number"
-                    value={step ?? ""}
-                    onChange={(e) => setStep(e.target.value === "" ? undefined : Number(e.target.value))}
+                    value={step ?? ''}
+                    onChange={(e) =>
+                      setStep(
+                        e.target.value === ''
+                          ? undefined
+                          : Number(e.target.value),
+                      )
+                    }
                   />
                 </Field>
               </div>
             )}
 
             {/* Options for dropdown, radio, checkbox group */}
-            {["dropdown", "radio", "checkbox"].includes(field.type) && (
+            {['dropdown', 'radio', 'checkbox'].includes(field.type) && (
               <Field>
-                <FieldLabel htmlFor="options">Options (one per line)</FieldLabel>
+                <FieldLabel htmlFor="options">
+                  Options (one per line)
+                </FieldLabel>
                 <textarea
                   id="options"
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -150,10 +184,7 @@ export function FieldProperties({ field, open, onOpenChange, onSave }: FieldProp
                   Mark this field as mandatory.
                 </FieldDescription>
               </div>
-              <Switch
-                checked={required}
-                onCheckedChange={setRequired}
-              />
+              <Switch checked={required} onCheckedChange={setRequired} />
             </Field>
           </FieldGroup>
         </div>

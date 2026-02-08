@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { AlertCircle, Loader2 } from 'lucide-react'
+import type { CanvasField } from '@/components/fields/field-preview'
+import type {CreateFieldInput, UpdateFormInput} from '@/api/forms';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -8,15 +11,13 @@ import {
 } from '@/components/ui/resizable'
 import { FieldSidebar } from '@/components/field-sidebar'
 import { EditorCanvas } from '@/components/editor-canvas'
-import type { CanvasField } from '@/components/fields/field-preview'
 import { FieldProperties } from '@/components/field-properties'
 import {
-  formsApi,
+  
+  
   fieldsApi,
-  type UpdateFormInput,
-  type CreateFieldInput,
+  formsApi
 } from '@/api/forms'
-import { Loader2, AlertCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/_layout/editor/$formId')({
   component: EditFormComponent,
@@ -60,7 +61,7 @@ function EditFormComponent() {
     queryFn: () => fieldsApi.getById(formId),
   })
 
-  const [fields, setFields] = useState<CanvasField[]>([])
+  const [fields, setFields] = useState<Array<CanvasField>>([])
   const [editingField, setEditingField] = useState<CanvasField | null>(null)
   const [formTitle, setFormTitle] = useState('')
   const [formDescription, setFormDescription] = useState('')

@@ -1,13 +1,13 @@
-"use client"
-import * as React from "react"
+'use client'
+import * as React from 'react'
 import {
-  LayoutDashboard,
-  FileEdit,
   BarChart3,
-  Settings,
+  FileEdit,
+  LayoutDashboard,
   Plus,
-} from "lucide-react"
-import { NavMain } from "@/components/nav-main"
+  Settings,
+} from 'lucide-react'
+import { NavMain } from '@/components/nav-main'
 import {
   Sidebar,
   SidebarContent,
@@ -17,48 +17,48 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar'
 
 const data = {
   navMain: [
     {
-      title: "Dashboard",
-      url: "/",
+      title: 'Dashboard',
+      url: '/',
       icon: LayoutDashboard,
       isActive: true,
     },
     {
-      title: "Editor",
-      url: "/editor",
+      title: 'Editor',
+      url: '/editor',
       icon: FileEdit,
     },
     {
-      title: "Analytics",
-      url: "/analytics",
+      title: 'Analytics',
+      url: '/analytics',
       icon: BarChart3,
       items: [
         {
-          title: "Overview",
-          url: "/analytics/overview",
+          title: 'Overview',
+          url: '/analytics/overview',
         },
         {
-          title: "Responses",
-          url: "/analytics/responses",
+          title: 'Responses',
+          url: '/analytics/responses',
         },
         {
-          title: "Reports",
-          url: "/analytics/reports",
+          title: 'Reports',
+          url: '/analytics/reports',
         },
       ],
     },
     {
-      title: "Settings",
-      url: "/settings",
+      title: 'Settings',
+      url: '/settings',
       icon: Settings,
       items: [
         {
-          title: "General",
-          url: "/settings/general",
+          title: 'General',
+          url: '/settings/general',
         },
       ],
     },
@@ -87,9 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        {/* Future user profile*/}
-      </SidebarFooter>
+      <SidebarFooter>{/* Future user profile*/}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

@@ -21,7 +21,7 @@ export interface FormField {
   min?: number
   max?: number
   step?: number
-  options?: string[]
+  options?: Array<string>
 }
 
 export interface Form {
@@ -33,7 +33,7 @@ export interface Form {
   isPublished: boolean
   createdAt: string
   updatedAt?: string
-  fields?: FormField[]
+  fields?: Array<FormField>
 }
 
 export interface ApiResponse<T> {
@@ -81,13 +81,13 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 export const formsApi = {
   // GET /forms - Fetch all forms
-  getAll: async (): Promise<Form[]> => {
+  getAll: async (): Promise<Array<Form>> => {
     const response = await fetch(`${API_URL}/forms`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
-    return handleResponse<Form[]>(response)
+    return handleResponse<Array<Form>>(response)
   },
 
   // GET /forms/:id - Fetch a single form by ID
@@ -137,10 +137,10 @@ export const formsApi = {
     }
   },
 
-  // PATCH /forms/:id/publish - Publish a form
+  // POST /forms/publish/:formId - Publish a form
   publish: async (id: string): Promise<Form> => {
-    const response = await fetch(`${API_URL}/forms/${id}/publish`, {
-      method: 'PATCH',
+    const response = await fetch(`${API_URL}/forms/publish/${id}`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
@@ -160,13 +160,13 @@ export const formsApi = {
 
 export const fieldsApi = {
   // GET /fields/:formId - Fetch all fields for a form
-  getById: async (formId: string): Promise<FormField[]> => {
+  getById: async (formId: string): Promise<Array<FormField>> => {
     const response = await fetch(`${API_URL}/fields/${formId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
-    return handleResponse<FormField[]>(response)
+    return handleResponse<Array<FormField>>(response)
   },
 
   // POST /fields/:formId - Create a new field

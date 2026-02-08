@@ -1,13 +1,13 @@
+'use client'
 
-"use client"
-
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight  } from 'lucide-react'
+import type {LucideIcon} from 'lucide-react';
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from '@/components/ui/collapsible'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,21 +17,21 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar'
 
 export function NavMain({
   items,
 }: {
-  items: {
+  items: Array<{
     title: string
     url: string
     icon?: LucideIcon
     isActive?: boolean
-    items?: {
+    items?: Array<{
       title: string
       url: string
-    }[]
-  }[]
+    }>
+  }>
 }) {
   return (
     <SidebarGroup>
@@ -77,7 +77,7 @@ export function NavMain({
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          )
+          ),
         )}
       </SidebarMenu>
     </SidebarGroup>

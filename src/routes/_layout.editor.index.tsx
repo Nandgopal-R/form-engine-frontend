@@ -1,17 +1,18 @@
-import { useState } from "react"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useMutation } from "@tanstack/react-query"
-import { FileText, Loader2, Sparkles } from "lucide-react"
+import { useState } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMutation } from '@tanstack/react-query'
+import { FileText, Loader2, Sparkles } from 'lucide-react'
+import type { CanvasField } from '@/components/fields/field-preview'
+import type {CreateFormInput} from '@/api/forms';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { FieldSidebar } from "@/components/field-sidebar"
-import { EditorCanvas } from "@/components/editor-canvas"
-import type { CanvasField } from "@/components/fields/field-preview"
-import { FieldProperties } from "@/components/field-properties"
-import { formsApi, type CreateFormInput } from "@/api/forms"
+} from '@/components/ui/resizable'
+import { FieldSidebar } from '@/components/field-sidebar'
+import { EditorCanvas } from '@/components/editor-canvas'
+import { FieldProperties } from '@/components/field-properties'
+import {  formsApi } from '@/api/forms'
 import {
   Dialog,
   DialogContent,
@@ -19,55 +20,55 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
-export const Route = createFileRoute("/_layout/editor/")({
+export const Route = createFileRoute('/_layout/editor/')({
   component: EditorComponent,
 })
 
 const FIELD_LABELS: Record<string, string> = {
-  text: "Text Input",
-  number: "Number Input",
-  checkbox: "Checkbox",
-  radio: "Radio Group",
-  dropdown: "Dropdown",
-  date: "Date Picker",
-  textarea: "Long Text",
-  email: "Email",
-  url: "Website",
-  phone: "Phone Number",
-  time: "Time Picker",
-  toggle: "Toggle Switch",
-  slider: "Scale",
-  rating: "Rating",
-  file: "File Upload",
-  section: "Section Header",
+  text: 'Text Input',
+  number: 'Number Input',
+  checkbox: 'Checkbox',
+  radio: 'Radio Group',
+  dropdown: 'Dropdown',
+  date: 'Date Picker',
+  textarea: 'Long Text',
+  email: 'Email',
+  url: 'Website',
+  phone: 'Phone Number',
+  time: 'Time Picker',
+  toggle: 'Toggle Switch',
+  slider: 'Scale',
+  rating: 'Rating',
+  file: 'File Upload',
+  section: 'Section Header',
 }
 
 function EditorComponent() {
   const navigate = useNavigate()
-  const [fields, setFields] = useState<CanvasField[]>([])
+  const [fields, setFields] = useState<Array<CanvasField>>([])
   const [editingField, setEditingField] = useState<CanvasField | null>(null)
-  const [formTitle, setFormTitle] = useState("")
-  const [formDescription, setFormDescription] = useState("")
+  const [formTitle, setFormTitle] = useState('')
+  const [formDescription, setFormDescription] = useState('')
 
   const [dialogOpen, setDialogOpen] = useState(true)
-  const [newFormTitle, setNewFormTitle] = useState("")
-  const [newFormDescription, setNewFormDescription] = useState("")
+  const [newFormTitle, setNewFormTitle] = useState('')
+  const [newFormDescription, setNewFormDescription] = useState('')
 
   // useMutation for creating a new form from dialog
   const createFormMutation = useMutation({
     mutationFn: (data: CreateFormInput) => formsApi.create(data),
     onSuccess: (data) => {
-      console.log("Form created successfully!", data)
+      console.log('Form created successfully!', data)
       setDialogOpen(false)
-      navigate({ to: "/editor/$formId", params: { formId: data.id } })
+      navigate({ to: '/editor/$formId', params: { formId: data.id } })
     },
     onError: (error) => {
-      console.error("Failed to create form:", error.message)
+      console.error('Failed to create form:', error.message)
     },
   })
 
@@ -75,11 +76,11 @@ function EditorComponent() {
   const saveFormMutation = useMutation({
     mutationFn: (data: CreateFormInput) => formsApi.create(data),
     onSuccess: (data) => {
-      console.log("Form saved successfully!", data)
-      navigate({ to: "/editor/$formId", params: { formId: data.id } })
+      console.log('Form saved successfully!', data)
+      navigate({ to: '/editor/$formId', params: { formId: data.id } })
     },
     onError: (error) => {
-      console.error("Failed to save form:", error.message)
+      console.error('Failed to save form:', error.message)
     },
   })
 
@@ -101,7 +102,9 @@ function EditorComponent() {
   }
 
   const handleSaveField = (updatedField: CanvasField) => {
-    setFields((prev) => prev.map((f) => (f.id === updatedField.id ? updatedField : f)))
+    setFields((prev) =>
+      prev.map((f) => (f.id === updatedField.id ? updatedField : f)),
+    )
     setEditingField(null)
   }
 
@@ -124,10 +127,7 @@ function EditorComponent() {
     <>
       {/* Create New Form Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent
-          className="sm:max-w-md"
-          showCloseButton={false}
-        >
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
           <DialogHeader className="space-y-3">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/20 to-purple-500/20">
               <Sparkles className="h-6 w-6 text-violet-500" />
@@ -160,7 +160,10 @@ function EditorComponent() {
 
             <div className="space-y-2">
               <Label htmlFor="form-description" className="text-sm font-medium">
-                Description <span className="text-muted-foreground text-xs">(optional)</span>
+                Description{' '}
+                <span className="text-muted-foreground text-xs">
+                  (optional)
+                </span>
               </Label>
               <textarea
                 id="form-description"
@@ -175,7 +178,7 @@ function EditorComponent() {
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              onClick={() => navigate({ to: "/" })}
+              onClick={() => navigate({ to: '/' })}
               disabled={createFormMutation.isPending}
             >
               Cancel
@@ -191,7 +194,7 @@ function EditorComponent() {
                   Creating...
                 </>
               ) : (
-                "Create Form"
+                'Create Form'
               )}
             </Button>
           </DialogFooter>
@@ -226,5 +229,3 @@ function EditorComponent() {
     </>
   )
 }
-
-

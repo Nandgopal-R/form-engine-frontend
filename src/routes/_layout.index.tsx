@@ -5,6 +5,9 @@ import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { formsApi } from '@/api/forms'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/_layout/')({
   component: DashboardPage,
@@ -106,10 +109,15 @@ function DashboardPage() {
             Manage and track your active form responses
           </p>
         </div>
-        <Button variant="outline" className="border-gray-300">
-          <Filter className="mr-2 h-4 w-4" />
-          Filter
-        </Button>
+        <div className="relative w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search forms..."
+            className="pl-9 bg-white"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {isLoading ? (

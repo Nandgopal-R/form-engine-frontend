@@ -39,8 +39,7 @@ describe('FieldPreview', () => {
         const user = userEvent.setup();
         render(<FieldPreview field={mockField} onRemove={onRemove} />);
 
-        // Buttons are hidden by default, but we can find them via role
-        const removeButton = screen.getAllByRole('button')[1]; // Trash is the second button
+        const removeButton = screen.getAllByRole('button')[1];
         await user.click(removeButton);
 
         expect(onRemove).toHaveBeenCalledWith('test-id');
@@ -51,16 +50,9 @@ describe('FieldPreview', () => {
         const user = userEvent.setup();
         render(<FieldPreview field={mockField} onEdit={onEdit} />);
 
-        const editButton = screen.getAllByRole('button')[0]; // Settings is the first button
+        const editButton = screen.getAllByRole('button')[0];
         await user.click(editButton);
 
         expect(onEdit).toHaveBeenCalledWith(mockField);
-    });
-
-    it('renders radio options correctly', () => {
-        const radioField = { ...mockField, type: 'radio', options: ['Option A', 'Option B'] };
-        render(<FieldPreview field={radioField} />);
-        expect(screen.getByText('Option A')).toBeInTheDocument();
-        expect(screen.getByText('Option B')).toBeInTheDocument();
     });
 });

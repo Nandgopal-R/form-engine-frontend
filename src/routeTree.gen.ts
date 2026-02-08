@@ -17,6 +17,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
 import { Route as FormFormIdRouteImport } from './routes/form.$formId'
 import { Route as LayoutEditorRouteImport } from './routes/_layout.editor'
 import { Route as LayoutAnalyticsRouteImport } from './routes/_layout.analytics'
+import { Route as LayoutEditorFormIdRouteImport } from './routes/_layout.editor.$formId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -57,6 +58,11 @@ const LayoutAnalyticsRoute = LayoutAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutEditorFormIdRoute = LayoutEditorFormIdRouteImport.update({
+  id: '/$formId',
+  path: '/$formId',
+  getParentRoute: () => LayoutEditorRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -64,17 +70,19 @@ export interface FileRoutesByFullPath {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/analytics': typeof LayoutAnalyticsRoute
-  '/editor': typeof LayoutEditorRoute
+  '/editor': typeof LayoutEditorRouteWithChildren
   '/form/$formId': typeof FormFormIdRoute
+  '/editor/$formId': typeof LayoutEditorFormIdRoute
 }
 export interface FileRoutesByTo {
   '/email-verified': typeof EmailVerifiedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/analytics': typeof LayoutAnalyticsRoute
-  '/editor': typeof LayoutEditorRoute
+  '/editor': typeof LayoutEditorRouteWithChildren
   '/form/$formId': typeof FormFormIdRoute
   '/': typeof LayoutIndexRoute
+  '/editor/$formId': typeof LayoutEditorFormIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,9 +91,10 @@ export interface FileRoutesById {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/_layout/analytics': typeof LayoutAnalyticsRoute
-  '/_layout/editor': typeof LayoutEditorRoute
+  '/_layout/editor': typeof LayoutEditorRouteWithChildren
   '/form/$formId': typeof FormFormIdRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/editor/$formId': typeof LayoutEditorFormIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/editor'
     | '/form/$formId'
+    | '/editor/$formId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/email-verified'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/editor'
     | '/form/$formId'
     | '/'
+    | '/editor/$formId'
   id:
     | '__root__'
     | '/_layout'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/_layout/editor'
     | '/form/$formId'
     | '/_layout/'
+    | '/_layout/editor/$formId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,18 +196,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAnalyticsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/editor/$formId': {
+      id: '/_layout/editor/$formId'
+      path: '/$formId'
+      fullPath: '/editor/$formId'
+      preLoaderRoute: typeof LayoutEditorFormIdRouteImport
+      parentRoute: typeof LayoutEditorRoute
+    }
   }
 }
 
+interface LayoutEditorRouteChildren {
+  LayoutEditorFormIdRoute: typeof LayoutEditorFormIdRoute
+}
+
+const LayoutEditorRouteChildren: LayoutEditorRouteChildren = {
+  LayoutEditorFormIdRoute: LayoutEditorFormIdRoute,
+}
+
+const LayoutEditorRouteWithChildren = LayoutEditorRoute._addFileChildren(
+  LayoutEditorRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutAnalyticsRoute: typeof LayoutAnalyticsRoute
-  LayoutEditorRoute: typeof LayoutEditorRoute
+  LayoutEditorRoute: typeof LayoutEditorRouteWithChildren
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAnalyticsRoute: LayoutAnalyticsRoute,
-  LayoutEditorRoute: LayoutEditorRoute,
+  LayoutEditorRoute: LayoutEditorRouteWithChildren,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 

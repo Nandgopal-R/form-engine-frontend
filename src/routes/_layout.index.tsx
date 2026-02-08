@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Filter } from 'lucide-react'
@@ -44,6 +44,8 @@ const sampleForms = [
 ]
 
 function DashboardPage() {
+  const navigate = useNavigate()
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -64,8 +66,8 @@ function DashboardPage() {
           <FormCard
             key={form.id}
             {...form}
-            onEdit={() => console.log('Edit:', form.id)}
-            onView={() => console.log('View:', form.id)}
+            onEdit={() => navigate({ to: '/editor/$formId', params: { formId: form.id } })}
+            onView={() => navigate({ to: '/form/$formId', params: { formId: form.id } })}
             onAnalytics={() => console.log('Analytics:', form.id)}
           />
         ))}
@@ -73,3 +75,4 @@ function DashboardPage() {
     </div>
   )
 }
+

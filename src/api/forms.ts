@@ -34,6 +34,7 @@ export interface Form {
   createdAt: string
   updatedAt?: string
   fields?: Array<FormField>
+  responseCount?: number
 }
 
 export interface ApiResponse<T> {
@@ -90,9 +91,19 @@ export const formsApi = {
     return handleResponse<Array<Form>>(response)
   },
 
-  // GET /forms/:id - Fetch a single form by ID
+  // GET /forms/:id - Fetch a single form by ID (owner only)
   getById: async (id: string): Promise<Form> => {
     const response = await fetch(`${API_URL}/forms/${id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+    return handleResponse<Form>(response)
+  },
+
+  // GET /forms/public/:id - Fetch a published form (any user)
+  getPublicById: async (id: string): Promise<Form> => {
+    const response = await fetch(`${API_URL}/forms/public/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

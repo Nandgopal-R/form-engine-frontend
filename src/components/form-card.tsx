@@ -5,6 +5,7 @@ import {
   Edit,
   Eye,
   EyeOff,
+  Link2,
   MoreVertical,
   Send,
   Trash2,
@@ -33,6 +34,7 @@ interface FormCardProps {
   onDelete?: () => void
   onPublish?: () => void
   onUnpublish?: () => void
+  onShare?: () => void
   isPublishing?: boolean
   isUnpublishing?: boolean
 }
@@ -48,6 +50,7 @@ export function FormCard({
   onDelete,
   onPublish,
   onUnpublish,
+  onShare,
   isPublishing = false,
   isUnpublishing = false,
 }: FormCardProps) {
@@ -116,6 +119,11 @@ export function FormCard({
               <DropdownMenuItem onClick={onView}>
                 <Eye className="mr-2 h-4 w-4" /> View Form
               </DropdownMenuItem>
+              {isPublished && (
+                <DropdownMenuItem onClick={onShare}>
+                  <Link2 className="mr-2 h-4 w-4" /> Share Link
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={onDelete}

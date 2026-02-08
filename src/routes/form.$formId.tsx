@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
-import { AlertCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { AlertCircle, ArrowRight, CheckCircle, Loader2, Save } from 'lucide-react'
 import type { FormField } from '@/api/forms'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -9,34 +9,28 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { fieldsApi, formsApi } from '@/api/forms'
+import { responsesApi } from '@/api/responses'
+import { useToast } from '@/hooks/use-toast'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
 })
 
-async function submitResponse(
-  formId: string,
-  responses: Record<string, unknown>,
-): Promise<{ success: boolean }> {
-  console.log('Submitted responses for form', formId, responses)
-  // TODO: Implement actual API call for submission
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-  return { success: true }
-}
-
 function FormResponsePage() {
   const { formId } = Route.useParams()
+  const { toast } = useToast()
   const [responses, setResponses] = useState<Record<string, unknown>>({})
   const [submitted, setSubmitted] = useState(false)
+  const [draftResponseId, setDraftResponseId] = useState<string | null>(null)
 
-  // Fetch form data
+  // Fetch form data using public endpoint (doesn't require ownership)
   const {
     data: form,
     isLoading: isFormLoading,
     error: formError,
   } = useQuery({
-    queryKey: ['form', formId],
-    queryFn: () => formsApi.getById(formId),
+    queryKey: ['public-form', formId],
+    queryFn: () => formsApi.getPublicById(formId),
   })
 
   // Fetch form fields separately
@@ -44,6 +38,23 @@ function FormResponsePage() {
     queryKey: ['form-fields', formId],
     queryFn: () => fieldsApi.getById(formId),
   })
+
+  // Check if user has an existing draft response
+  const { data: existingResponses } = useQuery({
+    queryKey: ['user-response', formId],
+    queryFn: () => responsesApi.getUserResponse(formId),
+    retry: false,
+  })
+
+  // Load existing draft if available
+  useEffect(() => {
+    if (existingResponses && existingResponses.length > 0) {
+      const lastResponse = existingResponses[0]
+      setDraftResponseId(lastResponse.id)
+      // Use rawAnswers (field IDs) if available, otherwise fall back to answers
+      setResponses(lastResponse.rawAnswers || lastResponse.answers)
+    }
+  }, [existingResponses])
 
   // Debug: Log the form data when received
   console.log('Form data received:', form)
@@ -53,11 +64,64 @@ function FormResponsePage() {
   // Combine form with fields for rendering
   const formWithFields = form ? { ...form, fields: formFields || [] } : null
 
-  // Submit mutation
+  // Submit mutation (final submission)
   const submitMutation = useMutation({
-    mutationFn: (data: Record<string, unknown>) => submitResponse(formId, data),
+    mutationFn: async (data: Record<string, unknown>) => {
+      if (draftResponseId) {
+        // Update existing draft to submitted
+        await responsesApi.resume(draftResponseId, { answers: data, isSubmitted: true })
+        return { id: draftResponseId }
+      } else {
+        // Create new submission
+        return responsesApi.submit(formId, { answers: data, isSubmitted: true })
+      }
+    },
     onSuccess: () => {
       setSubmitted(true)
+      toast({
+        title: 'Response submitted!',
+        description: 'Thank you for your submission.',
+        variant: 'success',
+      })
+    },
+    onError: (error) => {
+      toast({
+        title: 'Failed to submit response',
+        description: error.message,
+        variant: 'destructive',
+      })
+    },
+  })
+
+  // Save as draft mutation
+  const saveDraftMutation = useMutation({
+    mutationFn: async (data: Record<string, unknown>) => {
+      if (draftResponseId) {
+        // Update existing draft
+        await responsesApi.resume(draftResponseId, { answers: data, isSubmitted: false })
+        return { id: draftResponseId }
+      } else {
+        // Create new draft
+        return responsesApi.submit(formId, { answers: data, isSubmitted: false })
+      }
+    },
+    onSuccess: (data) => {
+      // If it's a new draft, save the response ID
+      if (data.id && !draftResponseId) {
+        setDraftResponseId(data.id)
+      }
+      toast({
+        title: 'Draft saved!',
+        description: 'Your progress has been saved.',
+        variant: 'success',
+      })
+    },
+    onError: (error) => {
+      toast({
+        title: 'Failed to save draft',
+        description: error.message,
+        variant: 'destructive',
+      })
     },
   })
 
@@ -68,6 +132,10 @@ function FormResponsePage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     submitMutation.mutate(responses)
+  }
+
+  const handleSaveDraft = () => {
+    saveDraftMutation.mutate(responses)
   }
 
   // Loading state
@@ -92,27 +160,8 @@ function FormResponsePage() {
           </div>
           <h2 className="text-xl font-bold mb-2">Form Not Found</h2>
           <p className="text-muted-foreground">
-            {formError instanceof Error
-              ? formError.message
-              : "The form you're looking for doesn't exist or has been removed."}
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  // Error state
-  if (formError || !formWithFields) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/20">
-        <div className="bg-card rounded-xl p-10 max-w-md text-center shadow-sm border">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-destructive/10 mb-5">
-            <AlertCircle className="h-7 w-7 text-destructive" />
-          </div>
-          <h2 className="text-xl font-bold mb-2">Form Not Found</h2>
-          <p className="text-muted-foreground">
-            {formError instanceof Error
-              ? formError.message
+            {formError
+              ? String(formError)
               : "The form you're looking for doesn't exist or has been removed."}
           </p>
         </div>
@@ -177,7 +226,26 @@ function FormResponsePage() {
           )}
 
           {formWithFields.fields && formWithFields.fields.length > 0 && (
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col sm:flex-row gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={handleSaveDraft}
+                disabled={saveDraftMutation.isPending}
+              >
+                {saveDraftMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save as Draft
+                  </>
+                )}
+              </Button>
               <Button
                 type="submit"
                 className="w-full sm:w-auto"

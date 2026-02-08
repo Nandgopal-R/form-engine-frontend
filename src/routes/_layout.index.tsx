@@ -10,6 +10,7 @@ import { formsApi } from '@/api/forms'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { useState } from 'react'
+import { useToast } from '@/hooks/use-toast'
 
 export const Route = createFileRoute('/_layout/')({
   component: DashboardPage,
@@ -117,6 +118,25 @@ function DashboardPage() {
     unpublishFormMutation.mutate(id)
   }
 
+  const { toast } = useToast()
+
+  const handleShare = (id: string, name: string) => {
+    const shareUrl = `${window.location.origin}/form/${id}`
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      toast({
+        title: 'Link copied!',
+        description: `Share link for "${name}" has been copied to clipboard.`,
+        variant: 'success',
+      })
+    }).catch(() => {
+      toast({
+        title: 'Failed to copy',
+        description: 'Could not copy link to clipboard.',
+        variant: 'destructive',
+      })
+    })
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -166,7 +186,7 @@ function DashboardPage() {
               name={form.title || form.name || 'Untitled Form'}
               lastUpdated={new Date(form.createdAt)}
               isPublished={form.isPublished}
-              responseCount={0}
+              responseCount={form.responseCount ?? 0}
               isPublishing={publishFormMutation.isPending}
               isUnpublishing={unpublishFormMutation.isPending}
               onEdit={() =>
@@ -190,6 +210,12 @@ function DashboardPage() {
               }
               onUnpublish={() =>
                 handleUnpublish(
+                  form.id,
+                  form.title || form.name || 'Untitled Form',
+                )
+              }
+              onShare={() =>
+                handleShare(
                   form.id,
                   form.title || form.name || 'Untitled Form',
                 )

@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_layout/analytics')({
-  component: RouteComponent,
+  component: AnalyticsLayout,
 })
 
-function RouteComponent() {
-  return <div>Hello "/_layout/analytics"!</div>
+function AnalyticsLayout() {
+  return <Outlet />
 }
+

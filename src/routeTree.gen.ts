@@ -15,9 +15,12 @@ import { Route as EmailVerifiedRouteImport } from './routes/email-verified'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
 import { Route as FormFormIdRouteImport } from './routes/form.$formId'
+import { Route as LayoutMyResponsesRouteImport } from './routes/_layout.my-responses'
 import { Route as LayoutAnalyticsRouteImport } from './routes/_layout.analytics'
 import { Route as LayoutEditorIndexRouteImport } from './routes/_layout.editor.index'
+import { Route as LayoutAnalyticsIndexRouteImport } from './routes/_layout.analytics.index'
 import { Route as LayoutEditorFormIdRouteImport } from './routes/_layout.editor.$formId'
+import { Route as LayoutAnalyticsResponsesRouteImport } from './routes/_layout.analytics.responses'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -48,6 +51,11 @@ const FormFormIdRoute = FormFormIdRouteImport.update({
   path: '/form/$formId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LayoutMyResponsesRoute = LayoutMyResponsesRouteImport.update({
+  id: '/my-responses',
+  path: '/my-responses',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAnalyticsRoute = LayoutAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -58,30 +66,46 @@ const LayoutEditorIndexRoute = LayoutEditorIndexRouteImport.update({
   path: '/editor/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutAnalyticsIndexRoute = LayoutAnalyticsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutAnalyticsRoute,
+} as any)
 const LayoutEditorFormIdRoute = LayoutEditorFormIdRouteImport.update({
   id: '/editor/$formId',
   path: '/editor/$formId',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutAnalyticsResponsesRoute =
+  LayoutAnalyticsResponsesRouteImport.update({
+    id: '/responses',
+    path: '/responses',
+    getParentRoute: () => LayoutAnalyticsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/email-verified': typeof EmailVerifiedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/analytics': typeof LayoutAnalyticsRoute
+  '/analytics': typeof LayoutAnalyticsRouteWithChildren
+  '/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
+  '/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/editor/$formId': typeof LayoutEditorFormIdRoute
+  '/analytics/': typeof LayoutAnalyticsIndexRoute
   '/editor/': typeof LayoutEditorIndexRoute
 }
 export interface FileRoutesByTo {
   '/email-verified': typeof EmailVerifiedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/analytics': typeof LayoutAnalyticsRoute
+  '/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
   '/': typeof LayoutIndexRoute
+  '/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/editor/$formId': typeof LayoutEditorFormIdRoute
+  '/analytics': typeof LayoutAnalyticsIndexRoute
   '/editor': typeof LayoutEditorIndexRoute
 }
 export interface FileRoutesById {
@@ -90,10 +114,13 @@ export interface FileRoutesById {
   '/email-verified': typeof EmailVerifiedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/_layout/analytics': typeof LayoutAnalyticsRoute
+  '/_layout/analytics': typeof LayoutAnalyticsRouteWithChildren
+  '/_layout/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/_layout/editor/$formId': typeof LayoutEditorFormIdRoute
+  '/_layout/analytics/': typeof LayoutAnalyticsIndexRoute
   '/_layout/editor/': typeof LayoutEditorIndexRoute
 }
 export interface FileRouteTypes {
@@ -104,18 +131,23 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/analytics'
+    | '/my-responses'
     | '/form/$formId'
+    | '/analytics/responses'
     | '/editor/$formId'
+    | '/analytics/'
     | '/editor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/email-verified'
     | '/signin'
     | '/signup'
-    | '/analytics'
+    | '/my-responses'
     | '/form/$formId'
     | '/'
+    | '/analytics/responses'
     | '/editor/$formId'
+    | '/analytics'
     | '/editor'
   id:
     | '__root__'
@@ -124,9 +156,12 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/_layout/analytics'
+    | '/_layout/my-responses'
     | '/form/$formId'
     | '/_layout/'
+    | '/_layout/analytics/responses'
     | '/_layout/editor/$formId'
+    | '/_layout/analytics/'
     | '/_layout/editor/'
   fileRoutesById: FileRoutesById
 }
@@ -182,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormFormIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout/my-responses': {
+      id: '/_layout/my-responses'
+      path: '/my-responses'
+      fullPath: '/my-responses'
+      preLoaderRoute: typeof LayoutMyResponsesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/analytics': {
       id: '/_layout/analytics'
       path: '/analytics'
@@ -196,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutEditorIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/analytics/': {
+      id: '/_layout/analytics/'
+      path: '/'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof LayoutAnalyticsIndexRouteImport
+      parentRoute: typeof LayoutAnalyticsRoute
+    }
     '/_layout/editor/$formId': {
       id: '/_layout/editor/$formId'
       path: '/editor/$formId'
@@ -203,18 +252,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutEditorFormIdRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/analytics/responses': {
+      id: '/_layout/analytics/responses'
+      path: '/responses'
+      fullPath: '/analytics/responses'
+      preLoaderRoute: typeof LayoutAnalyticsResponsesRouteImport
+      parentRoute: typeof LayoutAnalyticsRoute
+    }
   }
 }
 
+interface LayoutAnalyticsRouteChildren {
+  LayoutAnalyticsResponsesRoute: typeof LayoutAnalyticsResponsesRoute
+  LayoutAnalyticsIndexRoute: typeof LayoutAnalyticsIndexRoute
+}
+
+const LayoutAnalyticsRouteChildren: LayoutAnalyticsRouteChildren = {
+  LayoutAnalyticsResponsesRoute: LayoutAnalyticsResponsesRoute,
+  LayoutAnalyticsIndexRoute: LayoutAnalyticsIndexRoute,
+}
+
+const LayoutAnalyticsRouteWithChildren = LayoutAnalyticsRoute._addFileChildren(
+  LayoutAnalyticsRouteChildren,
+)
+
 interface LayoutRouteChildren {
-  LayoutAnalyticsRoute: typeof LayoutAnalyticsRoute
+  LayoutAnalyticsRoute: typeof LayoutAnalyticsRouteWithChildren
+  LayoutMyResponsesRoute: typeof LayoutMyResponsesRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutEditorFormIdRoute: typeof LayoutEditorFormIdRoute
   LayoutEditorIndexRoute: typeof LayoutEditorIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutAnalyticsRoute: LayoutAnalyticsRoute,
+  LayoutAnalyticsRoute: LayoutAnalyticsRouteWithChildren,
+  LayoutMyResponsesRoute: LayoutMyResponsesRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutEditorFormIdRoute: LayoutEditorFormIdRoute,
   LayoutEditorIndexRoute: LayoutEditorIndexRoute,

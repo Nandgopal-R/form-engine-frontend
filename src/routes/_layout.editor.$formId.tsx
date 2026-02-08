@@ -152,12 +152,12 @@ function EditFormComponent() {
   const handleFieldClick = (fieldId: string) => {
     console.log('Field clicked:', fieldId)
 
-    // Use format matching backend API expectations
+    // Create field data based on the actual field type clicked
     const fieldData: CreateFieldInput = {
-      fieldName: 'email',
-      label: 'What is your email?',
-      fieldValueType: 'string',
-      fieldType: 'Input',
+      fieldName: fieldId, // Use the field type as field name
+      label: `What is your ${fieldId}?`, // Dynamic label based on field type
+      fieldValueType: 'string', // Default to string for all fields
+      fieldType: fieldId.charAt(0).toUpperCase() + fieldId.slice(1), // Capitalize first letter: text -> Text
       // prevFieldId is handled as null in backend
     }
 

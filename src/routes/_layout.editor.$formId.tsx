@@ -138,6 +138,17 @@ function EditFormComponent() {
     },
   })
 
+  // useMutation for deleting fields
+  const deleteField = useMutation({
+    mutationFn: (fieldId: string) => fieldsApi.delete(fieldId),
+    onSuccess: () => {
+      console.log('Field deleted successfully!')
+    },
+    onError: (error) => {
+      console.error('Failed to delete field:', error.message)
+    },
+  })
+
   const handleFieldClick = (fieldId: string) => {
     console.log('Field clicked:', fieldId)
 
@@ -155,7 +166,14 @@ function EditFormComponent() {
   }
 
   const handleRemoveField = (id: string) => {
-    setFields((prev) => prev.filter((f) => f.id !== id))
+    console.log('Deleting field:', id)
+    // Call the delete API first
+    deleteField.mutate(id, {
+      onSuccess: () => {
+        // Only remove from local state after successful API deletion
+        setFields((prev) => prev.filter((f) => f.id !== id))
+      },
+    })
   }
 
   const handleEditField = (field: CanvasField) => {

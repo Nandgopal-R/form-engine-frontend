@@ -12,7 +12,6 @@ export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
 })
 
-// Types for the form and fields, aligned with CanvasField
 interface FormField {
   id: string
   type: string
@@ -32,7 +31,6 @@ interface Form {
   fields: FormField[]
 }
 
-// Mock API functions - replace with actual API calls
 async function fetchForm(formId: string): Promise<Form> {
   await new Promise(resolve => setTimeout(resolve, 500))
 

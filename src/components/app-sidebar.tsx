@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 const data = {
   navMain: [
@@ -70,6 +71,10 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate()
+  const { data: session } = authClient.useSession()
+  
+  const userName = session?.user?.name || session?.user?.email || 'User'
+  const userInitial = userName.charAt(0).toUpperCase()
 
   const handleLogout = async () => {
     await authClient.signOut()
@@ -99,8 +104,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          {/* User Info */}
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+            <SidebarMenuButton size="lg" className="cursor-default hover:bg-transparent">
+              <Avatar className="size-8">
+                <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
+                  {userInitial}
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{userName}</span>
+                {session?.user?.email && session?.user?.name && (
+                  <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
+                )}
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          {/* Logout Button */}
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
               <LogOut className="size-4" />
               <span>Logout</span>
             </SidebarMenuButton>

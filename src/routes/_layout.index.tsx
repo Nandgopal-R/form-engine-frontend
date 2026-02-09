@@ -1,14 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { authClient } from '@/lib/auth-client'
-import { useEffect } from 'react'
-import { AlertCircle, FileX, Filter } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { AlertCircle, FileX, Plus, Search } from 'lucide-react'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { formsApi } from '@/api/forms'
 import { Input } from '@/components/ui/input'
-import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -110,15 +109,28 @@ function DashboardPage() {
     }
   }
 
-  const handlePublish = (id: string, name: string) => {
+  const handlePublish = (id: string, _name: string) => {
     publishFormMutation.mutate(id)
   }
 
-  const handleUnpublish = (id: string, name: string) => {
+  const handleUnpublish = (id: string, _name: string) => {
     unpublishFormMutation.mutate(id)
   }
 
   const { toast } = useToast()
+
+  // Filter forms based on search query
+  const filteredForms = useMemo(() => {
+    if (!forms) return []
+    if (!searchQuery.trim()) return forms
+    
+    const query = searchQuery.toLowerCase().trim()
+    return forms.filter((form) => {
+      const title = (form.title || form.name || '').toLowerCase()
+      const description = (form.description || '').toLowerCase()
+      return title.includes(query) || description.includes(query)
+    })
+  }, [forms, searchQuery])
 
   const handleShare = (id: string, name: string) => {
     const shareUrl = `${window.location.origin}/form/${id}`
@@ -146,14 +158,20 @@ function DashboardPage() {
             Manage and track your active form responses
           </p>
         </div>
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search forms..."
-            className="pl-9 bg-white"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="flex items-center gap-3">
+          <div className="relative w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search forms..."
+              className="pl-9 bg-white"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Button onClick={() => navigate({ to: '/editor' })} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Form
+          </Button>
         </div>
       </div>
 
@@ -178,51 +196,65 @@ function DashboardPage() {
           </p>
         </div>
       ) : forms && forms.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {forms.map((form) => (
-            <FormCard
-              key={form.id}
-              id={form.id}
-              name={form.title || form.name || 'Untitled Form'}
-              lastUpdated={new Date(form.createdAt)}
-              isPublished={form.isPublished}
-              responseCount={form.responseCount ?? 0}
-              isPublishing={publishFormMutation.isPending}
-              isUnpublishing={unpublishFormMutation.isPending}
-              onEdit={() =>
-                navigate({ to: '/editor/$formId', params: { formId: form.id } })
-              }
-              onView={() =>
-                navigate({ to: '/form/$formId', params: { formId: form.id } })
-              }
-              onAnalytics={() => console.log('Analytics:', form.id)}
-              onDelete={() =>
-                handleDelete(
-                  form.id,
-                  form.title || form.name || 'Untitled Form',
-                )
-              }
-              onPublish={() =>
-                handlePublish(
-                  form.id,
-                  form.title || form.name || 'Untitled Form',
-                )
-              }
-              onUnpublish={() =>
-                handleUnpublish(
-                  form.id,
-                  form.title || form.name || 'Untitled Form',
-                )
-              }
-              onShare={() =>
-                handleShare(
-                  form.id,
-                  form.title || form.name || 'Untitled Form',
-                )
-              }
-            />
-          ))}
-        </div>
+        filteredForms.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredForms.map((form) => (
+              <FormCard
+                key={form.id}
+                id={form.id}
+                name={form.title || form.name || 'Untitled Form'}
+                lastUpdated={new Date(form.createdAt)}
+                isPublished={form.isPublished}
+                responseCount={form.responseCount ?? 0}
+                isPublishing={publishFormMutation.isPending}
+                isUnpublishing={unpublishFormMutation.isPending}
+                onEdit={() =>
+                  navigate({ to: '/editor/$formId', params: { formId: form.id } })
+                }
+                onView={() =>
+                  navigate({ to: '/form/$formId', params: { formId: form.id } })
+                }
+                onAnalytics={() => console.log('Analytics:', form.id)}
+                onDelete={() =>
+                  handleDelete(
+                    form.id,
+                    form.title || form.name || 'Untitled Form',
+                  )
+                }
+                onPublish={() =>
+                  handlePublish(
+                    form.id,
+                    form.title || form.name || 'Untitled Form',
+                  )
+                }
+                onUnpublish={() =>
+                  handleUnpublish(
+                    form.id,
+                    form.title || form.name || 'Untitled Form',
+                  )
+                }
+                onShare={() =>
+                  handleShare(
+                    form.id,
+                    form.title || form.name || 'Untitled Form',
+                  )
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <Search className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-1">
+              No matching forms
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              No forms found matching "{searchQuery}". Try a different search term.
+            </p>
+          </div>
+        )
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="rounded-full bg-muted p-4 mb-4">

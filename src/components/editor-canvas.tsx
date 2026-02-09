@@ -142,34 +142,53 @@ export function EditorCanvas({
 
         <TabsContent
           value="preview"
-          className="flex-1 overflow-y-auto p-6 mt-0 bg-muted/20"
+          className="flex-1 overflow-y-auto p-6 mt-0 bg-gradient-to-b from-muted/30 to-muted/10"
         >
-          <div className="max-w-2xl mx-auto p-8 bg-card rounded-xl shadow-sm border space-y-6">
-            <div className="space-y-2 mb-8">
+          <div className="max-w-2xl mx-auto">
+            {/* Form Header */}
+            <div className="bg-primary rounded-t-lg p-6 text-primary-foreground">
               <h1 className="text-2xl font-bold tracking-tight">
                 {formTitle || 'Untitled Form'}
               </h1>
               {formDescription && (
-                <p className="text-muted-foreground">{formDescription}</p>
+                <p className="text-primary-foreground/80 mt-2">{formDescription}</p>
               )}
             </div>
-            {fields.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
-                No fields to preview yet.
-              </p>
-            ) : (
-              fields.map((field) => (
-                <Field key={field.id} className="space-y-2">
-                  <FieldLabel className="flex items-center gap-1">
-                    {field.label}
-                    {field.required && (
-                      <span className="text-destructive">*</span>
-                    )}
-                  </FieldLabel>
-                  <FieldContent>{renderFieldInput(field)}</FieldContent>
-                </Field>
-              ))
-            )}
+            
+            {/* Form Body */}
+            <div className="bg-background border-x border-b border-border rounded-b-lg p-8">
+              {fields.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No fields to preview yet.
+                </p>
+              ) : (
+                <>
+                  <div className="divide-y divide-border">
+                    {fields.map((field) => (
+                      <Field key={field.id} className="space-y-2 py-5 first:pt-0 last:pb-0">
+                        <FieldLabel className="flex items-center gap-1 text-sm font-medium">
+                          {field.label}
+                          {field.required && (
+                            <span className="text-destructive">*</span>
+                          )}
+                        </FieldLabel>
+                        <FieldContent>{renderFieldInput(field)}</FieldContent>
+                      </Field>
+                    ))}
+                  </div>
+                  
+                  {/* Preview Submit Button */}
+                  <div className="pt-6 border-t border-border mt-8">
+                    <Button disabled className="w-full sm:w-auto">
+                      Submit
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      This is a preview. Submissions are disabled.
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </TabsContent>
       </Tabs>

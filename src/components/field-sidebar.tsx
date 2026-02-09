@@ -1,4 +1,4 @@
-import { TabsLine } from "./editor-sidebar-tabs"
+import { TabsLine } from './editor-sidebar-tabs'
 
 interface FieldSidebarProps {
   onFieldClick?: (fieldId: string) => void

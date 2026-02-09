@@ -183,7 +183,7 @@ function Signup() {
         <form onSubmit={handleSignup} className="flex flex-col gap-4">
           <div>
             <label className="mb-1.5 block text-[13px] font-medium text-foreground">
-              Full Name
+              Name
             </label>
             <input
               placeholder="Monkey D Luffy"
@@ -232,6 +232,7 @@ function Signup() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -241,13 +242,12 @@ function Signup() {
               <div className="mt-2">
                 <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all duration-300 ${
-                      strength === 'Strong'
-                        ? 'w-full bg-green-500'
-                        : strength === 'Medium'
-                          ? 'w-2/3 bg-yellow-400'
-                          : 'w-1/3 bg-destructive'
-                    }`}
+                    className={`h-full rounded-full transition-all duration-300 ${strength === 'Strong'
+                      ? 'w-full bg-green-500'
+                      : strength === 'Medium'
+                        ? 'w-2/3 bg-yellow-400'
+                        : 'w-1/3 bg-destructive'
+                      }`}
                   />
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">

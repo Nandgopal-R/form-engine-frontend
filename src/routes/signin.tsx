@@ -45,9 +45,9 @@ function Login() {
           setLoading(true)
         },
         onSuccess: () => {
-          window.location.href = '/'
+          window.location.href = '/dashboard'
         },
-        onError: (ctx) => {
+        onError: (ctx: { error: Error }) => {
           setLoading(false)
           setError(ctx.error.message)
         },

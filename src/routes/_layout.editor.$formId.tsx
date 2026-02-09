@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
-import type { CreateFieldInput, UpdateFormInput } from '@/api/forms'
+import type { CreateFieldInput, UpdateFormInput, UpdateFieldInput } from '@/api/forms'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -13,6 +13,7 @@ import { FieldSidebar } from '@/components/field-sidebar'
 import { EditorCanvas } from '@/components/editor-canvas'
 import { FieldProperties } from '@/components/field-properties'
 import { fieldsApi, formsApi } from '@/api/forms'
+import { useToast } from '@/hooks/use-toast'
 
 export const Route = createFileRoute('/_layout/editor/$formId')({
   component: EditFormComponent,
@@ -39,6 +40,8 @@ const FIELD_LABELS: Record<string, string> = {
 
 function EditFormComponent() {
   const { formId } = Route.useParams()
+  const navigate = useNavigate()
+  const { toast } = useToast()
 
   // Fetch existing form data
   const {
@@ -91,6 +94,7 @@ function EditFormComponent() {
             max: f.validation?.max ?? (f as any).max,
             step: f.step,
             options: f.options,
+            validation: f.validation,
           }
         }),
       )
@@ -100,11 +104,23 @@ function EditFormComponent() {
   // useMutation for updating the form
   const updateForm = useMutation({
     mutationFn: (data: UpdateFormInput) => formsApi.update(formId, data),
-    onSuccess: (data) => {
-      console.log('Form updated successfully!', data)
+    onSuccess: () => {
+      toast({
+        title: 'Form saved successfully!',
+        description: 'Redirecting to dashboard...',
+        variant: 'success',
+      })
+      // Navigate to dashboard after a short delay to show toast
+      setTimeout(() => {
+        navigate({ to: '/' })
+      }, 1500)
     },
     onError: (error) => {
-      console.error('Failed to update form:', error.message)
+      toast({
+        title: 'Failed to save form',
+        description: error.message,
+        variant: 'destructive',
+      })
     },
   })
 
@@ -114,9 +130,12 @@ function EditFormComponent() {
     onSuccess: (newField) => {
       console.log('Field created successfully!', newField)
       // Convert the new field to CanvasField format and add to state
+      let type = newField.fieldType.toLowerCase()
+      if (type === 'input') type = 'text'
+      
       const canvasField: CanvasField = {
         id: newField.id,
-        type: newField.fieldType.toLowerCase(),
+        type: type,
         label: newField.label,
         placeholder: newField.placeholder,
         required: newField.validation?.required ?? false,
@@ -124,6 +143,7 @@ function EditFormComponent() {
         max: newField.validation?.max,
         step: newField.step,
         options: newField.options,
+        validation: newField.validation,
       }
       setFields((prev) => [...prev, canvasField])
     },
@@ -145,14 +165,58 @@ function EditFormComponent() {
     },
   })
 
+  // useMutation for updating fields
+  const updateFieldMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateFieldInput }) => 
+      fieldsApi.update(id, data),
+    onSuccess: () => {
+      console.log('Field updated successfully!')
+      toast({
+        title: 'Field saved',
+        description: 'Validation rules have been updated.',
+        variant: 'success',
+      })
+    },
+    onError: (error) => {
+      console.error('Failed to update field:', error.message)
+      toast({
+        title: 'Failed to save field',
+        description: error.message,
+        variant: 'destructive',
+      })
+    },
+  })
+
   const handleFieldClick = (fieldId: string) => {
     console.log('Field clicked:', fieldId)
 
+    // Map field ID to appropriate field type and value type
+    const fieldTypeMap: Record<string, { fieldType: string; fieldValueType: string }> = {
+      text: { fieldType: 'text', fieldValueType: 'string' },
+      number: { fieldType: 'number', fieldValueType: 'number' },
+      checkbox: { fieldType: 'checkbox', fieldValueType: 'boolean' },
+      radio: { fieldType: 'radio', fieldValueType: 'string' },
+      dropdown: { fieldType: 'dropdown', fieldValueType: 'string' },
+      date: { fieldType: 'date', fieldValueType: 'string' },
+      textarea: { fieldType: 'textarea', fieldValueType: 'string' },
+      email: { fieldType: 'email', fieldValueType: 'string' },
+      url: { fieldType: 'url', fieldValueType: 'string' },
+      phone: { fieldType: 'phone', fieldValueType: 'string' },
+      time: { fieldType: 'time', fieldValueType: 'string' },
+      toggle: { fieldType: 'toggle', fieldValueType: 'boolean' },
+      slider: { fieldType: 'slider', fieldValueType: 'number' },
+      rating: { fieldType: 'rating', fieldValueType: 'number' },
+      file: { fieldType: 'file', fieldValueType: 'string' },
+      section: { fieldType: 'section', fieldValueType: 'string' },
+    }
+
+    const typeInfo = fieldTypeMap[fieldId] || { fieldType: 'text', fieldValueType: 'string' }
+
     const fieldData: CreateFieldInput = {
-      fieldName: 'email',
-      label: 'What is your email?',
-      fieldValueType: 'string',
-      fieldType: 'Input',
+      fieldName: fieldId,
+      label: FIELD_LABELS[fieldId] || fieldId,
+      fieldValueType: typeInfo.fieldValueType,
+      fieldType: typeInfo.fieldType,
       // prevFieldId is handled as null in backend
     }
 
@@ -176,10 +240,31 @@ function EditFormComponent() {
   }
 
   const handleSaveField = (updatedField: CanvasField) => {
+    // Update local state immediately
     setFields((prev) =>
       prev.map((f) => (f.id === updatedField.id ? updatedField : f)),
     )
     setEditingField(null)
+    
+    // Send update to backend
+    const updateData: UpdateFieldInput = {
+      label: updatedField.label,
+      placeholder: updatedField.placeholder,
+      min: updatedField.min,
+      max: updatedField.max,
+      step: updatedField.step,
+      options: updatedField.options,
+      validation: {
+        required: updatedField.required,
+        min: updatedField.validation?.min,
+        max: updatedField.validation?.max,
+        minLength: updatedField.validation?.minLength,
+        maxLength: updatedField.validation?.maxLength,
+        pattern: updatedField.validation?.pattern,
+      },
+    }
+    
+    updateFieldMutation.mutate({ id: updatedField.id, data: updateData })
   }
 
   const handleSaveForm = () => {

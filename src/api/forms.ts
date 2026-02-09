@@ -34,6 +34,7 @@ export interface Form {
   createdAt: string
   updatedAt?: string
   fields?: Array<FormField>
+  responseCount?: number
 }
 
 export interface ApiResponse<T> {
@@ -59,6 +60,19 @@ export interface CreateFieldInput {
   fieldType: string
   prevFieldId?: string | null
   validation?: FieldValidation
+}
+
+export interface UpdateFieldInput {
+  fieldName?: string
+  label?: string
+  fieldValueType?: string
+  fieldType?: string
+  validation?: FieldValidation
+  placeholder?: string
+  min?: number
+  max?: number
+  step?: number
+  options?: Array<string>
 }
 
 const API_URL = 'http://localhost:8000'
@@ -90,9 +104,19 @@ export const formsApi = {
     return handleResponse<Array<Form>>(response)
   },
 
-  // GET /forms/:id - Fetch a single form by ID
+  // GET /forms/:id - Fetch a single form by ID (owner only)
   getById: async (id: string): Promise<Form> => {
     const response = await fetch(`${API_URL}/forms/${id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+    return handleResponse<Form>(response)
+  },
+
+  // GET /forms/public/:id - Fetch a published form (any user)
+  getPublicById: async (id: string): Promise<Form> => {
+    const response = await fetch(`${API_URL}/forms/public/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -111,10 +135,10 @@ export const formsApi = {
     return handleResponse<Form>(response)
   },
 
-  // PATCH /forms/:id - Update an existing form
+  // PUT /forms/:id - Update an existing form
   update: async (id: string, data: UpdateFormInput): Promise<Form> => {
     const response = await fetch(`${API_URL}/forms/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
       credentials: 'include',
@@ -196,5 +220,16 @@ export const fieldsApi = {
         errorData.message || `Request failed: ${response.statusText}`,
       )
     }
+  },
+
+  // PUT /fields/:id - Update a field
+  update: async (id: string, data: UpdateFieldInput): Promise<FormField> => {
+    const response = await fetch(`${API_URL}/fields/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    })
+    return handleResponse<FormField>(response)
   },
 }

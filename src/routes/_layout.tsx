@@ -3,6 +3,7 @@ import {
   Outlet,
   createFileRoute,
   useMatches,
+  useNavigate,
 } from '@tanstack/react-router'
 import {
   SidebarInset,
@@ -11,6 +12,8 @@ import {
 } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
+import { authClient } from '@/lib/auth-client'
+import { useEffect } from 'react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,7 +29,22 @@ export const Route = createFileRoute('/_layout')({
 
 function LayoutComponent() {
   const matches = useMatches()
+  const navigate = useNavigate()
   const currentPath = matches[matches.length - 1]?.pathname || '/'
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const session = await authClient.getSession()
+        if (!session.data) {
+          navigate({ to: '/signin' })
+        }
+      } catch (error) {
+        navigate({ to: '/signin' })
+      }
+    }
+    checkAuth()
+  }, [navigate])
 
   const getBreadcrumbs = () => {
     if (currentPath === '/') {

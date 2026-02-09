@@ -80,8 +80,9 @@ function Login() {
             </label>
             <input
               type="email"
-              placeholder="m@example.com"
+              placeholder="name@example.com"
               value={email}
+              autoComplete="email"
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-[10px] border border-input bg-background p-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:outline-none transition-all"
             />
@@ -96,6 +97,7 @@ function Login() {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={password}
+                autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-[10px] border border-input bg-background p-3 pr-11 text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:outline-none transition-all"
               />

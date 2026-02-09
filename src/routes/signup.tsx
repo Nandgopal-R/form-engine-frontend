@@ -186,7 +186,7 @@ function Signup() {
               Name
             </label>
             <input
-              placeholder="John Doe"
+              placeholder="Monkey D Luffy"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded-[10px] border border-input bg-background p-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:outline-none transition-all"

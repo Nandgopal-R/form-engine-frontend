@@ -28,7 +28,7 @@ const data = {
   navMain: [
     {
       title: 'Dashboard',
-      url: '/',
+      url: '/dashboard',
       icon: LayoutDashboard,
       isActive: true,
     },
@@ -87,7 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link to="/">
+              <Link to="/dashboard">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <Plus className="size-4" />
                 </div>

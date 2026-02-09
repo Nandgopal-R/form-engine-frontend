@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 
-export const Route = createFileRoute('/_layout/')({
+export const Route = createFileRoute('/_layout/dashboard')({
   component: DashboardPage,
 })
 

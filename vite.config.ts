@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { URL, fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
@@ -9,7 +10,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    devtools({ eventBusConfig: { port: 42070 } }), // Use 42070 to avoid port conflict (42069 in use)
+    devtools({ eventBusConfig: { port: 42071 } }), // Use 42071 to avoid port conflict
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
@@ -21,5 +22,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
   },
 })

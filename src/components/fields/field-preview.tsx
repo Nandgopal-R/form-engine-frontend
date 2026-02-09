@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/slider"
 
 export interface CanvasField {
     id: string
-    type: string
+    type: stringbun
     label: string
     placeholder?: string
     required?: boolean

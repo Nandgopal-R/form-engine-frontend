@@ -105,7 +105,7 @@ function Signup() {
             setLoading(false)
             setSuccess(true)
           },
-          onError: (ctx) => {
+          onError: (ctx: { error: Error }) => {
             console.error('Signup Error:', ctx)
             setLoading(false)
             setError(ctx.error.message || 'Unknown error occurred')
@@ -313,7 +313,7 @@ function Signup() {
             try {
               await authClient.signIn.social({
                 provider: 'google',
-                callbackURL: 'http://localhost:3000',
+                callbackURL: 'http://localhost:3000/dashboard',
               })
             } catch (err: any) {
               console.error('Google Signin Error:', err)

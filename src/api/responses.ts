@@ -56,12 +56,26 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export const responsesApi = {
-  // POST /responses/:formId - Submit a new response (or save as draft)
+  // POST /responses/submit/:formId - Submit a new response (or save as draft)
   submit: async (
     formId: string,
     data: SubmitResponseInput,
   ): Promise<FormResponse> => {
-    const response = await fetch(`${API_URL}/responses/${formId}`, {
+    const response = await fetch(`${API_URL}/responses/submit/${formId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    })
+    return handleResponse<FormResponse>(response)
+  },
+
+  // POST /responses/draft/:formId - Save as draft
+  saveDraft: async (
+    formId: string,
+    data: SubmitResponseInput,
+  ): Promise<FormResponse> => {
+    const response = await fetch(`${API_URL}/responses/draft/${formId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

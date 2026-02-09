@@ -225,6 +225,7 @@ export function ValidationRuleBuilder({
                           size="icon"
                           className="h-6 w-6 shrink-0"
                           onClick={() => removeRule(index)}
+                          aria-label="Remove rule"
                         >
                           <X className="h-3.5 w-3.5" />
                         </Button>

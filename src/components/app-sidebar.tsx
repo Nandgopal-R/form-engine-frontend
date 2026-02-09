@@ -72,7 +72,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
-  
+
   const userName = session?.user?.name || session?.user?.email || 'User'
   const userInitial = userName.charAt(0).toUpperCase()
 

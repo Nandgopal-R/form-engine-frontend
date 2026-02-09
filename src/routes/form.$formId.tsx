@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { AlertCircle, ArrowRight, CheckCircle, Loader2, Save } from 'lucide-react'
+import { AlertCircle, ArrowRight, CheckCircle, FileText, Home, Loader2, Save } from 'lucide-react'
 import type { FormField } from '@/api/forms'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -105,7 +105,7 @@ function FormResponsePage() {
         return { id: draftResponseId }
       } else {
         // Create new draft
-        return responsesApi.submit(formId, { answers: data, isSubmitted: false })
+        return responsesApi.saveDraft(formId, { answers: data, isSubmitted: false })
       }
     },
     onSuccess: (data) => {
@@ -238,9 +238,23 @@ function FormResponsePage() {
             <CheckCircle className="h-7 w-7 text-green-500" />
           </div>
           <h2 className="text-xl font-bold mb-2">Response Submitted!</h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-6">
             Thank you for your response. Your submission has been recorded.
           </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild variant="outline">
+              <Link to="/dashboard">
+                <Home className="h-4 w-4 mr-2" />
+                Go to Dashboard
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link to="/analytics/responses">
+                <FileText className="h-4 w-4 mr-2" />
+                My Responses
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     )

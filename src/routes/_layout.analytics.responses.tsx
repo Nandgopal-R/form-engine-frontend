@@ -27,6 +27,34 @@ function ResponsesPage() {
     queryFn: () => formsApi.getAll(),
   })
 
+  // Aggregate responses for all forms - must be called before any returns
+  const {
+    data: allResponses,
+    isLoading: isAllResponsesLoading,
+  } = useQuery<
+    Array<{ formId: string; formTitle?: string; responses: Array<FormResponseForOwner> }>
+  >({
+    queryKey: ['analytics', 'all-responses', forms?.map((f) => f.id) ?? []],
+    queryFn: async () => {
+      if (!forms || forms.length === 0) return []
+      const grouped = await Promise.all(
+        forms.map(async (f) => {
+          try {
+            const res = await responsesApi.getForForm(f.id)
+            return { formId: f.id, formTitle: f.title, responses: res }
+          } catch (e) {
+            // If fetching responses for a particular form fails, return empty
+            console.error('Failed to fetch responses for form', f.id, e)
+            return { formId: f.id, formTitle: f.title, responses: [] }
+          }
+        }),
+      )
+      return grouped
+    },
+    enabled: !!forms && forms.length > 0,
+    retry: false,
+  })
+
   // Loading state
   if (isFormsLoading) {
     return (
@@ -74,35 +102,6 @@ function ResponsesPage() {
       </div>
     )
   }
-
-  // Aggregate responses for all forms (only after forms are loaded)
-  const {
-    data: allResponses,
-    isLoading: isAllResponsesLoading,
-  } = useQuery<
-    Array<{ formId: string; formTitle?: string; responses: Array<FormResponseForOwner> }>
-  >({
-    queryKey: ['analytics', 'all-responses', forms?.map((f) => f.id) ?? []],
-    queryFn: async () => {
-      if (!forms || forms.length === 0) return []
-      const grouped = await Promise.all(
-        forms.map(async (f) => {
-          try {
-            const res = await responsesApi.getForForm(f.id)
-            return { formId: f.id, formTitle: f.title, responses: res }
-          } catch (e) {
-            // If fetching responses for a particular form fails, return empty
-            console.error('Failed to fetch responses for form', f.id, e)
-            return { formId: f.id, formTitle: f.title, responses: [] }
-          }
-        }),
-      )
-      return grouped
-    },
-    enabled: !!forms,
-    // don't retry globally - handle per-form failures above
-    retry: false,
-  })
 
   return (
     <div className="h-full overflow-y-auto p-6">

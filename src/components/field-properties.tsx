@@ -1,3 +1,18 @@
+/**
+ * Field Properties Component
+ *
+ * This component provides a dialog interface for editing form field properties.
+ * It allows users to configure:
+ * - Basic properties (label, placeholder, required status)
+ * - Numeric constraints (min, max, step values)
+ * - Options for select/radio/checkbox fields
+ * - Advanced validation rules using the ValidationRuleBuilder
+ *
+ * The component maintains local state for all properties and only saves
+ * when the user explicitly clicks the save button. This provides a safe
+ * editing experience where changes can be cancelled.
+ */
+
 import { useEffect, useState } from 'react'
 import type { CanvasField } from './fields/field-preview'
 import { Button } from '@/components/ui/button'
@@ -28,10 +43,10 @@ import { ValidationRuleBuilder } from './validation-rule-builder'
 import type { ValidationConfig } from '@/lib/validation-engine'
 
 interface FieldPropertiesProps {
-  field: CanvasField | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSave: (field: CanvasField) => void
+  field: CanvasField | null // Field being edited (null when no field selected)
+  open: boolean // Whether dialog is open
+  onOpenChange: (open: boolean) => void // Callback for dialog open/close
+  onSave: (field: CanvasField) => void // Callback for saving field changes
 }
 
 export function FieldProperties({
@@ -40,6 +55,8 @@ export function FieldProperties({
   onOpenChange,
   onSave,
 }: FieldPropertiesProps) {
+  // Local state for all field properties
+  // Using separate state variables allows granular control and validation
   const [label, setLabel] = useState('')
   const [required, setRequired] = useState(false)
   const [placeholder, setPlaceholder] = useState('')
@@ -50,9 +67,12 @@ export function FieldProperties({
   const [validation, setValidation] = useState<ValidationConfig>({})
   const [showValidation, setShowValidation] = useState(false)
 
+  // Initialize local state when field prop changes
+  // This syncs dialog with the field being edited
   useEffect(() => {
     if (field) {
       setLabel(field.label || '')
+      // Set required status from multiple possible sources for backward compatibility
       setRequired(field.required || field.validation?.required || false)
       setPlaceholder(field.placeholder || '')
       setMin(field.min)
@@ -66,13 +86,13 @@ export function FieldProperties({
 
   const handleSave = () => {
     if (!field) return
-    
+
     // Merge validation with required flag and min/max from number fields
     const finalValidation: ValidationConfig = {
       ...validation,
       required,
     }
-    
+
     // For number/slider fields, include min/max in validation
     if (['number', 'slider'].includes(field.type)) {
       if (min !== undefined && !isNaN(min)) {
@@ -82,7 +102,7 @@ export function FieldProperties({
         finalValidation.max = Number(max)
       }
     }
-    
+
     onSave({
       ...field,
       label,
@@ -218,17 +238,28 @@ export function FieldProperties({
             </Field>
 
             {/* Validation Rules - Show for text-like fields */}
-            {['text', 'textarea', 'email', 'url', 'phone', 'number', 'input'].includes(
-              field.type.toLowerCase(),
-            ) && (
-              <Collapsible open={showValidation} onOpenChange={setShowValidation}>
+            {[
+              'text',
+              'textarea',
+              'email',
+              'url',
+              'phone',
+              'number',
+              'input',
+            ].includes(field.type.toLowerCase()) && (
+              <Collapsible
+                open={showValidation}
+                onOpenChange={setShowValidation}
+              >
                 <CollapsibleTrigger asChild>
                   <Button
                     variant="ghost"
                     className="w-full justify-between p-4 h-auto border rounded-lg"
                   >
                     <div className="flex flex-col items-start">
-                      <span className="text-base font-medium">Validation Rules</span>
+                      <span className="text-base font-medium">
+                        Validation Rules
+                      </span>
                       <span className="text-xs text-muted-foreground font-normal">
                         Add pattern and format validation
                       </span>

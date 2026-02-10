@@ -150,6 +150,17 @@ describe('FieldPreview', () => {
         expect(container.querySelector('.h-px.w-full.bg-border')).toBeInTheDocument();
     });
 
+    it('renders CGPA input', () => {
+        const field = { ...mockField, type: 'cgpa' };
+        const { container } = render(<FieldPreview field={field} />);
+        const input = container.querySelector('input[type="number"]');
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveAttribute('min', '0');
+        expect(input).toHaveAttribute('max', '10');
+        expect(input).toHaveAttribute('step', '0.01');
+        expect(screen.getByPlaceholderText('Enter CGPA (0.00-10.00)')).toBeInTheDocument();
+    });
+
     it('calls onRemove when the trash icon is clicked', async () => {
         const onRemove = vi.fn();
         const user = userEvent.setup();

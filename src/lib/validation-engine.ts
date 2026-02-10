@@ -4,7 +4,21 @@
  */
 
 export interface ValidationRule {
-  type: 'required' | 'minLength' | 'maxLength' | 'min' | 'max' | 'pattern' | 'email' | 'url' | 'phone' | 'alphanumeric' | 'lettersOnly' | 'numbersOnly' | 'noSpaces' | 'custom'
+  type:
+    | 'required'
+    | 'minLength'
+    | 'maxLength'
+    | 'min'
+    | 'max'
+    | 'pattern'
+    | 'email'
+    | 'url'
+    | 'phone'
+    | 'alphanumeric'
+    | 'lettersOnly'
+    | 'numbersOnly'
+    | 'noSpaces'
+    | 'custom'
   value?: string | number | boolean
   message?: string
 }
@@ -16,7 +30,7 @@ export interface ValidationConfig {
   min?: number
   max?: number
   pattern?: string
-  customRules?: ValidationRule[]
+  customRules?: Array<ValidationRule>
 }
 
 export interface ValidationError {
@@ -27,17 +41,21 @@ export interface ValidationError {
 
 export interface ValidationResult {
   isValid: boolean
-  errors: ValidationError[]
+  errors: Array<ValidationError>
 }
 
 // Predefined patterns for common validations
-export const PREDEFINED_PATTERNS: Record<string, { pattern: string; description: string }> = {
+export const PREDEFINED_PATTERNS: Record<
+  string,
+  { pattern: string; description: string }
+> = {
   email: {
     pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
     description: 'Valid email address',
   },
   url: {
-    pattern: '^(https?:\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$',
+    pattern:
+      '^(https?:\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$',
     description: 'Valid URL',
   },
   phone: {
@@ -78,7 +96,8 @@ export const PREDEFINED_PATTERNS: Record<string, { pattern: string; description:
   },
   username: {
     pattern: '^[a-zA-Z][a-zA-Z0-9_]{2,19}$',
-    description: 'Username (3-20 chars, starts with letter, allows underscores)',
+    description:
+      'Username (3-20 chars, starts with letter, allows underscores)',
   },
   password: {
     pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@$!%*?&]{8,}$',
@@ -150,10 +169,12 @@ export interface RuleTemplate {
   description: string
   category: 'text' | 'number' | 'contact' | 'format' | 'security' | 'college'
   generatePattern?: () => string
-  generateValidation: (params?: Record<string, unknown>) => Partial<ValidationConfig>
+  generateValidation: (
+    params?: Record<string, unknown>,
+  ) => Partial<ValidationConfig>
 }
 
-export const RULE_TEMPLATES: RuleTemplate[] = [
+export const RULE_TEMPLATES: Array<RuleTemplate> = [
   // Text rules
   {
     id: 'minLength',
@@ -181,7 +202,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Allow only alphabetic characters and spaces',
     category: 'text',
     generatePattern: () => PREDEFINED_PATTERNS.lettersOnly.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.lettersOnly.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.lettersOnly.pattern,
+    }),
   },
   {
     id: 'alphanumeric',
@@ -189,7 +212,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Allow only letters and numbers (no special characters)',
     category: 'text',
     generatePattern: () => PREDEFINED_PATTERNS.alphanumeric.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.alphanumeric.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.alphanumeric.pattern,
+    }),
   },
   {
     id: 'noSpaces',
@@ -197,7 +222,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Prevent spaces in the input',
     category: 'text',
     generatePattern: () => PREDEFINED_PATTERNS.noSpaces.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.noSpaces.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.noSpaces.pattern,
+    }),
   },
 
   // Number rules
@@ -227,7 +254,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Allow only numeric characters',
     category: 'number',
     generatePattern: () => PREDEFINED_PATTERNS.numbersOnly.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.numbersOnly.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.numbersOnly.pattern,
+    }),
   },
 
   // Contact rules
@@ -253,7 +282,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate Indian mobile number (10 digits)',
     category: 'contact',
     generatePattern: () => PREDEFINED_PATTERNS.indianPhone.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.indianPhone.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.indianPhone.pattern,
+    }),
   },
   {
     id: 'url',
@@ -271,7 +302,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate Indian postal code (6 digits)',
     category: 'format',
     generatePattern: () => PREDEFINED_PATTERNS.postalCode.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.postalCode.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.postalCode.pattern,
+    }),
   },
   {
     id: 'usZipCode',
@@ -279,7 +312,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate US ZIP code',
     category: 'format',
     generatePattern: () => PREDEFINED_PATTERNS.usZipCode.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.usZipCode.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.usZipCode.pattern,
+    }),
   },
   {
     id: 'date',
@@ -295,7 +330,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate credit card number',
     category: 'format',
     generatePattern: () => PREDEFINED_PATTERNS.creditCard.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.creditCard.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.creditCard.pattern,
+    }),
   },
 
   // Security rules
@@ -305,7 +342,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate username format (3-20 chars)',
     category: 'security',
     generatePattern: () => PREDEFINED_PATTERNS.username.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.username.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.username.pattern,
+    }),
   },
   {
     id: 'password',
@@ -313,7 +352,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Require strong password (8+ chars, mixed case, number)',
     category: 'security',
     generatePattern: () => PREDEFINED_PATTERNS.password.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.password.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.password.pattern,
+    }),
   },
 
   // College rules
@@ -323,7 +364,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate roll number format (e.g., CB21CS001)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.rollNumber.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.rollNumber.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.rollNumber.pattern,
+    }),
   },
   {
     id: 'registrationNumber',
@@ -331,7 +374,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate registration number (10-15 digits)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.registrationNumber.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.registrationNumber.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.registrationNumber.pattern,
+    }),
   },
   {
     id: 'collegeEmail',
@@ -339,7 +384,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate college email (.edu, .ac.in)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.collegeEmail.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.collegeEmail.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.collegeEmail.pattern,
+    }),
   },
   {
     id: 'cgpa',
@@ -355,7 +402,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate percentage (0 to 100)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.percentage.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.percentage.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.percentage.pattern,
+    }),
   },
   {
     id: 'semester',
@@ -363,7 +412,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate semester number (1-8)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.semester.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.semester.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.semester.pattern,
+    }),
   },
   {
     id: 'batchYear',
@@ -371,7 +422,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate batch year (2000-2099)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.batchYear.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.batchYear.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.batchYear.pattern,
+    }),
   },
   {
     id: 'section',
@@ -379,7 +432,9 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate section (A-Z)',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.section.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.section.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.section.pattern,
+    }),
   },
   {
     id: 'department',
@@ -387,15 +442,22 @@ export const RULE_TEMPLATES: RuleTemplate[] = [
     description: 'Validate department name format',
     category: 'college',
     generatePattern: () => PREDEFINED_PATTERNS.department.pattern,
-    generateValidation: () => ({ pattern: PREDEFINED_PATTERNS.department.pattern }),
+    generateValidation: () => ({
+      pattern: PREDEFINED_PATTERNS.department.pattern,
+    }),
   },
 ]
 
 // Error messages
-const ERROR_MESSAGES: Record<string, (value?: unknown, label?: string) => string> = {
+const ERROR_MESSAGES: Record<
+  string,
+  (value?: unknown, label?: string) => string
+> = {
   required: (_, label) => `${label || 'This field'} is required`,
-  minLength: (value, label) => `${label || 'This field'} must be at least ${value} characters`,
-  maxLength: (value, label) => `${label || 'This field'} must be at most ${value} characters`,
+  minLength: (value, label) =>
+    `${label || 'This field'} must be at least ${value} characters`,
+  maxLength: (value, label) =>
+    `${label || 'This field'} must be at most ${value} characters`,
   min: (value, label) => `${label || 'Value'} must be at least ${value}`,
   max: (value, label) => `${label || 'Value'} must be at most ${value}`,
   pattern: (_, label) => `${label || 'This field'} has an invalid format`,
@@ -423,9 +485,9 @@ export function validateField(
   value: unknown,
   fieldId: string,
   fieldLabel: string,
-  config: ValidationConfig
-): ValidationError[] {
-  const errors: ValidationError[] = []
+  config: ValidationConfig,
+): Array<ValidationError> {
+  const errors: Array<ValidationError> = []
   const stringValue = value !== null && value !== undefined ? String(value) : ''
   const isEmpty = stringValue.trim() === ''
 
@@ -463,7 +525,10 @@ export function validateField(
   }
 
   // Numeric validations
-  if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)))) {
+  if (
+    typeof value === 'number' ||
+    (typeof value === 'string' && !isNaN(Number(value)))
+  ) {
     const numValue = Number(value)
 
     if (config.min !== undefined && numValue < config.min) {
@@ -493,13 +558,17 @@ export function validateField(
         errors.push({
           field: fieldId,
           fieldLabel,
-          message: description !== 'Custom pattern' 
-            ? `${fieldLabel || 'This field'} must be: ${description.toLowerCase()}`
-            : ERROR_MESSAGES.pattern(undefined, fieldLabel),
+          message:
+            description !== 'Custom pattern'
+              ? `${fieldLabel || 'This field'} must be: ${description.toLowerCase()}`
+              : ERROR_MESSAGES.pattern(undefined, fieldLabel),
         })
       }
     } catch (e) {
-      console.warn(`Invalid regex pattern for field ${fieldId}:`, config.pattern)
+      console.warn(
+        `Invalid regex pattern for field ${fieldId}:`,
+        config.pattern,
+      )
     }
   }
 
@@ -516,15 +585,20 @@ export function validateForm(
     label: string
     fieldType: string
     validation?: ValidationConfig
-  }>
+  }>,
 ): ValidationResult {
-  const errors: ValidationError[] = []
+  const errors: Array<ValidationError> = []
 
   for (const field of fields) {
     const value = responses[field.id]
     const config = field.validation || {}
-    
-    const fieldErrors = validateField(value, field.id, field.label || field.id, config)
+
+    const fieldErrors = validateField(
+      value,
+      field.id,
+      field.label || field.id,
+      config,
+    )
     errors.push(...fieldErrors)
   }
 
@@ -539,7 +613,7 @@ export function validateForm(
  */
 export function buildValidationConfig(
   selectedRules: Array<{ ruleId: string; params?: Record<string, unknown> }>,
-  required: boolean = false
+  required: boolean = false,
 ): ValidationConfig {
   const config: ValidationConfig = { required }
 
@@ -561,7 +635,7 @@ export function buildValidationConfig(
 export function combinePatterns(patterns: string[]): string {
   if (patterns.length === 0) return ''
   if (patterns.length === 1) return patterns[0]
-  
+
   // Use lookaheads to require all patterns to match
   const lookaheads = patterns.map((p) => `(?=.*${p})`).join('')
   return `^${lookaheads}.*$`
@@ -572,33 +646,42 @@ export function combinePatterns(patterns: string[]): string {
  */
 export function getRulesForFieldType(fieldType: string): RuleTemplate[] {
   const textTypes = ['text', 'textarea', 'Input', 'input']
-  const numberTypes = ['number', 'slider']
-  
+  const numberTypes = ['number', 'slider', 'cgpa']
+
   if (textTypes.includes(fieldType)) {
-    return RULE_TEMPLATES.filter((r) => 
-      r.category === 'text' || 
-      r.category === 'contact' || 
-      r.category === 'format' || 
-      r.category === 'security' ||
-      r.category === 'college'
+    return RULE_TEMPLATES.filter(
+      (r) =>
+        r.category === 'text' ||
+        r.category === 'contact' ||
+        r.category === 'format' ||
+        r.category === 'security' ||
+        r.category === 'college',
     )
   }
-  
+
   if (numberTypes.includes(fieldType)) {
-    return RULE_TEMPLATES.filter((r) => r.category === 'number' || r.category === 'college')
+    return RULE_TEMPLATES.filter(
+      (r) => r.category === 'number' || r.category === 'college',
+    )
   }
-  
+
   if (fieldType === 'email') {
-    return RULE_TEMPLATES.filter((r) => r.id === 'email' || r.id === 'collegeEmail' || r.category === 'text')
+    return RULE_TEMPLATES.filter(
+      (r) =>
+        r.id === 'email' || r.id === 'collegeEmail' || r.category === 'text',
+    )
   }
-  
+
   if (fieldType === 'phone') {
-    return RULE_TEMPLATES.filter((r) => r.id === 'phone' || r.id === 'indianPhone' || r.category === 'text')
+    return RULE_TEMPLATES.filter(
+      (r) =>
+        r.id === 'phone' || r.id === 'indianPhone' || r.category === 'text',
+    )
   }
-  
+
   if (fieldType === 'url' || fieldType === 'website') {
     return RULE_TEMPLATES.filter((r) => r.id === 'url' || r.category === 'text')
   }
-  
+
   return RULE_TEMPLATES.filter((r) => r.category === 'text')
 }

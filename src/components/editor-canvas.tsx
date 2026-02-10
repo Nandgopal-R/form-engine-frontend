@@ -1,3 +1,22 @@
+/**
+ * Editor Canvas Component
+ *
+ * This component provides the main editing interface for forms with two modes:
+ *
+ * Edit Mode:
+ * - Allows editing form title and description
+ * - Shows form fields with edit/remove controls
+ * - Real-time field property changes
+ *
+ * Preview Mode:
+ * - Shows how form will look to end users
+ * - Displays fields in a clean, finalized layout
+ * - Shows submit button (disabled) for completeness
+ *
+ * The canvas serves as the central hub where users can see their form
+ * structure and make changes to individual fields or form metadata.
+ */
+
 import { Save } from 'lucide-react'
 import { FieldPreview, renderFieldInput } from './fields/field-preview'
 import type { CanvasField } from './fields/field-preview'
@@ -7,17 +26,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 interface EditorCanvasProps {
-  fields: Array<CanvasField>
-  formTitle: string
-  formDescription: string
-  onTitleChange: (title: string) => void
-  onDescriptionChange: (description: string) => void
-  onRemoveField?: (id: string) => void
-  onEditField?: (field: CanvasField) => void
-  onSave?: () => void
-  onUpdateTitle?: () => void
-  isSaving?: boolean
-  showFormTitleInput?: boolean
+  fields: Array<CanvasField> // Current form fields
+  formTitle: string // Current form title
+  formDescription: string // Current form description
+  onTitleChange: (title: string) => void // Title change handler
+  onDescriptionChange: (description: string) => void // Description change handler
+  onRemoveField?: (id: string) => void // Field removal handler
+  onEditField?: (field: CanvasField) => void // Field editing handler
+  onSave?: () => void // Save handler
+  onUpdateTitle?: () => void // Title update handler (for dedicated title mode)
+  isSaving?: boolean // Loading state for save button
+  showFormTitleInput?: boolean // Whether to show dedicated title input
 }
 
 export function EditorCanvas({
@@ -36,6 +55,7 @@ export function EditorCanvas({
   return (
     <div className="h-full flex flex-col">
       <Tabs defaultValue="edit" className="flex-1 flex flex-col h-full">
+        {/* Header with save button and mode switcher */}
         <div className="flex justify-end items-center px-6 py-2 border-b bg-background gap-2">
           <Button
             size="sm"
@@ -52,14 +72,18 @@ export function EditorCanvas({
           </TabsList>
         </div>
 
+        {/* Edit Mode - Form building interface */}
         <TabsContent value="edit" className="flex-1 overflow-y-auto p-6 mt-0">
           <div className="max-w-2xl mx-auto space-y-6">
-            {/* Form Title & Description */}
+            {/* Form Title & Description Section */}
             <div className="space-y-4 pb-6 border-b">
               {showFormTitleInput ? (
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="form-title-input" className="block text-sm font-medium mb-2">
+                    <label
+                      htmlFor="form-title-input"
+                      className="block text-sm font-medium mb-2"
+                    >
                       Form Title <span className="text-destructive">*</span>
                     </label>
                     <Input
@@ -71,8 +95,14 @@ export function EditorCanvas({
                     />
                   </div>
                   <div>
-                    <label htmlFor="form-description-input" className="block text-sm font-medium mb-2">
-                      Description <span className="text-muted-foreground text-xs">(optional)</span>
+                    <label
+                      htmlFor="form-description-input"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Description{' '}
+                      <span className="text-muted-foreground text-xs">
+                        (optional)
+                      </span>
                     </label>
                     <textarea
                       id="form-description-input"
@@ -140,22 +170,25 @@ export function EditorCanvas({
           </div>
         </TabsContent>
 
+        {/* Preview Mode - Shows how form will look to users */}
         <TabsContent
           value="preview"
           className="flex-1 overflow-y-auto p-6 mt-0 bg-gradient-to-b from-muted/30 to-muted/10"
         >
           <div className="max-w-2xl mx-auto">
-            {/* Form Header */}
+            {/* Form Header - styled like a real form */}
             <div className="bg-primary rounded-t-lg p-6 text-primary-foreground">
               <h1 className="text-2xl font-bold tracking-tight">
                 {formTitle || 'Untitled Form'}
               </h1>
               {formDescription && (
-                <p className="text-primary-foreground/80 mt-2">{formDescription}</p>
+                <p className="text-primary-foreground/80 mt-2">
+                  {formDescription}
+                </p>
               )}
             </div>
-            
-            {/* Form Body */}
+
+            {/* Form Body with all fields */}
             <div className="bg-background border-x border-b border-border rounded-b-lg p-8">
               {fields.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">
@@ -165,7 +198,10 @@ export function EditorCanvas({
                 <>
                   <div className="divide-y divide-border">
                     {fields.map((field) => (
-                      <Field key={field.id} className="space-y-2 py-5 first:pt-0 last:pb-0">
+                      <Field
+                        key={field.id}
+                        className="space-y-2 py-5 first:pt-0 last:pb-0"
+                      >
                         <FieldLabel className="flex items-center gap-1 text-sm font-medium">
                           {field.label}
                           {field.required && (
@@ -176,8 +212,8 @@ export function EditorCanvas({
                       </Field>
                     ))}
                   </div>
-                  
-                  {/* Preview Submit Button */}
+
+                  {/* Preview Submit Button - always disabled for safety */}
                   <div className="pt-6 border-t border-border mt-8">
                     <Button disabled className="w-full sm:w-auto">
                       Submit

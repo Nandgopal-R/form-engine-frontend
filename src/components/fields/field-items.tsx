@@ -5,6 +5,7 @@ import {
   ChevronDown,
   CircleDot,
   Clock,
+  GraduationCap,
   Hash,
   Heading,
   Link,
@@ -35,6 +36,7 @@ const FIELDS = [
   { id: 'rating', label: 'Rating', icon: Star },
   { id: 'file', label: 'File Upload', icon: Upload },
   { id: 'section', label: 'Section Header', icon: Heading },
+  { id: 'cgpa', label: 'CGPA', icon: GraduationCap },
 ]
 
 interface FieldItemsProps {

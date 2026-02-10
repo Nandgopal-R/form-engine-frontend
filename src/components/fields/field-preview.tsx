@@ -109,11 +109,11 @@ export function renderFieldInput(field: CanvasField) {
       if (options && options.length > 0) {
         return (
           <div className="flex flex-col gap-2">
-            {options.map((opt, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <Checkbox id={`checkbox-${field.id}-${idx}`} />
+            {options.map((opt) => (
+              <div key={`checkbox-${field.id}-${opt}`} className="flex items-center gap-2">
+                <Checkbox id={`checkbox-${field.id}-${opt}`} />
                 <Label
-                  htmlFor={`checkbox-${field.id}-${idx}`}
+                  htmlFor={`checkbox-${field.id}-${opt}`}
                   className="text-sm font-normal"
                 >
                   {opt}
@@ -137,16 +137,16 @@ export function renderFieldInput(field: CanvasField) {
     case 'radio':
       return (
         <div className="flex flex-col gap-2">
-          {fieldOptions.map((opt, idx) => (
-            <div key={idx} className="flex items-center gap-2">
+          {fieldOptions.map((opt) => (
+            <div key={`radio-${field.id}-${opt}`} className="flex items-center gap-2">
               <input
                 type="radio"
                 name={`radio-${field.id}`}
-                id={`radio-${field.id}-${idx}`}
+                id={`radio-${field.id}-${opt}`}
                 className="h-4 w-4"
               />
               <Label
-                htmlFor={`radio-${field.id}-${idx}`}
+                htmlFor={`radio-${field.id}-${opt}`}
                 className="text-sm font-normal"
               >
                 {opt}
@@ -159,8 +159,8 @@ export function renderFieldInput(field: CanvasField) {
       return (
         <select className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm">
           <option value="">Select an option...</option>
-          {fieldOptions.map((opt, idx) => (
-            <option key={idx} value={opt}>
+          {fieldOptions.map((opt) => (
+            <option key={`dropdown-${field.id}-${opt}`} value={opt}>
               {opt}
             </option>
           ))}
@@ -211,6 +211,16 @@ export function renderFieldInput(field: CanvasField) {
       return <Input type="file" className="cursor-pointer" />
     case 'section':
       return <div className="h-px w-full bg-border my-2" />
+    case 'cgpa':
+      return (
+        <Input
+          type="number"
+          placeholder="Enter CGPA (0.00-10.00)"
+          min={0}
+          max={10}
+          step={0.01}
+        />
+      )
     default:
       return <Input placeholder="Enter value..." />
   }

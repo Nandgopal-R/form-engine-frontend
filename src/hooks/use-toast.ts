@@ -51,23 +51,6 @@ type ActionType = typeof actionTypes
 
 type Action =
   | {
-<<<<<<< feat/docs
-    type: ActionType["ADD_TOAST"]
-    toast: ToasterToast
-  }
-  | {
-    type: ActionType["UPDATE_TOAST"]
-    toast: Partial<ToasterToast>
-  }
-  | {
-    type: ActionType["DISMISS_TOAST"]
-    toastId?: ToasterToast["id"]
-  }
-  | {
-    type: ActionType["REMOVE_TOAST"]
-    toastId?: ToasterToast["id"]
-  }
-=======
       type: ActionType['ADD_TOAST']
       toast: ToasterToast
     }
@@ -83,7 +66,6 @@ type Action =
       type: ActionType['REMOVE_TOAST']
       toastId?: ToasterToast['id']
     }
->>>>>>> main
 
 interface State {
   toasts: Array<ToasterToast>
@@ -137,14 +119,9 @@ export const reducer = (state: State, action: Action): State => {
         // Queue specific toast for removal
         addToRemoveQueue(toastId)
       } else {
-<<<<<<< feat/docs
-        state.toasts.forEach((t) => {
-          addToRemoveQueue(t.id)
-=======
         // Queue all toasts for removal
         state.toasts.forEach((toast) => {
           addToRemoveQueue(toast.id)
->>>>>>> main
         })
       }
 
@@ -154,17 +131,10 @@ export const reducer = (state: State, action: Action): State => {
         toasts: state.toasts.map((t) =>
           t.id === toastId || toastId === undefined
             ? {
-<<<<<<< feat/docs
-              ...t,
-              open: false,
-            }
-            : t
-=======
                 ...t,
                 open: false,
               }
             : t,
->>>>>>> main
         ),
       }
     }
@@ -210,18 +180,11 @@ type Toast = Omit<ToasterToast, 'id'>
 function toast({ ...props }: Toast) {
   const id = genId()
 
-<<<<<<< feat/docs
-  const update = (newProps: ToasterToast) =>
-    dispatch({
-      type: "UPDATE_TOAST",
-      toast: { ...newProps, id },
-=======
   // Update function to modify existing toast
   const update = (props: ToasterToast) =>
     dispatch({
       type: 'UPDATE_TOAST',
       toast: { ...props, id },
->>>>>>> main
     })
 
   // Dismiss function to close toast immediately

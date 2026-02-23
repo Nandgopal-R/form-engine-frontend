@@ -1,9 +1,3 @@
-<<<<<<< feat/docs
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { AlertCircle, ArrowRight, CheckCircle, FileText, Home, Loader2, Save } from 'lucide-react'
-=======
 /**
  * Form Response Page - Public Form Interface
  *
@@ -29,7 +23,6 @@ import {
   Save,
   Star,
 } from 'lucide-react'
->>>>>>> main
 import type { FormField } from '@/api/forms'
 import type { ValidationError } from '@/lib/validation-engine';
 import { Input } from '@/components/ui/input'
@@ -42,15 +35,12 @@ import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { useToast } from '@/hooks/use-toast'
-<<<<<<< feat/docs
-import { validateField, validateForm } from '@/lib/validation-engine'
-=======
+
 import {
   validateForm,
   validateField,
   type ValidationError,
 } from '@/lib/validation-engine'
->>>>>>> main
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
@@ -64,13 +54,9 @@ function FormResponsePage() {
   const [responses, setResponses] = useState<Record<string, unknown>>({})
   const [submitted, setSubmitted] = useState(false)
   const [draftResponseId, setDraftResponseId] = useState<string | null>(null)
-<<<<<<< feat/docs
-  const [validationErrors, setValidationErrors] = useState<Array<ValidationError>>([])
-=======
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
     [],
   )
->>>>>>> main
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
   // Fetch form data using public endpoint (doesn't require ownership)
@@ -200,11 +186,7 @@ function FormResponsePage() {
     // Mark field as touched to show validation errors
     setTouchedFields((prev) => new Set(prev).add(fieldId))
 
-<<<<<<< feat/docs
-    // Validate the field on change
-=======
     // Validate the field on change for immediate feedback
->>>>>>> main
     if (formWithFields?.fields) {
       const field = formWithFields.fields.find((f) => f.id === fieldId)
       if (field) {
@@ -246,18 +228,6 @@ function FormResponsePage() {
 
     // Validate all fields before submission
     if (formWithFields?.fields) {
-<<<<<<< feat/docs
-      const result = validateForm(responses, formWithFields.fields.map((f) => ({
-        id: f.id,
-        label: f.label || f.fieldName,
-        fieldType: f.fieldType,
-        validation: {
-          ...f.validation,
-          min: f.validation?.min ?? f.min,
-          max: f.validation?.max ?? f.max,
-        },
-      })))
-=======
       const result = validateForm(
         responses,
         formWithFields.fields.map((f) => ({
@@ -271,7 +241,6 @@ function FormResponsePage() {
           },
         })),
       )
->>>>>>> main
 
       if (!result.isValid) {
         setValidationErrors(result.errors)
@@ -480,12 +449,6 @@ function FormFieldRenderer({
   const max = field.max || field.validation?.max
   const step = field.step
   const required = field.validation?.required || false
-<<<<<<< feat/docs
-
-  // Error styling class
-  const errorClass = hasError ? 'border-destructive focus-visible:ring-destructive' : ''
-=======
->>>>>>> main
 
   // Apply error styling class
   const errorClass = hasError

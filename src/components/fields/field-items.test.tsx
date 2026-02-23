@@ -9,12 +9,13 @@ describe('FieldItems', () => {
         expect(screen.getByText('Short Text')).toBeDefined();
         expect(screen.getByText('Email')).toBeDefined();
         expect(screen.getByText('File Upload')).toBeDefined();
+        expect(screen.getByText('CGPA')).toBeDefined();
     });
 
     it('renders labels as buttons', () => {
         render(<FieldItems />);
 
         const buttons = screen.getAllByRole('button');
-        expect(buttons.length).toBeGreaterThan(10);
+        expect(buttons.length).toBeGreaterThan(15); // Now has 16 fields including CGPA
     });
 });

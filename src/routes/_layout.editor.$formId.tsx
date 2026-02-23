@@ -1,9 +1,36 @@
+/**
+ * Form Editor Component
+ *
+ * This is the main form building interface where users can:
+ * - Add, edit, and remove form fields
+ * - Configure field properties and validation rules
+ * - Rearrange fields by dragging and dropping
+ * - Preview the form in real-time
+ * - Save changes to the form structure
+ *
+ * The interface uses a three-panel layout:
+ * - Left: Field types sidebar for adding new fields
+ * - Center: Canvas showing form structure and allowing editing
+ * - Right: Properties panel for configuring selected field
+ *
+ * This component handles the complex state management of field operations,
+ * API synchronization, and real-time updates.
+ */
+
 import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
+<<<<<<< feat/docs
 import type { CreateFieldInput, UpdateFieldInput, UpdateFormInput } from '@/api/forms'
+=======
+import type {
+  CreateFieldInput,
+  UpdateFormInput,
+  UpdateFieldInput,
+} from '@/api/forms'
+>>>>>>> main
 import {
   ResizableHandle,
   ResizablePanel,
@@ -19,6 +46,8 @@ export const Route = createFileRoute('/_layout/editor/$formId')({
   component: EditFormComponent,
 })
 
+// Human-readable labels for different field types
+// Used throughout the editor for consistent naming
 const FIELD_LABELS: Record<string, string> = {
   text: 'Text Input',
   number: 'Number Input',
@@ -36,6 +65,7 @@ const FIELD_LABELS: Record<string, string> = {
   rating: 'Rating',
   file: 'File Upload',
   section: 'Section Header',
+  cgpa: 'CGPA',
 }
 
 function EditFormComponent() {
@@ -44,6 +74,7 @@ function EditFormComponent() {
   const { toast } = useToast()
 
   // Fetch existing form data
+  // This loads the form metadata (title, description, etc.)
   const {
     data: form,
     isLoading: isFormLoading,
@@ -54,17 +85,20 @@ function EditFormComponent() {
   })
 
   // Fetch existing fields
+  // Fields are stored separately from form metadata
   const { data: existingFields, isLoading: isFieldsLoading } = useQuery({
     queryKey: ['form-fields', formId],
     queryFn: () => fieldsApi.getById(formId),
   })
 
+  // Local state for managing form content
   const [fields, setFields] = useState<Array<CanvasField>>([])
   const [editingField, setEditingField] = useState<CanvasField | null>(null)
   const [formTitle, setFormTitle] = useState('')
   const [formDescription, setFormDescription] = useState('')
 
-  // Populate state when form data is loaded
+  // Populate form state when API data is loaded
+  // This ensures UI reflects the current saved state
   useEffect(() => {
     if (form) {
       console.log('Form Title:', form.title)
@@ -74,12 +108,15 @@ function EditFormComponent() {
     }
   }, [form])
 
-  // populate fields when data is loaded
+  // Populate fields when data is loaded
+  // Convert API field format to CanvasField format for the editor
   useEffect(() => {
     const sourceFields = existingFields || form?.fields
     if (sourceFields && sourceFields.length > 0) {
       setFields(
         sourceFields.map((f) => {
+          // Normalize field type from API response
+          // API may return 'fieldType' or 'type', and 'input' should be normalized to 'text'
           const rawType = f.fieldType || (f as any).type || 'text'
           let type = rawType.toLowerCase()
           if (type === 'input') type = 'text'
@@ -101,7 +138,7 @@ function EditFormComponent() {
     }
   }, [existingFields, form])
 
-  // useMutation for updating the form
+  // Mutation for updating form metadata (title, description)
   const updateForm = useMutation({
     mutationFn: (data: UpdateFormInput) => formsApi.update(formId, data),
     onSuccess: () => {
@@ -112,7 +149,7 @@ function EditFormComponent() {
       })
       // Navigate to dashboard after a short delay to show toast
       setTimeout(() => {
-        navigate({ to: '/' })
+        navigate({ to: '/dashboard' })
       }, 1500)
     },
     onError: (error) => {
@@ -166,6 +203,7 @@ function EditFormComponent() {
   })
 
   // useMutation for updating fields
+  // Mutation for updating individual field properties
   const updateFieldMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateFieldInput }) =>
       fieldsApi.update(id, data),
@@ -187,11 +225,16 @@ function EditFormComponent() {
     },
   })
 
+  // Handle field selection for editing
   const handleFieldClick = (fieldId: string) => {
     console.log('Field clicked:', fieldId)
 
-    // Map field ID to appropriate field type and value type
-    const fieldTypeMap: Record<string, { fieldType: string; fieldValueType: string }> = {
+    // Map field type to API field type and value type
+    // This ensures we send the correct data structure to the backend
+    const fieldTypeMap: Record<
+      string,
+      { fieldType: string; fieldValueType: string }
+    > = {
       text: { fieldType: 'text', fieldValueType: 'string' },
       number: { fieldType: 'number', fieldValueType: 'number' },
       checkbox: { fieldType: 'checkbox', fieldValueType: 'boolean' },
@@ -208,9 +251,17 @@ function EditFormComponent() {
       rating: { fieldType: 'rating', fieldValueType: 'number' },
       file: { fieldType: 'file', fieldValueType: 'string' },
       section: { fieldType: 'section', fieldValueType: 'string' },
+      cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
     }
 
+<<<<<<< feat/docs
     const typeInfo = (fieldTypeMap as any)[fieldId] || { fieldType: 'text', fieldValueType: 'string' }
+=======
+    const typeInfo = fieldTypeMap[fieldId] || {
+      fieldType: 'text',
+      fieldValueType: 'string',
+    }
+>>>>>>> main
 
     const fieldData: CreateFieldInput = {
       fieldName: fieldId,

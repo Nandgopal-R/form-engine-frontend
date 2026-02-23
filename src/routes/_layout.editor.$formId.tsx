@@ -22,15 +22,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
-<<<<<<< feat/docs
-import type { CreateFieldInput, UpdateFieldInput, UpdateFormInput } from '@/api/forms'
-=======
 import type {
   CreateFieldInput,
   UpdateFormInput,
   UpdateFieldInput,
 } from '@/api/forms'
->>>>>>> main
 import {
   ResizableHandle,
   ResizablePanel,
@@ -254,14 +250,10 @@ function EditFormComponent() {
       cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
     }
 
-<<<<<<< feat/docs
-    const typeInfo = (fieldTypeMap as any)[fieldId] || { fieldType: 'text', fieldValueType: 'string' }
-=======
     const typeInfo = fieldTypeMap[fieldId] || {
       fieldType: 'text',
       fieldValueType: 'string',
     }
->>>>>>> main
 
     const fieldData: CreateFieldInput = {
       fieldName: fieldId,

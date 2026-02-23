@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { RouterProvider, createMemoryHistory, createRootRoute, createRouter } from '@tanstack/react-router';
 import { AppSidebar } from './app-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { createRouter, createMemoryHistory, RouterProvider, createRootRoute } from '@tanstack/react-router';
 
 // Mock useIsMobile hook
 vi.mock('@/hooks/use-mobile', () => ({

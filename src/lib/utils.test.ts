@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { cn } from './utils';
 
 describe('cn utility', () => {
@@ -7,12 +7,12 @@ describe('cn utility', () => {
     });
 
     it('handles conditional classes (truthy)', () => {
-        const isActive = true;
+        const isActive = true as boolean;
         expect(cn('base', isActive && 'active')).toBe('base active');
     });
 
     it('handles conditional classes (falsy)', () => {
-        const isActive = false;
+        const isActive = false as boolean;
         expect(cn('base', isActive && 'active')).toBe('base');
     });
 

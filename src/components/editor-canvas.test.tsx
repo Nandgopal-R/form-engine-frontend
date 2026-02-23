@@ -1,10 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { EditorCanvas } from './editor-canvas';
 import type { CanvasField } from './fields/field-preview';
 
-const mockFields: CanvasField[] = [
+const mockFields: Array<CanvasField> = [
     { id: '1', type: 'text', label: 'Field 1' },
     { id: '2', type: 'number', label: 'Field 2' },
 ];
@@ -98,7 +98,7 @@ describe('EditorCanvas', () => {
         // We know from FieldPreview tests that there are buttons.
         // Let's find the first remove button.
         // FieldPreview structure: settings button, then trash button.
-        const buttons = screen.getAllByRole('button');
+        screen.getAllByRole('button');
         // Filter for the trash button (it has text-destructive class usually, or we can look specifically).
         // Or we can rely on mock from FieldPreview? deeper integration test here.
 
@@ -109,7 +109,7 @@ describe('EditorCanvas', () => {
 
         // We can find by icon class if we render real icons, but querying by class is fragile.
         // Let's try:
-        const removeButtons = document.querySelectorAll('.text-destructive.hover\\:bg-destructive\\/10');
+        document.querySelectorAll('.text-destructive.hover\\:bg-destructive\\/10');
         // This is implementation detail reliance.
 
         // Better: mock FieldPreview? No, we want integration.

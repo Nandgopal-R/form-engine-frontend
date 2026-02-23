@@ -1,14 +1,12 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { Switch } from './switch';
 import { Slider } from './slider';
 import {
     Sheet,
-    SheetTrigger,
     SheetContent,
-    SheetHeader,
     SheetTitle,
-    SheetDescription
+    SheetTrigger
 } from './sheet';
 
 describe('Interactive UI Components', () => {

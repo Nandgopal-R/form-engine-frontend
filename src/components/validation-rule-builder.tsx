@@ -1,8 +1,8 @@
-<<<<<<< feat/docs
+
 import { useMemo, useState } from 'react'
 import { AlertTriangle, CheckCircle2, Info, Plus, X } from 'lucide-react'
 import type { RuleTemplate, ValidationConfig } from '@/lib/validation-engine';
-=======
+
 /**
  * Validation Rule Builder Component
  *
@@ -16,10 +16,6 @@ import type { RuleTemplate, ValidationConfig } from '@/lib/validation-engine';
  * The component uses a template-based system where common validation patterns
  * are pre-configured and users just need to set parameters.
  */
-
-import { useState, useMemo } from 'react'
-import { Plus, X, Info, AlertTriangle, CheckCircle2 } from 'lucide-react'
->>>>>>> main
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -91,17 +87,12 @@ export function ValidationRuleBuilder({
   currentValidation = {},
   onChange,
 }: ValidationRuleBuilderProps) {
-<<<<<<< feat/docs
-  const [activeRules, setActiveRules] = useState<Array<ActiveRule>>(() => {
-    // Initialize from current validation
-    const rules: Array<ActiveRule> = []
-=======
+
   // State for currently active validation rules on this field
   const [activeRules, setActiveRules] = useState<ActiveRule[]>(() => {
     // Initialize active rules from existing validation config
     // This ensures the UI reflects the current validation state
     const rules: ActiveRule[] = []
->>>>>>> main
     if (currentValidation.minLength !== undefined) {
       rules.push({
         ruleId: 'minLength',
@@ -158,10 +149,7 @@ export function ValidationRuleBuilder({
   }, [applicableRules])
 
   // Build validation config from active rules
-<<<<<<< feat/docs
-  const buildConfig = (rules: Array<ActiveRule>, required?: boolean): ValidationConfig => {
-    const config: ValidationConfig = { required: required ?? currentValidation.required }
-=======
+
   const buildConfig = (
     rules: ActiveRule[],
     required?: boolean,
@@ -169,7 +157,6 @@ export function ValidationRuleBuilder({
     const config: ValidationConfig = {
       required: required ?? currentValidation.required,
     }
->>>>>>> main
 
     for (const rule of rules) {
       const template = RULE_TEMPLATES.find((t) => t.id === rule.ruleId)

@@ -1,15 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
-    validateField,
-    validateForm,
-    buildValidationConfig,
-    getRulesForFieldType,
-    combinePatterns,
-    getPatternDescription,
     PREDEFINED_PATTERNS,
     RULE_TEMPLATES,
-    type ValidationConfig,
+    
+    buildValidationConfig,
+    combinePatterns,
+    getPatternDescription,
+    getRulesForFieldType,
+    validateField,
+    validateForm
 } from './validation-engine';
+import type {ValidationConfig} from './validation-engine';
 
 describe('Validation Engine', () => {
     describe('getPatternDescription', () => {

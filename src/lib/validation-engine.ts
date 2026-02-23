@@ -16,7 +16,7 @@ export interface ValidationConfig {
   min?: number
   max?: number
   pattern?: string
-  customRules?: ValidationRule[]
+  customRules?: Array<ValidationRule>
 }
 
 export interface ValidationError {
@@ -27,7 +27,7 @@ export interface ValidationError {
 
 export interface ValidationResult {
   isValid: boolean
-  errors: ValidationError[]
+  errors: Array<ValidationError>
 }
 
 // Predefined patterns for common validations
@@ -153,7 +153,7 @@ export interface RuleTemplate {
   generateValidation: (params?: Record<string, unknown>) => Partial<ValidationConfig>
 }
 
-export const RULE_TEMPLATES: RuleTemplate[] = [
+export const RULE_TEMPLATES: Array<RuleTemplate> = [
   // Text rules
   {
     id: 'minLength',
@@ -424,8 +424,8 @@ export function validateField(
   fieldId: string,
   fieldLabel: string,
   config: ValidationConfig
-): ValidationError[] {
-  const errors: ValidationError[] = []
+): Array<ValidationError> {
+  const errors: Array<ValidationError> = []
   const stringValue = value !== null && value !== undefined ? String(value) : ''
   const isEmpty = stringValue.trim() === ''
 
@@ -518,7 +518,7 @@ export function validateForm(
     validation?: ValidationConfig
   }>
 ): ValidationResult {
-  const errors: ValidationError[] = []
+  const errors: Array<ValidationError> = []
 
   for (const field of fields) {
     const value = responses[field.id]
@@ -558,7 +558,7 @@ export function buildValidationConfig(
  * Combine multiple regex patterns with AND logic
  * This creates a pattern that matches if ALL patterns match
  */
-export function combinePatterns(patterns: string[]): string {
+export function combinePatterns(patterns: Array<string>): string {
   if (patterns.length === 0) return ''
   if (patterns.length === 1) return patterns[0]
   
@@ -570,7 +570,7 @@ export function combinePatterns(patterns: string[]): string {
 /**
  * Get rules applicable to a field type
  */
-export function getRulesForFieldType(fieldType: string): RuleTemplate[] {
+export function getRulesForFieldType(fieldType: string): Array<RuleTemplate> {
   const textTypes = ['text', 'textarea', 'Input', 'input']
   const numberTypes = ['number', 'slider']
   

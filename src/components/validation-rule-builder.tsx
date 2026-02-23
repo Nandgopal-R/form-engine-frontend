@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
-import { Plus, X, Info, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { AlertTriangle, CheckCircle2, Info, Plus, X } from 'lucide-react'
+import type { RuleTemplate, ValidationConfig } from '@/lib/validation-engine';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,11 +19,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import {
-  RULE_TEMPLATES,
-  getRulesForFieldType,
   PREDEFINED_PATTERNS,
-  type ValidationConfig,
-  type RuleTemplate,
+  RULE_TEMPLATES,
+
+
+  getRulesForFieldType
 } from '@/lib/validation-engine'
 
 interface ValidationRuleBuilderProps {
@@ -59,9 +60,9 @@ export function ValidationRuleBuilder({
   currentValidation = {},
   onChange,
 }: ValidationRuleBuilderProps) {
-  const [activeRules, setActiveRules] = useState<ActiveRule[]>(() => {
+  const [activeRules, setActiveRules] = useState<Array<ActiveRule>>(() => {
     // Initialize from current validation
-    const rules: ActiveRule[] = []
+    const rules: Array<ActiveRule> = []
     if (currentValidation.minLength !== undefined) {
       rules.push({ ruleId: 'minLength', params: { value: currentValidation.minLength } })
     }
@@ -95,9 +96,9 @@ export function ValidationRuleBuilder({
 
   // Group rules by category
   const rulesByCategory = useMemo(() => {
-    const grouped: Record<string, RuleTemplate[]> = {}
+    const grouped: Record<string, Array<RuleTemplate>> = {}
     for (const rule of applicableRules) {
-      if (!grouped[rule.category]) {
+      if (!Object.prototype.hasOwnProperty.call(grouped, rule.category)) {
         grouped[rule.category] = []
       }
       grouped[rule.category].push(rule)
@@ -106,7 +107,7 @@ export function ValidationRuleBuilder({
   }, [applicableRules])
 
   // Build validation config from active rules
-  const buildConfig = (rules: ActiveRule[], required?: boolean): ValidationConfig => {
+  const buildConfig = (rules: Array<ActiveRule>, required?: boolean): ValidationConfig => {
     const config: ValidationConfig = { required: required ?? currentValidation.required }
 
     for (const rule of rules) {

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { ValidationRuleBuilder } from './validation-rule-builder'
 import type { CanvasField } from './fields/field-preview'
+import type { ValidationConfig } from '@/lib/validation-engine'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,9 +26,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { ChevronDown } from 'lucide-react'
-import { ValidationRuleBuilder } from './validation-rule-builder'
-import type { ValidationConfig } from '@/lib/validation-engine'
 
 interface FieldPropertiesProps {
   field: CanvasField | null

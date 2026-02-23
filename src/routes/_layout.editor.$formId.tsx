@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
-import type { CreateFieldInput, UpdateFormInput, UpdateFieldInput } from '@/api/forms'
+import type { CreateFieldInput, UpdateFieldInput, UpdateFormInput } from '@/api/forms'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -132,7 +132,7 @@ function EditFormComponent() {
       // Convert the new field to CanvasField format and add to state
       let type = newField.fieldType.toLowerCase()
       if (type === 'input') type = 'text'
-      
+
       const canvasField: CanvasField = {
         id: newField.id,
         type: type,
@@ -167,7 +167,7 @@ function EditFormComponent() {
 
   // useMutation for updating fields
   const updateFieldMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateFieldInput }) => 
+    mutationFn: ({ id, data }: { id: string; data: UpdateFieldInput }) =>
       fieldsApi.update(id, data),
     onSuccess: () => {
       console.log('Field updated successfully!')
@@ -210,7 +210,7 @@ function EditFormComponent() {
       section: { fieldType: 'section', fieldValueType: 'string' },
     }
 
-    const typeInfo = fieldTypeMap[fieldId] || { fieldType: 'text', fieldValueType: 'string' }
+    const typeInfo = (fieldTypeMap as any)[fieldId] || { fieldType: 'text', fieldValueType: 'string' }
 
     const fieldData: CreateFieldInput = {
       fieldName: fieldId,
@@ -245,7 +245,7 @@ function EditFormComponent() {
       prev.map((f) => (f.id === updatedField.id ? updatedField : f)),
     )
     setEditingField(null)
-    
+
     // Send update to backend
     const updateData: UpdateFieldInput = {
       label: updatedField.label,
@@ -263,7 +263,7 @@ function EditFormComponent() {
         pattern: updatedField.validation?.pattern,
       },
     }
-    
+
     updateFieldMutation.mutate({ id: updatedField.id, data: updateData })
   }
 

@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AlertCircle, ArrowRight, CheckCircle, FileText, Home, Loader2, Save } from 'lucide-react'
 import type { FormField } from '@/api/forms'
+import type { ValidationError } from '@/lib/validation-engine';
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
@@ -11,7 +12,7 @@ import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { useToast } from '@/hooks/use-toast'
-import { validateForm, validateField, type ValidationError } from '@/lib/validation-engine'
+import { validateField, validateForm } from '@/lib/validation-engine'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
@@ -23,7 +24,7 @@ function FormResponsePage() {
   const [responses, setResponses] = useState<Record<string, unknown>>({})
   const [submitted, setSubmitted] = useState(false)
   const [draftResponseId, setDraftResponseId] = useState<string | null>(null)
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
+  const [validationErrors, setValidationErrors] = useState<Array<ValidationError>>([])
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
 
   // Fetch form data using public endpoint (doesn't require ownership)
@@ -132,7 +133,7 @@ function FormResponsePage() {
     setResponses((prev) => ({ ...prev, [fieldId]: value }))
     // Mark field as touched
     setTouchedFields((prev) => new Set(prev).add(fieldId))
-    
+
     // Validate the field on change
     if (formWithFields?.fields) {
       const field = formWithFields.fields.find((f) => f.id === fieldId)
@@ -164,7 +165,7 @@ function FormResponsePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate all fields before submission
     if (formWithFields?.fields) {
       const result = validateForm(responses, formWithFields.fields.map((f) => ({
@@ -177,7 +178,7 @@ function FormResponsePage() {
           max: f.validation?.max ?? f.max,
         },
       })))
-      
+
       if (!result.isValid) {
         setValidationErrors(result.errors)
         // Mark all fields as touched to show all errors
@@ -190,7 +191,7 @@ function FormResponsePage() {
         return
       }
     }
-    
+
     submitMutation.mutate(responses)
   }
 
@@ -275,7 +276,7 @@ function FormResponsePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {!formWithFields.fields || formWithFields.fields.length === 0 ? (
+          {formWithFields.fields.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               This form has no fields yet.
             </div>
@@ -309,7 +310,7 @@ function FormResponsePage() {
             })
           )}
 
-          {formWithFields.fields && formWithFields.fields.length > 0 && (
+          {formWithFields.fields.length > 0 && (
             <div className="pt-4 flex flex-col sm:flex-row gap-3">
               <Button
                 type="button"
@@ -374,7 +375,7 @@ function FormFieldRenderer({ field, value, onChange, hasError }: FormFieldRender
   const max = field.max || field.validation?.max
   const step = field.step
   const required = field.validation?.required || false
-  
+
   // Error styling class
   const errorClass = hasError ? 'border-destructive focus-visible:ring-destructive' : ''
 

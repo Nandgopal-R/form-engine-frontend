@@ -10,9 +10,9 @@
  * - Success confirmation after submission
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AlertCircle,
   ArrowRight,
@@ -24,6 +24,7 @@ import {
   Star,
 } from 'lucide-react'
 import type { FormField } from '@/api/forms'
+import type { ValidationError } from '@/lib/validation-engine';
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
@@ -35,9 +36,9 @@ import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { useToast } from '@/hooks/use-toast'
 import {
-  validateForm,
+
   validateField,
-  type ValidationError,
+  validateForm
 } from '@/lib/validation-engine'
 
 export const Route = createFileRoute('/form/$formId')({
@@ -52,7 +53,7 @@ function FormResponsePage() {
   const [responses, setResponses] = useState<Record<string, unknown>>({})
   const [submitted, setSubmitted] = useState(false)
   const [draftResponseId, setDraftResponseId] = useState<string | null>(null)
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
+  const [validationErrors, setValidationErrors] = useState<Array<ValidationError>>(
     [],
   )
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
@@ -339,7 +340,7 @@ function FormResponsePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {!formWithFields.fields || formWithFields.fields.length === 0 ? (
+          {formWithFields.fields.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               This form has no fields yet.
             </div>
@@ -373,7 +374,7 @@ function FormResponsePage() {
             })
           )}
 
-          {formWithFields.fields && formWithFields.fields.length > 0 && (
+          {formWithFields.fields.length > 0 && (
             <div className="pt-4 flex flex-col sm:flex-row gap-3">
               <Button
                 type="button"
@@ -686,11 +687,10 @@ function FormFieldRenderer({
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
-              className={`h-6 w-6 cursor-pointer transition-colors ${
-                star <= ((value as number) || 0)
+              className={`h-6 w-6 cursor-pointer transition-colors ${star <= ((value as number) || 0)
                   ? 'fill-yellow-400 text-yellow-400'
                   : 'text-gray-300'
-              }`}
+                }`}
               onClick={() => onChange(star)}
             />
           ))}

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { ValidationRuleBuilder } from './validation-rule-builder';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
+import { ValidationRuleBuilder } from './validation-rule-builder';
 
 // Mock pointer capture for Radix UI
 beforeAll(() => {

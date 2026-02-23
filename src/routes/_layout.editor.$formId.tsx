@@ -24,8 +24,8 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
 import type {
   CreateFieldInput,
-  UpdateFormInput,
   UpdateFieldInput,
+  UpdateFormInput,
 } from '@/api/forms'
 import {
   ResizableHandle,
@@ -229,7 +229,7 @@ function EditFormComponent() {
     // This ensures we send the correct data structure to the backend
     const fieldTypeMap: Record<
       string,
-      { fieldType: string; fieldValueType: string }
+      { fieldType: string; fieldValueType: string } | undefined
     > = {
       text: { fieldType: 'text', fieldValueType: 'string' },
       number: { fieldType: 'number', fieldValueType: 'number' },

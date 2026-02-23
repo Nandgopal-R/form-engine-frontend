@@ -73,7 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
 
-  const userName = session?.user?.name || session?.user?.email || 'User'
+  const userName = session?.user.name || session?.user.email || 'User'
   const userInitial = userName.charAt(0).toUpperCase()
 
   const handleLogout = async () => {
@@ -114,7 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{userName}</span>
-                {session?.user?.email && session?.user?.name && (
+                {session?.user.email && session.user.name && (
                   <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
                 )}
               </div>

@@ -5,8 +5,6 @@ import { Slider } from './slider';
 import {
     Sheet,
     SheetContent,
-    SheetDescription,
-    SheetHeader,
     SheetTitle,
     SheetTrigger
 } from './sheet';

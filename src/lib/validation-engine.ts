@@ -485,11 +485,7 @@ export function validateField(
   value: unknown,
   fieldId: string,
   fieldLabel: string,
-<<<<<<< feat/docs
-  config: ValidationConfig
-=======
   config: ValidationConfig,
->>>>>>> main
 ): Array<ValidationError> {
   const errors: Array<ValidationError> = []
   const stringValue = value !== null && value !== undefined ? String(value) : ''

@@ -97,7 +97,7 @@ export interface UpdateFieldInput {
 }
 
 // Base URL for API endpoints
-const API_URL = 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 // Centralized error handling for all API requests
 // Extracts error messages and provides consistent error format

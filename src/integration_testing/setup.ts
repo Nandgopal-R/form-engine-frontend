@@ -1,4 +1,4 @@
-import { vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
 
 // Store the original fetch
 const originalFetch = globalThis.fetch;

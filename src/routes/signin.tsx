@@ -138,6 +138,7 @@ function Login() {
           </button>
         </form>
 
+        {/* Google sign-in disabled
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-border" />
@@ -155,7 +156,6 @@ function Login() {
           onClick={() => {
             const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
             const callback = encodeURIComponent(window.location.origin + '/dashboard');
-            // Direct navigation to avoid XHR/cookie blocking
             window.location.href = `${backendUrl}/signin/google?callback=${callback}`;
           }}
         >
@@ -179,6 +179,7 @@ function Login() {
           </svg>
           Sign in with Google
         </button>
+        */}
 
         <p className="mt-6 text-center text-[13px] text-muted-foreground">
           Don’t have an account?{' '}

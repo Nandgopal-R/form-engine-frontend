@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   LogOut,
   Plus,
-  Settings,
 } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { authClient } from '@/lib/auth-client'
@@ -60,11 +59,6 @@ const data = {
           url: '/analytics/reports',
         },
       ],
-    },
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: Settings,
     },
   ],
 }

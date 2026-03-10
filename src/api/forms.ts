@@ -52,6 +52,7 @@ export interface Form {
   updatedAt?: string // Last update timestamp
   fields?: Array<FormField> // Associated form fields (optional)
   responseCount?: number // Number of submissions received
+  draftCount?: number // Number of draft saves
 }
 
 // Standard API response wrapper for consistent error handling
@@ -112,8 +113,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
     // Fallbacks ensure we always have some error to show
     throw new Error(
       errorData.message ||
-        errorData.error ||
-        `Request failed: ${response.statusText}`,
+      errorData.error ||
+      `Request failed: ${response.statusText}`,
     )
   }
 

@@ -53,7 +53,13 @@ function LayoutComponent() {
     if (currentPath.startsWith('/editor')) {
       return { parent: null, current: 'Editor' }
     }
-    if (currentPath.startsWith('/analytics')) {
+    if (currentPath === '/analytics') {
+      return { parent: 'Analytics', current: 'Overview' }
+    }
+    if (currentPath === '/analytics/responses') {
+      return { parent: 'Analytics', current: 'Responses' }
+    }
+    if (currentPath === '/analytics/reports') {
       return { parent: 'Analytics', current: 'Reports' }
     }
     if (currentPath.startsWith('/settings')) {

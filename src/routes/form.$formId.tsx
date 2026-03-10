@@ -105,10 +105,44 @@ function FormResponsePage() {
   // This creates a unified data structure that matches our renderer's expectations
   const formWithFields = form ? { ...form, fields: formFields || [] } : null
 
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+
+  // Simulation: Load from localStorage if it exists for this form
+  useEffect(() => {
+    const savedData = localStorage.getItem(`form_draft_${formId}`)
+    if (savedData && Object.keys(responses).length === 0) {
+      try {
+        const parsed = JSON.parse(savedData)
+        setResponses(parsed)
+        setLastSaved(new Date())
+        toast({
+          title: 'Draft recovered',
+          description: 'We found an unsaved draft on this device.',
+        })
+      } catch (e) {
+        console.error('Failed to parse saved draft', e)
+      }
+    }
+  }, [formId])
+
+  // Simulation: Auto-save to localStorage on response change
+  useEffect(() => {
+    if (Object.keys(responses).length > 0) {
+      const timer = setTimeout(() => {
+        localStorage.setItem(`form_draft_${formId}`, JSON.stringify(responses))
+        setLastSaved(new Date())
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [responses, formId])
+
   // Submit mutation (final submission)
   // Handles both new submissions and converting drafts to final submissions
   const submitMutation = useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
+      // Simulation: Clear localStorage on submission
+      localStorage.removeItem(`form_draft_${formId}`)
+
       if (draftResponseId) {
         // Convert existing draft to submitted state
         // This keeps the same response ID for continuity
@@ -328,14 +362,27 @@ function FormResponsePage() {
   return (
     <div className="min-h-screen bg-muted/20 py-10 sm:py-16 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto p-8 bg-card rounded-xl shadow-sm border space-y-6">
-        <div className="space-y-2 mb-8">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {formWithFields.title || formWithFields.name || 'Untitled Form'}
-          </h1>
-          {formWithFields.description && (
-            <p className="text-muted-foreground">
-              {formWithFields.description}
-            </p>
+        <div className="flex justify-between items-start mb-8 gap-4">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold tracking-tight">
+              {formWithFields.title || formWithFields.name || 'Untitled Form'}
+            </h1>
+            {formWithFields.description && (
+              <p className="text-muted-foreground text-sm">
+                {formWithFields.description}
+              </p>
+            )}
+          </div>
+          {lastSaved && (
+            <div className="flex flex-col items-end shrink-0">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full uppercase tracking-wider">
+                <Save className="h-3 w-3" />
+                Auto-saved
+              </div>
+              <span className="text-[9px] text-muted-foreground mt-1">
+                {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
+            </div>
           )}
         </div>
 
@@ -688,8 +735,8 @@ function FormFieldRenderer({
             <Star
               key={star}
               className={`h-6 w-6 cursor-pointer transition-colors ${star <= ((value as number) || 0)
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : 'text-gray-300'
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-gray-300'
                 }`}
               onClick={() => onChange(star)}
             />

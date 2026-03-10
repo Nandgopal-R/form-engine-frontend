@@ -14,6 +14,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as EmailVerifiedRouteImport } from './routes/email-verified'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as FormFormIdRouteImport } from './routes/form.$formId'
 import { Route as LayoutMyResponsesRouteImport } from './routes/_layout.my-responses'
 import { Route as LayoutDashboardRouteImport } from './routes/_layout.dashboard'
@@ -46,6 +47,11 @@ const LayoutRoute = LayoutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment/success',
+  path: '/payment/success',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FormFormIdRoute = FormFormIdRouteImport.update({
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof LayoutDashboardRoute
   '/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/analytics/reports': typeof LayoutAnalyticsReportsRoute
   '/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/editor/$formId': typeof LayoutEditorFormIdRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof LayoutDashboardRoute
   '/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/analytics/reports': typeof LayoutAnalyticsReportsRoute
   '/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/editor/$formId': typeof LayoutEditorFormIdRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/_layout/analytics/reports': typeof LayoutAnalyticsReportsRoute
   '/_layout/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/_layout/editor/$formId': typeof LayoutEditorFormIdRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/my-responses'
     | '/form/$formId'
+    | '/payment/success'
     | '/analytics/reports'
     | '/analytics/responses'
     | '/editor/$formId'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/my-responses'
     | '/form/$formId'
+    | '/payment/success'
     | '/analytics/reports'
     | '/analytics/responses'
     | '/editor/$formId'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/_layout/dashboard'
     | '/_layout/my-responses'
     | '/form/$formId'
+    | '/payment/success'
     | '/_layout/analytics/reports'
     | '/_layout/analytics/responses'
     | '/_layout/editor/$formId'
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   FormFormIdRoute: typeof FormFormIdRoute
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/success': {
+      id: '/payment/success'
+      path: '/payment/success'
+      fullPath: '/payment/success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/form/$formId': {
@@ -343,6 +363,7 @@ const rootRouteChildren: RootRouteChildren = {
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   FormFormIdRoute: FormFormIdRoute,
+  PaymentSuccessRoute: PaymentSuccessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

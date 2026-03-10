@@ -365,7 +365,7 @@ function EditFormComponent() {
       min: updatedField.min,
       max: updatedField.max,
       step: updatedField.step,
-      options: updatedField.options,
+      options: updatedField.options as CanvasField['options'],
       validation: {
         required: updatedField.required,
         min: updatedField.validation?.min,

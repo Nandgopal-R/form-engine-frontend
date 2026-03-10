@@ -47,8 +47,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
     console.error('Response Text:', response.statusText)
     throw new Error(
       errorData.message ||
-      errorData.error ||
-      `Request failed: ${response.statusText}`,
+        errorData.error ||
+        `Request failed: ${response.statusText}`,
     )
   }
   const result: ApiResponse<T> = await response.json()
@@ -128,15 +128,5 @@ export const responsesApi = {
       credentials: 'include',
     })
     return handleResponse<Array<UserResponse>>(response)
-  },
-
-  // GET /responses/received - Get all responses RECEIVED for forms owned by the user
-  getAllReceived: async (): Promise<Array<any>> => {
-    const response = await fetch(`${API_URL}/responses/received`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
-    return handleResponse<Array<any>>(response)
   },
 }

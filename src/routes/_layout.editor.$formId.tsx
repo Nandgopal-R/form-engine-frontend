@@ -19,7 +19,7 @@
 
 import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
 import type {
@@ -27,6 +27,7 @@ import type {
   UpdateFieldInput,
   UpdateFormInput,
 } from '@/api/forms'
+import type { Template } from '@/api/templates'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -68,6 +69,7 @@ function EditFormComponent() {
   const { formId } = Route.useParams()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   // Fetch existing form data
   // This loads the form metadata (title, description, etc.)
@@ -179,6 +181,8 @@ function EditFormComponent() {
         validation: newField.validation,
       }
       setFields((prev) => [...prev, canvasField])
+      // Invalidate the query to keep local cache in sync with the backend
+      queryClient.invalidateQueries({ queryKey: ['form-fields', formId] })
     },
     onError: (error, variables) => {
       console.error('Failed to create field:', error.message)
@@ -192,6 +196,7 @@ function EditFormComponent() {
     mutationFn: (fieldId: string) => fieldsApi.delete(fieldId),
     onSuccess: () => {
       console.log('Field deleted successfully!')
+      queryClient.invalidateQueries({ queryKey: ['form-fields', formId] })
     },
     onError: (error) => {
       console.error('Failed to delete field:', error.message)
@@ -250,7 +255,7 @@ function EditFormComponent() {
       cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
     }
 
-    const typeInfo = fieldTypeMap[fieldId] || {
+    const typeInfo = fieldTypeMap[fieldId] ?? {
       fieldType: 'text',
       fieldValueType: 'string',
     }
@@ -265,6 +270,70 @@ function EditFormComponent() {
 
     console.log('Creating field with data:', JSON.stringify(fieldData, null, 2))
     createField.mutate(fieldData)
+  }
+
+  // Handle template selection - add all template fields to the form
+  const handleTemplateClick = async (template: Template) => {
+    console.log('Template clicked:', template.title)
+
+    const fieldTypeMap: Record<
+      string,
+      { fieldType: string; fieldValueType: string }
+    > = {
+      text: { fieldType: 'text', fieldValueType: 'string' },
+      number: { fieldType: 'number', fieldValueType: 'number' },
+      checkbox: { fieldType: 'checkbox', fieldValueType: 'boolean' },
+      radio: { fieldType: 'radio', fieldValueType: 'string' },
+      dropdown: { fieldType: 'dropdown', fieldValueType: 'string' },
+      date: { fieldType: 'date', fieldValueType: 'string' },
+      textarea: { fieldType: 'textarea', fieldValueType: 'string' },
+      email: { fieldType: 'email', fieldValueType: 'string' },
+      url: { fieldType: 'url', fieldValueType: 'string' },
+      phone: { fieldType: 'phone', fieldValueType: 'string' },
+      time: { fieldType: 'time', fieldValueType: 'string' },
+      toggle: { fieldType: 'toggle', fieldValueType: 'boolean' },
+      slider: { fieldType: 'slider', fieldValueType: 'number' },
+      rating: { fieldType: 'rating', fieldValueType: 'number' },
+      file: { fieldType: 'file', fieldValueType: 'string' },
+      section: { fieldType: 'section', fieldValueType: 'string' },
+      cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
+    }
+
+    // Process fields sequentially to avoid race conditions in the backend's linked list logic
+    for (const templateField of template.fields) {
+      const rawType = templateField.fieldType
+      let type = rawType.toLowerCase()
+      if (type === 'input') type = 'text'
+
+      const typeInfo = fieldTypeMap[type] ?? {
+        fieldType: 'text',
+        fieldValueType: 'string',
+      }
+
+      const fieldData: CreateFieldInput = {
+        fieldName: templateField.fieldName,
+        label: templateField.label,
+        fieldValueType: typeInfo.fieldValueType,
+        fieldType: typeInfo.fieldType,
+        validation: templateField.validation,
+        placeholder: templateField.placeholder,
+        min: templateField.min,
+        max: templateField.max,
+        step: templateField.step,
+        options: templateField.options,
+      }
+
+      console.log(
+        'Creating field from template:',
+        JSON.stringify(fieldData, null, 2),
+      )
+
+      try {
+        await createField.mutateAsync(fieldData)
+      } catch (error) {
+        console.error('Error creating template field:', error)
+      }
+    }
   }
 
   const handleRemoveField = (id: string) => {
@@ -351,7 +420,10 @@ function EditFormComponent() {
     <>
       <ResizablePanelGroup direction="horizontal" className="h-full w-full">
         <ResizablePanel defaultSize={20} minSize={15}>
-          <FieldSidebar onFieldClick={handleFieldClick} />
+          <FieldSidebar
+            onFieldClick={handleFieldClick}
+            onTemplateClick={handleTemplateClick}
+          />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={80} minSize={50}>

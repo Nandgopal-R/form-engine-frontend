@@ -260,6 +260,18 @@ function ResponsesPage() {
           </div>
         )}
 
+        {forms.length === 0 && !isFormsLoading && (
+          <div className="text-center py-12 border-2 border-dashed rounded-2xl bg-muted/5">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 mb-4">
+              <FileText className="h-6 w-6 text-muted-foreground/40" />
+            </div>
+            <h3 className="text-lg font-bold">No forms found</h3>
+            <p className="text-muted-foreground text-sm max-w-xs mx-auto mt-2">
+              Create your first form to start collecting responses and view analytics.
+            </p>
+          </div>
+        )}
+
         {filteredGroups.length > 0 ? (
           <div className="space-y-6">
             {filteredGroups.map((group) => (

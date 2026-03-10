@@ -1,12 +1,12 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo, useState  } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { AlertCircle, FileX, Plus, Search } from 'lucide-react'
+import { formsApi } from '@/api/forms'
 import { authClient } from '@/lib/auth-client'
 import { FormCard } from '@/components/form-card'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { formsApi } from '@/api/forms'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 
@@ -122,7 +122,7 @@ function DashboardPage() {
   const filteredForms = useMemo(() => {
     if (!forms) return []
     if (!searchQuery.trim()) return forms
-    
+
     const query = searchQuery.toLowerCase().trim()
     return forms.filter((form) => {
       const title = (form.title || form.name || '').toLowerCase()

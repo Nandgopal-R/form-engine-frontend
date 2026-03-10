@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   Link,
   Outlet,
@@ -5,7 +6,6 @@ import {
   useMatches,
   useNavigate,
 } from '@tanstack/react-router'
-import { useEffect } from 'react'
 import {
   SidebarInset,
   SidebarProvider,

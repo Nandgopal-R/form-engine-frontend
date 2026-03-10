@@ -82,6 +82,11 @@ export interface CreateFieldInput {
   fieldType: string // UI field type
   prevFieldId?: string | null
   validation?: FieldValidation
+  placeholder?: string
+  min?: number
+  max?: number
+  step?: number
+  options?: Array<string>
 }
 
 export interface UpdateFieldInput {
@@ -98,7 +103,7 @@ export interface UpdateFieldInput {
 }
 
 // Base URL for API endpoints
-const API_URL = 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 // Centralized error handling for all API requests
 // Extracts error messages and provides consistent error format
@@ -217,12 +222,21 @@ export const formsApi = {
 }
 
 export const fieldsApi = {
-  // GET /fields/:formId - Fetch all fields for a form
+  // GET /fields/:formId - Fetch all fields for a form (authenticated)
   getById: async (formId: string): Promise<Array<FormField>> => {
     const response = await fetch(`${API_URL}/fields/${formId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+    })
+    return handleResponse<Array<FormField>>(response)
+  },
+
+  // GET /fields/public/:formId - Fetch all fields for a public form (no auth required)
+  getPublicById: async (formId: string): Promise<Array<FormField>> => {
+    const response = await fetch(`${API_URL}/fields/public/${formId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
     })
     return handleResponse<Array<FormField>>(response)
   },

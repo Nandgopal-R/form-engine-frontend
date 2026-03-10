@@ -81,6 +81,11 @@ export interface CreateFieldInput {
   fieldType: string // UI field type
   prevFieldId?: string | null
   validation?: FieldValidation
+  placeholder?: string
+  min?: number
+  max?: number
+  step?: number
+  options?: string[]
 }
 
 export interface UpdateFieldInput {

@@ -27,6 +27,7 @@ import type {
   UpdateFormInput,
   UpdateFieldInput,
 } from '@/api/forms'
+import type { Template } from '@/api/templates'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -267,6 +268,64 @@ function EditFormComponent() {
     createField.mutate(fieldData)
   }
 
+  // Handle template selection - add all template fields to the form
+  const handleTemplateClick = (template: Template) => {
+    console.log('Template clicked:', template.title)
+
+    const fieldTypeMap: Record<
+      string,
+      { fieldType: string; fieldValueType: string }
+    > = {
+      text: { fieldType: 'text', fieldValueType: 'string' },
+      number: { fieldType: 'number', fieldValueType: 'number' },
+      checkbox: { fieldType: 'checkbox', fieldValueType: 'boolean' },
+      radio: { fieldType: 'radio', fieldValueType: 'string' },
+      dropdown: { fieldType: 'dropdown', fieldValueType: 'string' },
+      date: { fieldType: 'date', fieldValueType: 'string' },
+      textarea: { fieldType: 'textarea', fieldValueType: 'string' },
+      email: { fieldType: 'email', fieldValueType: 'string' },
+      url: { fieldType: 'url', fieldValueType: 'string' },
+      phone: { fieldType: 'phone', fieldValueType: 'string' },
+      time: { fieldType: 'time', fieldValueType: 'string' },
+      toggle: { fieldType: 'toggle', fieldValueType: 'boolean' },
+      slider: { fieldType: 'slider', fieldValueType: 'number' },
+      rating: { fieldType: 'rating', fieldValueType: 'number' },
+      file: { fieldType: 'file', fieldValueType: 'string' },
+      section: { fieldType: 'section', fieldValueType: 'string' },
+      cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
+    }
+
+    template.fields.forEach((templateField) => {
+      const rawType = templateField.fieldType || 'text'
+      let type = rawType.toLowerCase()
+      if (type === 'input') type = 'text'
+
+      const typeInfo = fieldTypeMap[type] || {
+        fieldType: 'text',
+        fieldValueType: 'string',
+      }
+
+      const fieldData: CreateFieldInput = {
+        fieldName: templateField.fieldName,
+        label: templateField.label,
+        fieldValueType: typeInfo.fieldValueType,
+        fieldType: typeInfo.fieldType,
+        validation: templateField.validation,
+        placeholder: templateField.placeholder,
+        min: templateField.min,
+        max: templateField.max,
+        step: templateField.step,
+        options: templateField.options,
+      }
+
+      console.log(
+        'Creating field from template:',
+        JSON.stringify(fieldData, null, 2),
+      )
+      createField.mutate(fieldData)
+    })
+  }
+
   const handleRemoveField = (id: string) => {
     console.log('Deleting field:', id)
     // Call the delete API first
@@ -351,7 +410,10 @@ function EditFormComponent() {
     <>
       <ResizablePanelGroup direction="horizontal" className="h-full w-full">
         <ResizablePanel defaultSize={20} minSize={15}>
-          <FieldSidebar onFieldClick={handleFieldClick} />
+          <FieldSidebar
+            onFieldClick={handleFieldClick}
+            onTemplateClick={handleTemplateClick}
+          />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={80} minSize={50}>

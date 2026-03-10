@@ -1,6 +1,6 @@
-import { type FullConfig } from '@playwright/test'
 import { chromium } from '@playwright/test'
 import { TEST_USER } from './helpers'
+import type { FullConfig } from '@playwright/test'
 
 /**
  * Global setup: ensures the E2E test user exists.

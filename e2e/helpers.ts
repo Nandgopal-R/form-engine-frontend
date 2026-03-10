@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 
 /** Shared test credentials — must match a user that exists in the DB or will be signed up. */
 export const TEST_USER = {

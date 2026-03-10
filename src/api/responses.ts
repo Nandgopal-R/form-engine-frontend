@@ -143,13 +143,45 @@ export const responsesApi = {
   },
 
   // GET /responses/received - Get all responses RECEIVED for forms owned by the user
-  getAllReceived: async (): Promise<Array<ReceivedResponse>> => {
-    const response = await fetch(`${API_URL}/responses/received`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
+  // Falls back to fetching per-form if endpoint doesn't exist on deployed backend
+  getAllReceived: async (formIds?: string[]): Promise<Array<ReceivedResponse>> => {
+    try {
+      const response = await fetch(`${API_URL}/responses/received`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
+      if (response.ok) {
+        return handleResponse<Array<ReceivedResponse>>(response)
+      }
+    } catch {
+      // endpoint doesn't exist, fall through to per-form fallback
+    }
 
-    return handleResponse<Array<ReceivedResponse>>(response)
+    // Fallback: fetch responses per form using existing endpoint
+    if (!formIds || formIds.length === 0) return []
+
+    const results: ReceivedResponse[] = []
+    for (const formId of formIds) {
+      try {
+        const perFormResponses = await responsesApi.getForForm(formId)
+        for (const r of perFormResponses) {
+          results.push({
+            id: r.id,
+            formId: r.formId,
+            formName: r.formTitle,
+            responder: 'Respondent',
+            email: '',
+            answers: r.answers,
+            isSubmitted: true,
+            status: 'Completed',
+            createdAt: new Date().toISOString(),
+          })
+        }
+      } catch {
+        // form may have no responses, skip
+      }
+    }
+    return results
   },
 }

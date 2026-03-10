@@ -1,10 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { EditorCanvas } from './editor-canvas';
 import type { CanvasField } from './fields/field-preview';
 
-const mockFields: CanvasField[] = [
+const mockFields: Array<CanvasField> = [
     { id: '1', type: 'text', label: 'Field 1' },
     { id: '2', type: 'number', label: 'Field 2' },
 ];

@@ -24,8 +24,8 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
 import type {
   CreateFieldInput,
-  UpdateFormInput,
   UpdateFieldInput,
+  UpdateFormInput,
 } from '@/api/forms'
 import type { Template } from '@/api/templates'
 import {
@@ -255,7 +255,7 @@ function EditFormComponent() {
       cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
     }
 
-    const typeInfo = fieldTypeMap[fieldId] || {
+    const typeInfo = fieldTypeMap[fieldId] ?? {
       fieldType: 'text',
       fieldValueType: 'string',
     }
@@ -301,11 +301,11 @@ function EditFormComponent() {
 
     // Process fields sequentially to avoid race conditions in the backend's linked list logic
     for (const templateField of template.fields) {
-      const rawType = templateField.fieldType || 'text'
+      const rawType = templateField.fieldType
       let type = rawType.toLowerCase()
       if (type === 'input') type = 'text'
 
-      const typeInfo = fieldTypeMap[type] || {
+      const typeInfo = fieldTypeMap[type] ?? {
         fieldType: 'text',
         fieldValueType: 'string',
       }

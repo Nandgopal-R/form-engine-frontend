@@ -12,8 +12,9 @@
  * are pre-configured and users just need to set parameters.
  */
 
-import { useState, useMemo } from 'react'
-import { Plus, X, Info, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { AlertTriangle, CheckCircle2, Info, Plus, X } from 'lucide-react'
+import type { RuleTemplate, ValidationConfig } from '@/lib/validation-engine';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,11 +33,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import {
-  RULE_TEMPLATES,
-  getRulesForFieldType,
   PREDEFINED_PATTERNS,
-  type ValidationConfig,
-  type RuleTemplate,
+  RULE_TEMPLATES,
+
+
+  getRulesForFieldType
 } from '@/lib/validation-engine'
 
 interface ValidationRuleBuilderProps {
@@ -86,10 +87,10 @@ export function ValidationRuleBuilder({
   onChange,
 }: ValidationRuleBuilderProps) {
   // State for currently active validation rules on this field
-  const [activeRules, setActiveRules] = useState<ActiveRule[]>(() => {
+  const [activeRules, setActiveRules] = useState<Array<ActiveRule>>(() => {
     // Initialize active rules from existing validation config
     // This ensures the UI reflects the current validation state
-    const rules: ActiveRule[] = []
+    const rules: Array<ActiveRule> = []
     if (currentValidation.minLength !== undefined) {
       rules.push({
         ruleId: 'minLength',
@@ -135,11 +136,9 @@ export function ValidationRuleBuilder({
 
   // Group rules by category
   const rulesByCategory = useMemo(() => {
-    const grouped: Record<string, RuleTemplate[]> = {}
+    const grouped: Record<string, Array<RuleTemplate>> = {}
     for (const rule of applicableRules) {
-      if (!grouped[rule.category]) {
-        grouped[rule.category] = []
-      }
+      grouped[rule.category] ??= []
       grouped[rule.category].push(rule)
     }
     return grouped
@@ -147,7 +146,7 @@ export function ValidationRuleBuilder({
 
   // Build validation config from active rules
   const buildConfig = (
-    rules: ActiveRule[],
+    rules: Array<ActiveRule>,
     required?: boolean,
   ): ValidationConfig => {
     const config: ValidationConfig = {

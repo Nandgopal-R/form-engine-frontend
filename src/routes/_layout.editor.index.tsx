@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
-import { FileText, ArrowRight } from 'lucide-react'
+import { ArrowRight, FileText } from 'lucide-react'
 
 import type { CreateFormInput } from '@/api/forms'
 import { Button } from '@/components/ui/button'

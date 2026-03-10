@@ -1,5 +1,6 @@
 'use client'
 import * as React from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   BarChart3,
   ClipboardList,
@@ -9,9 +10,9 @@ import {
   Plus,
   Settings,
 } from 'lucide-react'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
+
 import { NavMain } from '@/components/nav-main'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Sidebar,
   SidebarContent,
@@ -22,7 +23,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { authClient } from '@/lib/auth-client'
 
 const data = {
   navMain: [
@@ -73,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
 
-  const userName = session?.user?.name || session?.user?.email || 'User'
+  const userName = session?.user.name || session?.user.email || 'User'
   const userInitial = userName.charAt(0).toUpperCase()
 
   const handleLogout = async () => {
@@ -114,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{userName}</span>
-                {session?.user?.email && session?.user?.name && (
+                {session?.user.email && session.user.name && (
                   <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
                 )}
               </div>

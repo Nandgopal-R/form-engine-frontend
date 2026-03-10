@@ -1,7 +1,7 @@
 import { FieldItems } from './fields/field-items'
 import { TemplateItems } from './fields/template-items'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Template } from '@/api/templates'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface TabsLineProps {
   onFieldClick?: (fieldId: string) => void

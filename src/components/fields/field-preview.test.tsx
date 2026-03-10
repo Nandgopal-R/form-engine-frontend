@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
-import { FieldPreview, type CanvasField } from './field-preview';
+import { describe, expect, it, vi } from 'vitest';
+import {  FieldPreview } from './field-preview';
+import type {CanvasField} from './field-preview';
 
 const mockField: CanvasField = {
     id: 'test-id',

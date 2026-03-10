@@ -16,7 +16,7 @@ export interface TemplateField {
   min?: number
   max?: number
   step?: number
-  options?: string[]
+  options?: Array<string>
 }
 
 export interface Template {
@@ -25,18 +25,18 @@ export interface Template {
   description: string
   templateType: 'builtin' | 'custom'
   ownerId?: string
-  fields: TemplateField[]
+  fields: Array<TemplateField>
   createdAt: string
   updatedAt?: string
 }
 
 export const templatesApi = {
-  getBuiltin: async (): Promise<Template[]> => {
-    return builtinTemplates
+  getBuiltin: (): Promise<Array<Template>> => {
+    return Promise.resolve(builtinTemplates)
   },
 }
 
-export const builtinTemplates: Template[] = [
+export const builtinTemplates: Array<Template> = [
   {
     id: 'builtin-contact',
     title: 'Contact Us Form',

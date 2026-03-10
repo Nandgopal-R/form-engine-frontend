@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { CheckCircle2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const Route = createFileRoute('/email-verified')({
   component: EmailVerified,

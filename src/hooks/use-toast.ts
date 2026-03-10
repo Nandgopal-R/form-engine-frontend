@@ -68,7 +68,7 @@ type Action =
     }
 
 interface State {
-  toasts: ToasterToast[]
+  toasts: Array<ToasterToast>
 }
 
 // Store timeout references for proper cleanup

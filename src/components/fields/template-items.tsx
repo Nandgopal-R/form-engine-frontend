@@ -1,7 +1,7 @@
 import { LayoutTemplate } from 'lucide-react'
+import type { Template } from '@/api/templates'
 import { Button } from '@/components/ui/button'
 import { builtinTemplates } from '@/api/templates'
-import type { Template } from '@/api/templates'
 
 interface TemplateItemsProps {
   onTemplateClick?: (template: Template) => void

@@ -632,7 +632,7 @@ export function buildValidationConfig(
  * Combine multiple regex patterns with AND logic
  * This creates a pattern that matches if ALL patterns match
  */
-export function combinePatterns(patterns: string[]): string {
+export function combinePatterns(patterns: Array<string>): string {
   if (patterns.length === 0) return ''
   if (patterns.length === 1) return patterns[0]
 
@@ -644,7 +644,7 @@ export function combinePatterns(patterns: string[]): string {
 /**
  * Get rules applicable to a field type
  */
-export function getRulesForFieldType(fieldType: string): RuleTemplate[] {
+export function getRulesForFieldType(fieldType: string): Array<RuleTemplate> {
   const textTypes = ['text', 'textarea', 'Input', 'input']
   const numberTypes = ['number', 'slider', 'cgpa']
 

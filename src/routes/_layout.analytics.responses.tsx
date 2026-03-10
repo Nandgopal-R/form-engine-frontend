@@ -1,9 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2, AlertCircle, FileText } from 'lucide-react'
-import { responsesApi } from '@/api/responses'
-import { formsApi, type Form } from '@/api/forms'
+import { AlertCircle, FileText, Loader2 } from 'lucide-react'
 import type { FormResponseForOwner } from '@/api/responses'
+import type { Form } from '@/api/forms';
+import { responsesApi } from '@/api/responses'
+import { formsApi } from '@/api/forms'
 import {
   Card,
   CardContent,
@@ -114,14 +115,14 @@ function ResponsesPage() {
         </div>
 
         {/* Loading / Error handling */}
-        {(isFormsLoading || isAllResponsesLoading) && (
+        {isAllResponsesLoading && (
           <div className="text-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mx-auto mb-2" />
             <div className="text-muted-foreground">Loading responses...</div>
           </div>
         )}
 
-        {forms && forms.length === 0 && (
+        {forms.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             No forms found. Create a form first to collect responses.
           </div>
@@ -135,19 +136,19 @@ function ResponsesPage() {
                 <CardHeader>
                   <CardTitle>{group.formTitle || 'Untitled Form'}</CardTitle>
                   <CardDescription>
-                    {group.responses?.length
+                    {group.responses.length
                       ? `${group.responses.length} response${group.responses.length === 1 ? '' : 's'}`
                       : 'No responses yet'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {group.responses && group.responses.length > 0 ? (
+                  {group.responses.length > 0 ? (
                     <div className="space-y-4">
                       {group.responses.map((response, idx) => (
                         <div key={response.id} className="border rounded-lg p-4 space-y-2">
                           <h3 className="font-medium text-sm text-muted-foreground">Response #{idx + 1}</h3>
                           <div className="space-y-2">
-                            {Object.entries(response.answers || {}).map(([k, v]) => (
+                            {Object.entries(response.answers).map(([k, v]) => (
                               <div key={k} className="grid grid-cols-3 gap-2">
                                 <div className="font-medium text-sm">{k}:</div>
                                 <div className="col-span-2 text-sm">
@@ -167,7 +168,7 @@ function ResponsesPage() {
             ))}
           </div>
         ) : (
-          !isFormsLoading && !isAllResponsesLoading && (
+          !isAllResponsesLoading && (
             <div className="text-center py-8 text-muted-foreground">No responses received yet.</div>
           )
         )}

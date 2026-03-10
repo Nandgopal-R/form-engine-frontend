@@ -85,7 +85,7 @@ export interface CreateFieldInput {
   min?: number
   max?: number
   step?: number
-  options?: string[]
+  options?: Array<string>
 }
 
 export interface UpdateFieldInput {
@@ -117,8 +117,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
     // Fallbacks ensure we always have some error to show
     throw new Error(
       errorData.message ||
-        errorData.error ||
-        `Request failed: ${response.statusText}`,
+      errorData.error ||
+      `Request failed: ${response.statusText}`,
     )
   }
 

@@ -11,7 +11,7 @@ import {
   X,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import type { FormResponseForOwner } from '@/api/responses'
+import type { ReceivedResponse } from '@/api/responses'
 import type { Form } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { formsApi } from '@/api/forms'
@@ -37,14 +37,8 @@ export const Route = createFileRoute('/_layout/analytics/responses')({
   component: ResponsesPage,
 })
 
-// Extended interface for frontend simulation
-interface SimulatedResponse extends FormResponseForOwner {
-  responder?: string
-  email?: string
-  createdAt: string
-  status?: string
-  isSubmitted?: boolean
-}
+// Extended interface for frontend display
+type SimulatedResponse = ReceivedResponse
 
 function ResponsesPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -78,6 +72,7 @@ function ResponsesPage() {
     useQuery({
       queryKey: ['received-responses'],
       queryFn: () => responsesApi.getAllReceived(),
+      retry: false,
     })
 
   // Group responses by form for the UI
@@ -479,7 +474,7 @@ function ResponsesPage() {
                                   ? new Date(
                                       response.submittedAt,
                                     ).toLocaleDateString()
-                                  : '3/10/2026'}
+                                  : '—'}
                               </div>
                               <div className="text-[9px] text-muted-foreground/60 mt-1">
                                 {response.createdAt &&

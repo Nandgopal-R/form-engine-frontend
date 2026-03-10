@@ -122,6 +122,11 @@ function ResponsesPage() {
           </div>
         )}
 
+        {forms.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            No forms found. Create a form first to collect responses.
+          </div>
+        )}
 
         {/* Show aggregated responses grouped by form */}
         {allResponses && allResponses.length > 0 ? (

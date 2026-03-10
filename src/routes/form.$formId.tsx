@@ -24,22 +24,18 @@ import {
   Star,
 } from 'lucide-react'
 import type { FormField } from '@/api/forms'
-import type { ValidationError } from '@/lib/validation-engine';
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Switch } from '@/components/ui/switch'
-import { Slider } from '@/components/ui/slider'
+import type { ValidationError } from '@/lib/validation-engine'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
+import { Switch } from '@/components/ui/switch'
 import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
+import { validateField, validateForm } from '@/lib/validation-engine'
 import { useToast } from '@/hooks/use-toast'
-import {
-
-  validateField,
-  validateForm
-} from '@/lib/validation-engine'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,

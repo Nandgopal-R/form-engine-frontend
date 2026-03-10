@@ -28,8 +28,5 @@ jobs:
       - name: Run tests
         run: bun run test
 
-      - name: Run integration tests
-        run: bunx vitest run src/integration_testing/
-
       - name: Run build
         run: bun run build

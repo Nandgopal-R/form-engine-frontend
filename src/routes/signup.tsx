@@ -93,7 +93,6 @@ function Signup() {
           email,
           password,
           name,
-          callbackURL: window.location.origin + '/email-verified', // Redirect to Frontend after verification
         },
         {
           onRequest: () => {
@@ -103,7 +102,8 @@ function Signup() {
           onSuccess: () => {
             console.log('Signup Successful!')
             setLoading(false)
-            setSuccess(true)
+            // Redirect directly to dashboard since email verification is disabled
+            window.location.href = '/dashboard'
           },
           onError: (ctx: { error: Error }) => {
             console.error('Signup Error:', ctx)

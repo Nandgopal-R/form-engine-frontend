@@ -156,7 +156,7 @@ function Login() {
             try {
               await authClient.signIn.social({
                 provider: 'google',
-                callbackURL: 'http://localhost:3000/dashboard',
+                callbackURL: window.location.origin + '/dashboard',
               })
             } catch (err: any) {
               console.error('Google Signin Error:', err)

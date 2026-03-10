@@ -141,12 +141,15 @@ export const responsesApi = {
     })
     return handleResponse<Array<UserResponse>>(response)
   },
+
+  // GET /responses/received - Get all responses RECEIVED for forms owned by the user
+  getAllReceived: async (): Promise<Array<ReceivedResponse>> => {
     const response = await fetch(`${API_URL}/responses/received`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
 
-    return handleResponse<Array<any>>(response)
+    return handleResponse<Array<ReceivedResponse>>(response)
   },
 }

@@ -152,11 +152,19 @@ function Login() {
         <button
           type="button"
           className="w-full rounded-[10px] border border-input bg-background p-3 font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground hover:border-ring flex items-center justify-center gap-2"
-          onClick={() => {
-            // Redirect to backend OAuth endpoint directly
-            const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-            const callbackUrl = encodeURIComponent(window.location.origin + '/dashboard');
-            window.location.href = `${backendUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
+          onClick={async () => {
+            try {
+              // Use authClient which properly handles OAuth flow
+              await authClient.signIn.social({
+                provider: 'google',
+                callbackURL: window.location.origin + '/dashboard',
+              })
+            } catch (err: any) {
+              console.error('Google Signin Error:', err)
+              alert(
+                'Google Signin Failed: ' + (err.message || JSON.stringify(err)),
+              )
+            }
           }}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">

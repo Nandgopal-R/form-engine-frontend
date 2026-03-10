@@ -73,7 +73,7 @@ function FormResponsePage() {
   // This follows our microservices-like API design
   const { data: formFields, isLoading: isFieldsLoading } = useQuery({
     queryKey: ['form-fields', formId],
-    queryFn: () => fieldsApi.getById(formId),
+    queryFn: () => fieldsApi.getPublicById(formId),
   })
 
   // Check if user has an existing draft response to allow continuing work

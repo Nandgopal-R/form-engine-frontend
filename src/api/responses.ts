@@ -129,4 +129,14 @@ export const responsesApi = {
     })
     return handleResponse<Array<UserResponse>>(response)
   },
+
+  // Placeholder for analytics aggregated view
+  getAllReceived: async (): Promise<Array<FormResponseForOwner>> => {
+    const response = await fetch(`${API_URL}/responses/received`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+    return handleResponse<Array<FormResponseForOwner>>(response)
+  },
 }

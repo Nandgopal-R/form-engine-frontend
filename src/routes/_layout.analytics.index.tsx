@@ -351,8 +351,21 @@ function AnalyticsOverviewPage() {
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-xs font-medium text-foreground truncate max-w-[300px]">
-                              {Object.values(res.answers).find(val => val && String(val).trim() !== '') as string || 'No data provided'}
+                            <div className="text-xs font-medium text-foreground">
+                              {Object.entries(res.answers).length > 0 ? (
+                                <div className="flex items-center gap-1.5 overflow-hidden">
+                                  <span className="truncate max-w-[120px]">
+                                    {String(Object.values(res.answers)[0] || '...')}
+                                  </span>
+                                  {Object.keys(res.answers).length > 1 && (
+                                    <Badge variant="outline" className="text-[9px] font-bold px-1 py-0 bg-primary/5 text-primary h-4 border-primary/10">
+                                      +{Object.keys(res.answers).length - 1}
+                                    </Badge>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground italic">Empty</span>
+                              )}
                             </div>
                           </td>
                           <td className="px-6 py-4">

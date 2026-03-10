@@ -66,6 +66,7 @@ function ResponsesPage() {
   } = useQuery({
     queryKey: ['received-responses'],
     queryFn: () => responsesApi.getAllReceived(),
+    retry: false,
   })
 
   // Group responses by form for the UI

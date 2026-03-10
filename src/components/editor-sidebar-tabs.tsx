@@ -8,13 +8,15 @@ interface TabsLineProps {
   onTemplateClick?: (template: Template) => void
 }
 
-export function TabsLine({ onFieldClick, onTemplateClick }: TabsLineProps) {
+export function TabsLine({
+  onFieldClick,
+  onTemplateClick,
+}: TabsLineProps) {
   return (
-    <Tabs defaultValue="fields" className="w-full h-full">
-      <TabsList variant="line" className="flex justify-center w-full">
+    <Tabs defaultValue="fields" className="w-full h-full flex flex-col">
+      <TabsList variant="line" className="flex justify-center w-full shrink-0">
         <TabsTrigger value="fields">Fields</TabsTrigger>
         <TabsTrigger value="templates">Templates</TabsTrigger>
-        <TabsTrigger value="generate">Generate</TabsTrigger>
       </TabsList>
 
       <TabsContent
@@ -29,13 +31,6 @@ export function TabsLine({ onFieldClick, onTemplateClick }: TabsLineProps) {
         className="mt-0 flex-1 overflow-y-auto min-h-0"
       >
         <TemplateItems onTemplateClick={onTemplateClick} />
-      </TabsContent>
-
-      <TabsContent
-        value="generate"
-        className="p-4 text-sm text-muted-foreground text-center"
-      >
-        Generate coming soon
       </TabsContent>
     </Tabs>
   )

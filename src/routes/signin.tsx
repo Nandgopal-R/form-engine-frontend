@@ -156,7 +156,7 @@ function Login() {
             // Redirect to backend OAuth endpoint directly
             const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
             const callbackUrl = encodeURIComponent(window.location.origin + '/dashboard');
-            window.location.href = `${backendUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
+            window.location.href = `${backendUrl}/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
           }}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">

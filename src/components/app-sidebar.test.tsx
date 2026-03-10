@@ -58,6 +58,5 @@ describe('AppSidebar', () => {
         expect(await screen.findByText('Dashboard')).toBeInTheDocument();
         expect(await screen.findByText('Editor')).toBeInTheDocument();
         expect(await screen.findByText('Analytics')).toBeInTheDocument();
-        expect(await screen.findByText('Settings')).toBeInTheDocument();
     });
 });

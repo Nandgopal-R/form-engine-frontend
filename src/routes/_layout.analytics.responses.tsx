@@ -11,7 +11,7 @@ import {
   X,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import type { FormResponseForOwner } from '@/api/responses'
+import type { ReceivedResponse } from '@/api/responses'
 import type { Form } from '@/api/forms';
 import { responsesApi } from '@/api/responses'
 import { formsApi } from '@/api/forms'
@@ -31,14 +31,8 @@ export const Route = createFileRoute('/_layout/analytics/responses')({
   component: ResponsesPage,
 })
 
-// Extended interface for frontend simulation
-interface SimulatedResponse extends FormResponseForOwner {
-  responder?: string;
-  email?: string;
-  createdAt: string;
-  status?: string;
-  isSubmitted?: boolean;
-}
+// Extended interface for frontend display
+type SimulatedResponse = ReceivedResponse
 
 function ResponsesPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -378,9 +372,7 @@ function ResponsesPage() {
                               <div className="text-xs font-bold text-muted-foreground whitespace-nowrap">
                                 {response.createdAt && !isNaN(Date.parse(response.createdAt))
                                   ? new Date(response.createdAt).toLocaleDateString()
-                                  : response.submittedAt && !isNaN(Date.parse(response.submittedAt))
-                                    ? new Date(response.submittedAt).toLocaleDateString()
-                                    : '3/10/2026'}
+                                  : '—'}
                               </div>
                               <div className="text-[9px] text-muted-foreground/60 mt-1">
                                 {response.createdAt && !isNaN(Date.parse(response.createdAt))

@@ -26,6 +26,18 @@ export interface UserResponse {
   updatedAt: string
 }
 
+export interface ReceivedResponse {
+  id: string
+  formId: string
+  formName: string
+  responder: string
+  email: string
+  answers: Record<string, unknown>
+  isSubmitted: boolean
+  status: string
+  createdAt: string
+}
+
 export interface SubmitResponseInput {
   answers: Record<string, unknown>
   isSubmitted?: boolean
@@ -131,12 +143,13 @@ export const responsesApi = {
   },
 
   // GET /responses/received - Get all responses RECEIVED for forms owned by the user
-  getAllReceived: async (): Promise<Array<any>> => {
+  getAllReceived: async (): Promise<Array<ReceivedResponse>> => {
     const response = await fetch(`${API_URL}/responses/received`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
-    return handleResponse<Array<any>>(response)
+
+    return handleResponse<Array<ReceivedResponse>>(response)
   },
 }

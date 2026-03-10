@@ -251,6 +251,7 @@ function Signup() {
           </button>
         </form>
 
+        {/* Google sign-up disabled
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-border" />
@@ -268,7 +269,6 @@ function Signup() {
           onClick={() => {
             const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
             const callback = encodeURIComponent(window.location.origin + '/dashboard');
-            // Direct navigation to avoid XHR/cookie blocking
             window.location.href = `${backendUrl}/signin/google?callback=${callback}`;
           }}
         >
@@ -292,6 +292,7 @@ function Signup() {
           </svg>
           Sign up with Google
         </button>
+        */}
 
         <p className="mt-6 text-center text-xs text-muted-foreground leading-relaxed px-4">
           By clicking continue, you agree to our{' '}

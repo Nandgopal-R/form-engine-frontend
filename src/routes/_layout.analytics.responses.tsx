@@ -59,13 +59,14 @@ function ResponsesPage() {
     queryFn: () => formsApi.getAll(),
   })
 
-  // Aggregate responses for all forms
+  // Aggregate responses for all forms (with per-form fallback for deployed backend)
   const {
     data: allResponses = [],
     isLoading: isAllResponsesLoading,
   } = useQuery({
-    queryKey: ['received-responses'],
-    queryFn: () => responsesApi.getAllReceived(),
+    queryKey: ['received-responses', forms?.map(f => f.id)],
+    queryFn: () => responsesApi.getAllReceived(forms?.map(f => f.id)),
+    enabled: !!forms,
     retry: false,
   })
 

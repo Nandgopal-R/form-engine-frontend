@@ -47,12 +47,13 @@ function AnalyticsOverviewPage() {
     queryFn: () => formsApi.getAll(),
   })
 
-  // Fetch all received responses
+  // Fetch all received responses (with per-form fallback for deployed backend)
   const {
     data: allResponses = [],
   } = useQuery({
-    queryKey: ['received-responses'],
-    queryFn: () => responsesApi.getAllReceived(),
+    queryKey: ['received-responses', forms?.map(f => f.id)],
+    queryFn: () => responsesApi.getAllReceived(forms?.map(f => f.id)),
+    enabled: !!forms,
     retry: false,
   })
 

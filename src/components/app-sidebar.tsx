@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   LogOut,
   Plus,
-  Settings,
 } from 'lucide-react'
 
 import { NavMain } from '@/components/nav-main'
@@ -61,11 +60,6 @@ const data = {
           url: '/analytics/reports',
         },
       ],
-    },
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: Settings,
     },
   ],
 }

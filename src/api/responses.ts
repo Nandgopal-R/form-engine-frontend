@@ -59,8 +59,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
     console.error('Response Text:', response.statusText)
     throw new Error(
       errorData.message ||
-        errorData.error ||
-        `Request failed: ${response.statusText}`,
+      errorData.error ||
+      `Request failed: ${response.statusText}`,
     )
   }
   const result: ApiResponse<T> = await response.json()

@@ -1,8 +1,8 @@
 import { AlertCircle, FileText } from 'lucide-react'
-import type { AnalyticsReport } from '@/api/ai'
 import { AIInsightsSection } from './AIInsightsSection'
 import { ReportHeader } from './ReportHeader'
 import { ResponseStatistics } from './ResponseStatistics'
+import type { AnalyticsReport } from '@/api/ai'
 
 interface Form {
     id: string

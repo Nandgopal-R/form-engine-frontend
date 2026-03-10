@@ -7,7 +7,7 @@ interface RatingItem {
 }
 
 interface ResponseVisualizationsProps {
-  ratings?: RatingItem[]
+  ratings?: Array<RatingItem>
 }
 
 export function ResponseCharts({ ratings }: ResponseVisualizationsProps) {

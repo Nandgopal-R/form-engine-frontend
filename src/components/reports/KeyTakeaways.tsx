@@ -1,11 +1,11 @@
 import { Lightbulb } from 'lucide-react'
 
 interface KeyTakeawaysProps {
-  takeaways: string[]
+  takeaways: Array<string>
 }
 
 export function KeyTakeaways({ takeaways }: KeyTakeawaysProps) {
-  if (!takeaways || takeaways.length === 0) return null
+  if (takeaways.length === 0) return null
 
   return (
     <div className="space-y-3">

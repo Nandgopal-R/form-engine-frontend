@@ -109,9 +109,9 @@ export const aiApi = {
    * Placeholder — no backend endpoint exists yet.
    * Returns an empty array so AISuggestionPanel renders gracefully.
    */
-  suggestFields: async (
+  suggestFields: (
     _fields: Array<string>,
   ): Promise<{ suggestions: Array<{ label: string; type: string }> }> => {
-    return { suggestions: [] }
+    return Promise.resolve({ suggestions: [] })
   },
 }

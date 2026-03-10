@@ -5,6 +5,8 @@ import {
   Sparkles,
   TrendingUp,
 } from 'lucide-react'
+import { KeyTakeaways } from './KeyTakeaways'
+import { ResponseCharts } from './ResponseCharts'
 import type { AnalyticsReport } from '@/api/ai'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,8 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { KeyTakeaways } from './KeyTakeaways'
-import { ResponseCharts } from './ResponseCharts'
 
 interface AIInsightsSectionProps {
   onGenerate: () => Promise<void>

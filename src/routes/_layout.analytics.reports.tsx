@@ -1,12 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import type { AnalyticsReport } from '@/api/ai'
 import { formsApi } from '@/api/forms'
 import { aiApi } from '@/api/ai'
 import { ReportsSidebar } from '@/components/reports/ReportsSidebar'
 import { ReportViewer } from '@/components/reports/ReportViewer'
 import { useToast } from '@/hooks/use-toast'
-import type { AnalyticsReport } from '@/api/ai'
+
 
 export const Route = createFileRoute('/_layout/analytics/reports')({
   component: ReportsPage,

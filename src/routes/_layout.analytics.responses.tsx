@@ -174,78 +174,6 @@ function ResponsesPage() {
     setSelectedStatus('all')
   }
 
-  // Group responses by form for the UI
-  const groupedResponses = useMemo(() => {
-    return (forms || []).map(f => {
-      const responsesForForm = allResponses.filter((r: any) => r.formId === f.id)
-      return {
-        formId: f.id,
-        formTitle: f.title,
-        responses: responsesForForm
-      }
-    }).filter(group => group.responses.length > 0 || searchTerm === '')
-  }, [allResponses, forms, searchTerm])
-
-  // Filtering logic
-  const filteredGroups = useMemo(() => {
-    return groupedResponses.map(group => ({
-      ...group,
-      responses: group.responses.filter(r => {
-        const answersStr = JSON.stringify(r.answers).toLowerCase();
-        const matchesSearch = searchTerm === '' ||
-          answersStr.includes(searchTerm.toLowerCase()) ||
-          (r.responder && r.responder.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (r.email && r.email.toLowerCase().includes(searchTerm.toLowerCase()))
-
-        const matchesDate = filterDate === '' || (r.createdAt && r.createdAt.startsWith(filterDate))
-        const matchesForm = selectedForm === 'all' || r.formId === selectedForm
-        const matchesStatus = selectedStatus === 'all' || r.status === selectedStatus
-
-        return matchesSearch && matchesDate && matchesForm && matchesStatus
-      })
-    })).filter(group => group.responses.length > 0)
-  }, [groupedResponses, searchTerm, filterDate, selectedForm, selectedStatus])
-
-  const handleExport = (type: 'csv' | 'json', group: { formTitle?: string; responses: Array<SimulatedResponse> }) => {
-    const data = group.responses
-    let blob: Blob
-    let filename = `${group.formTitle || 'responses'}_${new Date().toISOString().split('T')[0]}`
-
-    if (type === 'json') {
-      blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-      filename += '.json'
-    } else {
-      const headers = Array.from(new Set(data.flatMap((r: SimulatedResponse) => Object.keys(r.answers))))
-      const csvRows = [
-        ['Responder', 'Email', 'Date', 'Status', ...headers].join(','),
-        ...data.map((r: SimulatedResponse) => [
-          `"${r.responder || 'Anonymous'}"`,
-          `"${r.email || 'N/A'}"`,
-          new Date(r.createdAt).toLocaleDateString(),
-          `"${r.status || 'Submitted'}"`,
-          ...headers.map(h => `"${String((r.answers as Record<string, any>)[h] || '').replace(/"/g, '""')}"`)
-        ].join(','))
-      ]
-      blob = new Blob([csvRows.join('\n')], { type: 'text/csv' })
-      filename += '.csv'
-    }
-
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  const clearFilters = () => {
-    setSearchTerm('')
-    setFilterDate('')
-    setSelectedForm('all')
-    setSelectedStatus('all')
-  }
-
   // Loading state
   if (isFormsLoading) {
     return (
@@ -539,11 +467,6 @@ function ResponsesPage() {
                                   ? new Date(
                                       response.createdAt,
                                     ).toLocaleDateString()
-                                  : response.submittedAt &&
-                                    !isNaN(Date.parse(response.submittedAt))
-                                  ? new Date(
-                                      response.submittedAt,
-                                    ).toLocaleDateString()
                                   : '—'}
                               </div>
                               <div className="text-[9px] text-muted-foreground/60 mt-1">
@@ -555,7 +478,7 @@ function ResponsesPage() {
                                       hour: '2-digit',
                                       minute: '2-digit',
                                     })
-                                  : '10:15 PM'}
+                                  : '—'}
                               </div>
                             </td>
                           </tr>

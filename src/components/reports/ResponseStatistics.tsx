@@ -1,5 +1,5 @@
+import { CheckCircle2, Star, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, Star, CheckCircle2 } from 'lucide-react'
 
 interface ResponseStatisticsProps {
   totalResponses: number

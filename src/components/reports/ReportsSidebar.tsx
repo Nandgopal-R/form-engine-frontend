@@ -8,7 +8,7 @@ interface Form {
 }
 
 interface ReportsSidebarProps {
-    forms: Form[]
+    forms: Array<Form>
     selectedFormId: string | null
     onSelectForm: (id: string) => void
 }

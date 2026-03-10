@@ -37,6 +37,7 @@ import { FieldSidebar } from '@/components/field-sidebar'
 import { EditorCanvas } from '@/components/editor-canvas'
 import { FieldProperties } from '@/components/field-properties'
 import { fieldsApi, formsApi } from '@/api/forms'
+import { aiApi } from '@/api/ai'
 import { useToast } from '@/hooks/use-toast'
 
 export const Route = createFileRoute('/_layout/editor/$formId')({
@@ -220,6 +221,29 @@ function EditFormComponent() {
       console.error('Failed to update field:', error.message)
       toast({
         title: 'Failed to save field',
+        description: error.message,
+        variant: 'destructive',
+      })
+    },
+  })
+
+  // Mutation for AI form generation
+  const aiGenerate = useMutation({
+    mutationFn: (prompt: string) => aiApi.generateForm(prompt),
+    onSuccess: (generatedForm) => {
+      toast({
+        title: 'Form generated!',
+        description: `"${generatedForm.title}" created with ${generatedForm.fields.length} fields. Redirecting...`,
+        variant: 'success',
+      })
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+      setTimeout(() => {
+        navigate({ to: '/editor/$formId', params: { formId: generatedForm.id } })
+      }, 1500)
+    },
+    onError: (error) => {
+      toast({
+        title: 'AI generation failed',
         description: error.message,
         variant: 'destructive',
       })
@@ -423,6 +447,8 @@ function EditFormComponent() {
           <FieldSidebar
             onFieldClick={handleFieldClick}
             onTemplateClick={handleTemplateClick}
+            onAIGenerate={(prompt) => aiGenerate.mutate(prompt)}
+            isAIGenerating={aiGenerate.isPending}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />

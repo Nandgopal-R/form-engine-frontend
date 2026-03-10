@@ -1,33 +1,35 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { TabsLine } from './editor-sidebar-tabs';
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
+import { TabsLine } from './editor-sidebar-tabs'
 
 describe('TabsLine', () => {
-    it('renders the initial tab (Fields) correctly', () => {
-        render(<TabsLine />);
-        expect(screen.getByText('Short Text')).toBeInTheDocument();
-    });
+  const mockProps = {}
 
-    it('switches tabs correctly', async () => {
-        const user = userEvent.setup();
-        render(<TabsLine />);
+  it('renders the initial tab (Fields) correctly', () => {
+    render(<TabsLine {...mockProps} />)
+    expect(screen.getByText('Short Text')).toBeInTheDocument()
+  })
 
-        const templatesTab = screen.getByRole('tab', { name: /templates/i });
-        await user.click(templatesTab);
+  it('switches tabs correctly', async () => {
+    const user = userEvent.setup()
+    render(<TabsLine {...mockProps} />)
 
-        expect(screen.getByText('Contact Us Form')).toBeInTheDocument();
-        expect(screen.queryByText('Short Text')).not.toBeInTheDocument();
-    });
+    const templatesTab = screen.getByRole('tab', { name: /templates/i })
+    await user.click(templatesTab)
 
-    it('calls onFieldClick when a field is clicked', async () => {
-        const onFieldClick = vi.fn();
-        const user = userEvent.setup();
-        render(<TabsLine onFieldClick={onFieldClick} />);
+    expect(screen.getByText('Contact Us Form')).toBeInTheDocument()
+    expect(screen.queryByText('Short Text')).not.toBeInTheDocument()
+  })
 
-        const textFieldButton = screen.getByText('Short Text');
-        await user.click(textFieldButton);
+  it('calls onFieldClick when a field is clicked', async () => {
+    const onFieldClick = vi.fn()
+    const user = userEvent.setup()
+    render(<TabsLine {...mockProps} onFieldClick={onFieldClick} />)
 
-        expect(onFieldClick).toHaveBeenCalledWith('text');
-    });
-});
+    const textFieldButton = screen.getByText('Short Text')
+    await user.click(textFieldButton)
+
+    expect(onFieldClick).toHaveBeenCalledWith('text')
+  })
+})

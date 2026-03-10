@@ -6,7 +6,6 @@ import {
   useMatches,
   useNavigate,
 } from '@tanstack/react-router'
-import { useEffect } from 'react'
 import {
   SidebarInset,
   SidebarProvider,
@@ -23,13 +22,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { Separator } from '@/components/ui/separator'
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_layout')({
   component: LayoutComponent,

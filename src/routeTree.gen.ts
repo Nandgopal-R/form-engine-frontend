@@ -22,7 +22,6 @@ import { Route as LayoutEditorIndexRouteImport } from './routes/_layout.editor.i
 import { Route as LayoutAnalyticsIndexRouteImport } from './routes/_layout.analytics.index'
 import { Route as LayoutEditorFormIdRouteImport } from './routes/_layout.editor.$formId'
 import { Route as LayoutAnalyticsResponsesRouteImport } from './routes/_layout.analytics.responses'
-import { Route as LayoutAnalyticsReportsRouteImport } from './routes/_layout.analytics.reports'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -89,11 +88,6 @@ const LayoutAnalyticsResponsesRoute =
     path: '/responses',
     getParentRoute: () => LayoutAnalyticsRoute,
   } as any)
-const LayoutAnalyticsReportsRoute = LayoutAnalyticsReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => LayoutAnalyticsRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -104,7 +98,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof LayoutDashboardRoute
   '/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
-  '/analytics/reports': typeof LayoutAnalyticsReportsRoute
   '/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/editor/$formId': typeof LayoutEditorFormIdRoute
   '/analytics/': typeof LayoutAnalyticsIndexRoute
@@ -118,7 +111,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof LayoutDashboardRoute
   '/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
-  '/analytics/reports': typeof LayoutAnalyticsReportsRoute
   '/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/editor/$formId': typeof LayoutEditorFormIdRoute
   '/analytics': typeof LayoutAnalyticsIndexRoute
@@ -135,7 +127,6 @@ export interface FileRoutesById {
   '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/my-responses': typeof LayoutMyResponsesRoute
   '/form/$formId': typeof FormFormIdRoute
-  '/_layout/analytics/reports': typeof LayoutAnalyticsReportsRoute
   '/_layout/analytics/responses': typeof LayoutAnalyticsResponsesRoute
   '/_layout/editor/$formId': typeof LayoutEditorFormIdRoute
   '/_layout/analytics/': typeof LayoutAnalyticsIndexRoute
@@ -152,7 +143,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/my-responses'
     | '/form/$formId'
-    | '/analytics/reports'
     | '/analytics/responses'
     | '/editor/$formId'
     | '/analytics/'
@@ -166,7 +156,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/my-responses'
     | '/form/$formId'
-    | '/analytics/reports'
     | '/analytics/responses'
     | '/editor/$formId'
     | '/analytics'
@@ -182,7 +171,6 @@ export interface FileRouteTypes {
     | '/_layout/dashboard'
     | '/_layout/my-responses'
     | '/form/$formId'
-    | '/_layout/analytics/reports'
     | '/_layout/analytics/responses'
     | '/_layout/editor/$formId'
     | '/_layout/analytics/'
@@ -291,24 +279,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAnalyticsResponsesRouteImport
       parentRoute: typeof LayoutAnalyticsRoute
     }
-    '/_layout/analytics/reports': {
-      id: '/_layout/analytics/reports'
-      path: '/reports'
-      fullPath: '/analytics/reports'
-      preLoaderRoute: typeof LayoutAnalyticsReportsRouteImport
-      parentRoute: typeof LayoutAnalyticsRoute
-    }
   }
 }
 
 interface LayoutAnalyticsRouteChildren {
-  LayoutAnalyticsReportsRoute: typeof LayoutAnalyticsReportsRoute
   LayoutAnalyticsResponsesRoute: typeof LayoutAnalyticsResponsesRoute
   LayoutAnalyticsIndexRoute: typeof LayoutAnalyticsIndexRoute
 }
 
 const LayoutAnalyticsRouteChildren: LayoutAnalyticsRouteChildren = {
-  LayoutAnalyticsReportsRoute: LayoutAnalyticsReportsRoute,
   LayoutAnalyticsResponsesRoute: LayoutAnalyticsResponsesRoute,
   LayoutAnalyticsIndexRoute: LayoutAnalyticsIndexRoute,
 }

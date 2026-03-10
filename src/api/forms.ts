@@ -52,7 +52,6 @@ export interface Form {
   updatedAt?: string // Last update timestamp
   fields?: Array<FormField> // Associated form fields (optional)
   responseCount?: number // Number of submissions received
-  draftCount?: number // Number of draft saves
 }
 
 // Standard API response wrapper for consistent error handling

@@ -19,7 +19,7 @@
 
 import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
 import type {
@@ -69,6 +69,7 @@ function EditFormComponent() {
   const { formId } = Route.useParams()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   // Fetch existing form data
   // This loads the form metadata (title, description, etc.)
@@ -180,6 +181,8 @@ function EditFormComponent() {
         validation: newField.validation,
       }
       setFields((prev) => [...prev, canvasField])
+      // Invalidate the query to keep local cache in sync with the backend
+      queryClient.invalidateQueries({ queryKey: ['form-fields', formId] })
     },
     onError: (error, variables) => {
       console.error('Failed to create field:', error.message)
@@ -193,6 +196,7 @@ function EditFormComponent() {
     mutationFn: (fieldId: string) => fieldsApi.delete(fieldId),
     onSuccess: () => {
       console.log('Field deleted successfully!')
+      queryClient.invalidateQueries({ queryKey: ['form-fields', formId] })
     },
     onError: (error) => {
       console.error('Failed to delete field:', error.message)
@@ -269,7 +273,7 @@ function EditFormComponent() {
   }
 
   // Handle template selection - add all template fields to the form
-  const handleTemplateClick = (template: Template) => {
+  const handleTemplateClick = async (template: Template) => {
     console.log('Template clicked:', template.title)
 
     const fieldTypeMap: Record<
@@ -295,7 +299,8 @@ function EditFormComponent() {
       cgpa: { fieldType: 'cgpa', fieldValueType: 'number' },
     }
 
-    template.fields.forEach((templateField) => {
+    // Process fields sequentially to avoid race conditions in the backend's linked list logic
+    for (const templateField of template.fields) {
       const rawType = templateField.fieldType || 'text'
       let type = rawType.toLowerCase()
       if (type === 'input') type = 'text'
@@ -322,8 +327,13 @@ function EditFormComponent() {
         'Creating field from template:',
         JSON.stringify(fieldData, null, 2),
       )
-      createField.mutate(fieldData)
-    })
+
+      try {
+        await createField.mutateAsync(fieldData)
+      } catch (error) {
+        console.error('Error creating template field:', error)
+      }
+    }
   }
 
   const handleRemoveField = (id: string) => {

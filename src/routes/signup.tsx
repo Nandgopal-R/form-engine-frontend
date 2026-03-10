@@ -38,8 +38,6 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const [strength, setStrength] = useState<string | null>(null)
 
-  const [success, setSuccess] = useState(false)
-
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -118,48 +116,6 @@ function Signup() {
       const msg = err instanceof Error ? err.message : JSON.stringify(err)
       setError('Critical Error: ' + msg)
     }
-  }
-
-  if (success) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground">
-        <div className="w-full max-w-[420px] rounded-2xl bg-card p-8 shadow-xl border border-border text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="rounded-full bg-green-500/10 p-3 text-green-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-mail-check"
-              >
-                <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                <path d="m16 19 2 2 4-4" />
-              </svg>
-            </div>
-          </div>
-          <h2 className="mb-2 text-2xl font-bold">Check your email</h2>
-          <p className="mb-6 text-sm text-muted-foreground">
-            We've sent a verification link to{' '}
-            <span className="text-foreground font-medium">{email}</span>.
-            <br />
-            Please check your inbox to verify your account.
-          </p>
-          <Link
-            to="/signin"
-            className="block w-full rounded-[10px] bg-primary p-3 font-medium text-primary-foreground transition-all hover:bg-primary/90 shadow-md"
-          >
-            Go to Sign In
-          </Link>
-        </div>
-      </div>
-    )
   }
 
   return (

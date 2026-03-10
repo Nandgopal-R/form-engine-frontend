@@ -1,11 +1,14 @@
 import { FieldItems } from './fields/field-items'
+import { TemplateItems } from './fields/template-items'
+import type { Template } from '@/api/templates'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface TabsLineProps {
   onFieldClick?: (fieldId: string) => void
+  onTemplateClick?: (template: Template) => void
 }
 
-export function TabsLine({ onFieldClick }: TabsLineProps) {
+export function TabsLine({ onFieldClick, onTemplateClick }: TabsLineProps) {
   return (
     <Tabs defaultValue="fields" className="w-full h-full">
       <TabsList variant="line" className="flex justify-center w-full">
@@ -23,9 +26,9 @@ export function TabsLine({ onFieldClick }: TabsLineProps) {
 
       <TabsContent
         value="templates"
-        className="p-4 text-sm text-muted-foreground text-center"
+        className="mt-0 flex-1 overflow-y-auto min-h-0"
       >
-        Templates coming soon
+        <TemplateItems onTemplateClick={onTemplateClick} />
       </TabsContent>
 
       <TabsContent

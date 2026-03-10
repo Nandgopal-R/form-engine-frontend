@@ -1,5 +1,6 @@
 'use client'
 import * as React from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   BarChart3,
   ClipboardList,
@@ -8,9 +9,9 @@ import {
   LogOut,
   Plus,
 } from 'lucide-react'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
+
 import { NavMain } from '@/components/nav-main'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +22,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { authClient } from '@/lib/auth-client'
 
 const data = {
   navMain: [

@@ -16,7 +16,7 @@ describe('TabsLine', () => {
         const templatesTab = screen.getByRole('tab', { name: /templates/i });
         await user.click(templatesTab);
 
-        expect(screen.getByText(/templates coming soon/i)).toBeInTheDocument();
+        expect(screen.getByText('Contact Us Form')).toBeInTheDocument();
         expect(screen.queryByText('Short Text')).not.toBeInTheDocument();
     });
 

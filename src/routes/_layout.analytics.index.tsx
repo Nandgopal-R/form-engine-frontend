@@ -50,11 +50,10 @@ function AnalyticsOverviewPage() {
   // Fetch all received responses
   const {
     data: allResponses = [],
-    isLoading: isResponsesLoading,
-    error: responsesError,
   } = useQuery({
     queryKey: ['received-responses'],
     queryFn: () => responsesApi.getAllReceived(),
+    retry: false,
   })
 
   // Filtering logic for responses
@@ -121,7 +120,7 @@ function AnalyticsOverviewPage() {
   }
 
   // Loading state
-  if (isFormsLoading || isResponsesLoading) {
+  if (isFormsLoading) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
@@ -134,8 +133,8 @@ function AnalyticsOverviewPage() {
     )
   }
 
-  // Error state
-  if (formsError || responsesError || !forms) {
+  // Error state — only block on forms error; responses can fail gracefully
+  if (formsError || !forms) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center max-w-md">
@@ -144,7 +143,7 @@ function AnalyticsOverviewPage() {
           </div>
           <h2 className="text-xl font-bold mb-2">Error Loading Analytics</h2>
           <p className="text-muted-foreground">
-            {formsError || responsesError ? String(formsError || responsesError) : 'Failed to load form analytics'}
+            {formsError ? String(formsError) : 'Failed to load form analytics'}
           </p>
         </div>
       </div>

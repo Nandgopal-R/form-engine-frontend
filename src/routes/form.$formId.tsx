@@ -10,9 +10,9 @@
  * - Success confirmation after submission
  */
 
-import { useEffect, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import {
   AlertCircle,
   ArrowRight,
@@ -36,6 +36,11 @@ import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { validateField, validateForm } from '@/lib/validation-engine'
 import { useToast } from '@/hooks/use-toast'
+import {
+
+  validateField,
+  validateForm
+} from '@/lib/validation-engine'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
@@ -69,7 +74,7 @@ function FormResponsePage() {
   // This follows our microservices-like API design
   const { data: formFields, isLoading: isFieldsLoading } = useQuery({
     queryKey: ['form-fields', formId],
-    queryFn: () => fieldsApi.getById(formId),
+    queryFn: () => fieldsApi.getPublicById(formId),
   })
 
   // Check if user has an existing draft response to allow continuing work
@@ -684,8 +689,8 @@ function FormFieldRenderer({
             <Star
               key={star}
               className={`h-6 w-6 cursor-pointer transition-colors ${star <= ((value as number) || 0)
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
+                  ? 'fill-yellow-400 text-yellow-400'
+                  : 'text-gray-300'
                 }`}
               onClick={() => onChange(star)}
             />

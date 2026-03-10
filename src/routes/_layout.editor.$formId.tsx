@@ -234,7 +234,7 @@ function EditFormComponent() {
     // This ensures we send the correct data structure to the backend
     const fieldTypeMap: Record<
       string,
-      { fieldType: string; fieldValueType: string }
+      { fieldType: string; fieldValueType: string } | undefined
     > = {
       text: { fieldType: 'text', fieldValueType: 'string' },
       number: { fieldType: 'number', fieldValueType: 'number' },

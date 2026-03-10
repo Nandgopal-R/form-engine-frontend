@@ -6,8 +6,15 @@ import {
   useMatches,
   useNavigate,
 } from '@tanstack/react-router'
-
+import { useEffect } from 'react'
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
+import { Separator } from '@/components/ui/separator'
+import { authClient } from '@/lib/auth-client'
 import {
   Breadcrumb,
   BreadcrumbItem,

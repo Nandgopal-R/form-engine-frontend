@@ -76,10 +76,6 @@ const CATEGORY_COLORS: Record<string, string> = {
     'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
 }
 
-interface ActiveRule {
-  ruleId: string
-  params?: Record<string, unknown>
-}
 
 export function ValidationRuleBuilder({
   fieldType,
@@ -138,7 +134,9 @@ export function ValidationRuleBuilder({
   const rulesByCategory = useMemo(() => {
     const grouped: Record<string, Array<RuleTemplate>> = {}
     for (const rule of applicableRules) {
-      grouped[rule.category] ??= []
+      if (!(rule.category in grouped)) {
+        grouped[rule.category] = []
+      }
       grouped[rule.category].push(rule)
     }
     return grouped

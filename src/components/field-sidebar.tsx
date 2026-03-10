@@ -12,7 +12,10 @@ export function FieldSidebar({
 }: FieldSidebarProps) {
   return (
     <div className="h-full w-full flex flex-col">
-      <TabsLine onFieldClick={onFieldClick} onTemplateClick={onTemplateClick} />
+      <TabsLine
+        onFieldClick={onFieldClick}
+        onTemplateClick={onTemplateClick}
+      />
     </div>
   )
 }

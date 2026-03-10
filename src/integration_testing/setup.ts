@@ -8,7 +8,7 @@ export let mockFetch: ReturnType<typeof vi.fn>;
 
 export function resetMockFetch() {
   mockFetch = vi.fn();
-  globalThis.fetch = mockFetch;
+  globalThis.fetch = mockFetch as unknown as typeof fetch;
 }
 
 export function restoreFetch() {

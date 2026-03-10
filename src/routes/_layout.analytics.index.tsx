@@ -1,8 +1,18 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, FileText, Loader2, Download, Search, Calendar, ChevronRight, Clock, ClipboardList, FileEdit } from 'lucide-react'
-import { useState, useMemo } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import {
+  AlertCircle,
+  Calendar,
+  ChevronRight,
+  ClipboardList,
+  Clock,
+  Download,
+  FileEdit,
+  FileText,
+  Loader2,
+  Search,
+} from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import {
@@ -68,9 +78,7 @@ function AnalyticsOverviewPage() {
     filteredResponses.forEach(r => {
       const date = new Date(r.createdAt)
       const dayName = days[date.getDay()]
-      if (counts[dayName] !== undefined) {
-        counts[dayName]++
-      }
+      counts[dayName]++
     })
 
     const orderedDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']

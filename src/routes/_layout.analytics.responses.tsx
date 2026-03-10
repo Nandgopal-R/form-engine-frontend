@@ -1,7 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, FileText, Loader2, Download, Filter, Search, Calendar, ChevronDown, X } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import {
+  AlertCircle,
+  ChevronDown,
+  Download,
+  FileText,
+  Filter,
+  Loader2,
+  Search,
+  X,
+} from 'lucide-react'
+import { useMemo, useState } from 'react'
 import type { FormResponseForOwner } from '@/api/responses'
 import type { Form } from '@/api/forms';
 import { responsesApi } from '@/api/responses'
@@ -67,9 +76,7 @@ function ResponsesPage() {
 
   // Group responses by form for the UI
   const groupedResponses = useMemo(() => {
-    if (!allResponses || !forms) return []
-
-    return forms.map(f => {
+    return (forms || []).map(f => {
       const responsesForForm = allResponses.filter((r: any) => r.formId === f.id)
       return {
         formId: f.id,
@@ -99,7 +106,7 @@ function ResponsesPage() {
     })).filter(group => group.responses.length > 0)
   }, [groupedResponses, searchTerm, filterDate, selectedForm, selectedStatus])
 
-  const handleExport = (type: 'csv' | 'json', group: { formTitle?: string; responses: SimulatedResponse[] }) => {
+  const handleExport = (type: 'csv' | 'json', group: { formTitle?: string; responses: Array<SimulatedResponse> }) => {
     const data = group.responses
     let blob: Blob
     let filename = `${group.formTitle || 'responses'}_${new Date().toISOString().split('T')[0]}`
@@ -260,7 +267,7 @@ function ResponsesPage() {
           </div>
         )}
 
-        {forms.length === 0 && !isFormsLoading && (
+        {forms.length === 0 && (
           <div className="text-center py-12 border-2 border-dashed rounded-2xl bg-muted/5">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 mb-4">
               <FileText className="h-6 w-6 text-muted-foreground/40" />

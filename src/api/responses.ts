@@ -144,7 +144,7 @@ export const responsesApi = {
 
   // GET /responses/received - Get all responses RECEIVED for forms owned by the user
   // Falls back to fetching per-form if endpoint doesn't exist on deployed backend
-  getAllReceived: async (formIds?: string[]): Promise<Array<ReceivedResponse>> => {
+  getAllReceived: async (formIds?: Array<string>): Promise<Array<ReceivedResponse>> => {
     try {
       const response = await fetch(`${API_URL}/responses/received`, {
         method: 'GET',
@@ -161,7 +161,7 @@ export const responsesApi = {
     // Fallback: fetch responses per form using existing endpoint
     if (!formIds || formIds.length === 0) return []
 
-    const results: ReceivedResponse[] = []
+    const results: Array<ReceivedResponse> = []
     for (const formId of formIds) {
       try {
         const perFormResponses = await responsesApi.getForForm(formId)

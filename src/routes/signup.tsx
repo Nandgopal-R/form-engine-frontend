@@ -93,7 +93,7 @@ function Signup() {
           email,
           password,
           name,
-          callbackURL: 'http://localhost:3000/email-verified', // Redirect to Frontend after verification
+          callbackURL: window.location.origin + '/email-verified', // Redirect to Frontend after verification
         },
         {
           onRequest: () => {
@@ -313,7 +313,7 @@ function Signup() {
             try {
               await authClient.signIn.social({
                 provider: 'google',
-                callbackURL: 'http://localhost:3000/dashboard',
+                callbackURL: window.location.origin + '/dashboard',
               })
             } catch (err: any) {
               console.error('Google Signin Error:', err)

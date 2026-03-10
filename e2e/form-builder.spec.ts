@@ -43,8 +43,6 @@ test.describe('Form Builder - Create Form', () => {
 })
 
 test.describe('Form Builder - Edit Form', () => {
-  let formId: string
-
   test.beforeEach(async ({ page }) => {
     await signIn(page)
 
@@ -59,8 +57,6 @@ test.describe('Form Builder - Edit Form', () => {
       .click()
 
     await page.waitForURL('**/editor/**', { timeout: 10000 })
-    const url = page.url()
-    formId = url.split('/editor/')[1]
   })
 
   test('shows field type sidebar', async ({ page }) => {

@@ -56,7 +56,7 @@ export function EditorCanvas({
     <div className="h-full flex flex-col">
       <Tabs defaultValue="edit" className="flex-1 flex flex-col h-full">
         {/* Header with save button and mode switcher */}
-        <div className="flex justify-end items-center px-6 py-2 border-b bg-background gap-2">
+        <div className="flex flex-wrap justify-end items-center px-3 sm:px-6 py-2 border-b bg-background gap-2">
           <Button
             size="sm"
             onClick={onSave}
@@ -73,7 +73,7 @@ export function EditorCanvas({
         </div>
 
         {/* Edit Mode - Form building interface */}
-        <TabsContent value="edit" className="flex-1 overflow-y-auto p-6 mt-0">
+        <TabsContent value="edit" className="flex-1 overflow-y-auto p-3 sm:p-6 mt-0">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Form Title & Description Section */}
             <div className="space-y-4 pb-6 border-b">
@@ -115,12 +115,12 @@ export function EditorCanvas({
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                   <Input
                     value={formTitle}
                     onChange={(e) => onTitleChange(e.target.value)}
                     placeholder="Form Title"
-                    className="text-2xl font-bold h-auto py-2 border-0 border-b rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 flex-1"
+                    className="text-xl sm:text-2xl font-bold h-auto py-2 border-0 border-b rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 flex-1"
                   />
                   <Button
                     size="sm"
@@ -173,7 +173,7 @@ export function EditorCanvas({
         {/* Preview Mode - Shows how form will look to users */}
         <TabsContent
           value="preview"
-          className="flex-1 overflow-y-auto p-6 mt-0 bg-gradient-to-b from-muted/30 to-muted/10"
+          className="flex-1 overflow-y-auto p-3 sm:p-6 mt-0 bg-gradient-to-b from-muted/30 to-muted/10"
         >
           <div className="max-w-2xl mx-auto">
             {/* Form Header - styled like a real form */}

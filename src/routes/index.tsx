@@ -10,10 +10,12 @@ import {
   LineChart,
   Lock,
   Mail,
+  Menu,
   Rocket,
   Shield,
   Sparkles,
   Users,
+  X,
   Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -26,6 +28,7 @@ export const Route = createFileRoute('/')({
 function LandingPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -87,12 +90,32 @@ function LandingPage() {
                 <Button asChild><Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link></Button>
               ) : (
                 <>
-                  <Button variant="ghost" asChild><Link to="/signin">Sign In</Link></Button>
-                  <Button asChild><Link to="/signup">Get Started</Link></Button>
+                  <Button variant="ghost" asChild className="hidden sm:inline-flex"><Link to="/signin">Sign In</Link></Button>
+                  <Button asChild className="hidden sm:inline-flex"><Link to="/signup">Get Started</Link></Button>
                 </>
               )}
+              <button
+                className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
             </div>
           </div>
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-border py-4 px-2 space-y-2 bg-background/95 backdrop-blur-md">
+              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Features</a>
+              <a href="#use-cases" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Use Cases</a>
+              <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Testimonials</a>
+              {!isLoading && !isLoggedIn && (
+                <div className="flex flex-col gap-2 pt-2 border-t border-border">
+                  <Button variant="ghost" asChild className="justify-start"><Link to="/signin">Sign In</Link></Button>
+                  <Button asChild><Link to="/signup">Get Started</Link></Button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </nav>
 

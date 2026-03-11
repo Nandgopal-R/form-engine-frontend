@@ -76,7 +76,7 @@ function MyResponsesPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-6">
+    <div className="h-full overflow-y-auto p-4 sm:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">My Responses</h1>
@@ -89,8 +89,8 @@ function MyResponsesPage() {
           {responses.map((response) => (
             <Card key={response.id} className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <CardTitle className="text-lg">
                       {response.formTitle || 'Untitled Form'}
                     </CardTitle>
@@ -106,7 +106,7 @@ function MyResponsesPage() {
                       </Badge>
                     )}
                   </div>
-                  <Badge variant="outline" className="flex items-center gap-1">
+                  <Badge variant="outline" className="flex items-center gap-1 self-start">
                     <Calendar className="h-3 w-3" />
                     {formatDistanceToNow(new Date(response.updatedAt), { addSuffix: true })}
                   </Badge>
@@ -122,7 +122,7 @@ function MyResponsesPage() {
                   <h4 className="text-sm font-medium text-muted-foreground">Your Answers:</h4>
                   <div className="grid gap-2 bg-muted/50 rounded-lg p-4">
                     {Object.entries(response.answers).map(([fieldName, value]) => (
-                      <div key={fieldName} className="grid grid-cols-3 gap-2 text-sm">
+                      <div key={fieldName} className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-2 text-sm">
                         <div className="font-medium text-foreground">{fieldName}:</div>
                         <div className="col-span-2 text-muted-foreground">
                           {Array.isArray(value)

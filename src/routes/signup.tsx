@@ -119,12 +119,12 @@ function Signup() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground px-4">
       <h1 className="mb-6 text-4xl font-bold tracking-tight text-primary">
         FormEngine
       </h1>
 
-      <div className="w-full max-w-[420px] rounded-2xl bg-card p-8 shadow-xl border border-border">
+      <div className="w-full max-w-[420px] rounded-2xl bg-card p-6 sm:p-8 shadow-xl border border-border">
         <h2 className="mb-1.5 text-2xl font-bold text-card-foreground">
           Create an account
         </h2>

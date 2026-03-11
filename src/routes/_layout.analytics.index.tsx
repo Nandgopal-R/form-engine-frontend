@@ -157,7 +157,7 @@ function AnalyticsOverviewPage() {
   const draftSaves = filteredResponses.filter(r => !r.isSubmitted).length
 
   return (
-    <div className="h-full overflow-y-auto p-6 bg-muted/5">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 bg-muted/5">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -168,7 +168,7 @@ function AnalyticsOverviewPage() {
               Track your forms and responses at a glance
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" className="h-9 gap-2" onClick={() => handleExport('json')}>
               <Download className="h-4 w-4" />
               Export JSON
@@ -243,13 +243,13 @@ function AnalyticsOverviewPage() {
                     <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                     <Input
                       type="date"
-                      className="h-8 pl-8 text-xs border-none bg-muted/50 w-[140px]"
+                      className="h-8 pl-8 text-xs border-none bg-muted/50 w-full sm:w-[140px]"
                       value={dateRange}
                       onChange={(e) => setDateRange(e.target.value)}
                     />
                   </div>
                   <Select value={selectedForm} onValueChange={setSelectedForm}>
-                    <SelectTrigger className="h-8 text-xs border-none bg-muted/50 w-[140px]">
+                    <SelectTrigger className="h-8 text-xs border-none bg-muted/50 w-full sm:w-[140px]">
                       <SelectValue placeholder="All Forms" />
                     </SelectTrigger>
                     <SelectContent>
@@ -263,7 +263,7 @@ function AnalyticsOverviewPage() {
                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                     <Input
                       placeholder="Responder..."
-                      className="h-8 pl-8 text-xs border-none bg-muted/50 w-[140px]"
+                      className="h-8 pl-8 text-xs border-none bg-muted/50 w-full sm:w-[140px]"
                       value={responderSearch}
                       onChange={(e) => setResponderSearch(e.target.value)}
                     />
@@ -274,23 +274,23 @@ function AnalyticsOverviewPage() {
             <CardContent className="relative">
               {/* Horizontal Weekly Summary Overlay */}
               <div className="absolute top-4 left-0 right-0 px-2 z-10 pointer-events-none">
-                <div className="bg-popover/80 backdrop-blur-lg px-10 py-5 rounded-2xl border shadow-2xl flex items-center justify-between w-full pointer-events-auto">
-                  <div className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-4 border-r pr-10">
+                <div className="bg-popover/80 backdrop-blur-lg px-4 sm:px-10 py-3 sm:py-5 rounded-2xl border shadow-2xl flex flex-col sm:flex-row items-center justify-between w-full pointer-events-auto gap-3 sm:gap-0">
+                  <div className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-4 sm:border-r sm:pr-10">
                     <Clock className="h-5 w-5" />
                     Weekly Summary
                   </div>
-                  <div className="flex flex-1 items-center justify-around px-8">
+                  <div className="flex flex-1 items-center justify-around px-2 sm:px-8 w-full">
                     {chartData.map(d => (
                       <div key={d.label} className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest mb-1">{d.label}</span>
-                        <span className="text-xl font-black text-primary drop-shadow-sm">{d.value}</span>
+                        <span className="text-[9px] sm:text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest mb-1">{d.label}</span>
+                        <span className="text-base sm:text-xl font-black text-primary drop-shadow-sm">{d.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              <div className="h-[220px] flex items-end justify-between gap-3 px-4 pb-2 pt-16">
+              <div className="h-[220px] flex items-end justify-between gap-3 px-4 pb-2 pt-28 sm:pt-16">
                 {chartData.map((day) => (
                   <div key={day.label} className="flex-1 flex flex-col items-center gap-2 group">
                     <div

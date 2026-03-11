@@ -20,7 +20,7 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle, Loader2, PanelLeft } from 'lucide-react'
 import type { CanvasField } from '@/components/fields/field-preview'
 import type {
   CreateFieldInput,
@@ -33,12 +33,20 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
 import { FieldSidebar } from '@/components/field-sidebar'
 import { EditorCanvas } from '@/components/editor-canvas'
 import { FieldProperties } from '@/components/field-properties'
 import { fieldsApi, formsApi } from '@/api/forms'
 import { aiApi } from '@/api/ai'
 import { useToast } from '@/hooks/use-toast'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export const Route = createFileRoute('/_layout/editor/$formId')({
   component: EditFormComponent,
@@ -71,6 +79,8 @@ function EditFormComponent() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const isMobile = useIsMobile()
+  const [mobileFieldsOpen, setMobileFieldsOpen] = useState(false)
 
   // Fetch existing form data
   // This loads the form metadata (title, description, etc.)
@@ -442,31 +452,69 @@ function EditFormComponent() {
 
   return (
     <>
-      <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-        <ResizablePanel defaultSize={20} minSize={15}>
-          <FieldSidebar
-            onFieldClick={handleFieldClick}
-            onTemplateClick={handleTemplateClick}
-            onAIGenerate={(prompt) => aiGenerate.mutate(prompt)}
-            isAIGenerating={aiGenerate.isPending}
-          />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={80} minSize={50}>
-          <EditorCanvas
-            fields={fields}
-            formTitle={formTitle}
-            formDescription={formDescription}
-            onTitleChange={setFormTitle}
-            onDescriptionChange={setFormDescription}
-            onRemoveField={handleRemoveField}
-            onEditField={handleEditField}
-            onSave={handleSaveForm}
-            onUpdateTitle={handleSaveForm}
-            isSaving={updateForm.isPending}
-          />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+      {isMobile ? (
+        <div className="h-full w-full flex flex-col">
+          <div className="flex items-center gap-2 px-3 py-2 border-b bg-background">
+            <Button variant="outline" size="sm" onClick={() => setMobileFieldsOpen(true)}>
+              <PanelLeft className="h-4 w-4 mr-1" />
+              Fields
+            </Button>
+          </div>
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <EditorCanvas
+              fields={fields}
+              formTitle={formTitle}
+              formDescription={formDescription}
+              onTitleChange={setFormTitle}
+              onDescriptionChange={setFormDescription}
+              onRemoveField={handleRemoveField}
+              onEditField={handleEditField}
+              onSave={handleSaveForm}
+              onUpdateTitle={handleSaveForm}
+              isSaving={updateForm.isPending}
+            />
+          </div>
+          <Sheet open={mobileFieldsOpen} onOpenChange={setMobileFieldsOpen}>
+            <SheetContent side="left" className="w-[300px] p-0">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Add Fields</SheetTitle>
+              </SheetHeader>
+              <FieldSidebar
+                onFieldClick={(id) => { handleFieldClick(id); setMobileFieldsOpen(false); }}
+                onTemplateClick={(t) => { handleTemplateClick(t); setMobileFieldsOpen(false); }}
+                onAIGenerate={(prompt) => aiGenerate.mutate(prompt)}
+                isAIGenerating={aiGenerate.isPending}
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
+      ) : (
+        <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+          <ResizablePanel defaultSize={20} minSize={15}>
+            <FieldSidebar
+              onFieldClick={handleFieldClick}
+              onTemplateClick={handleTemplateClick}
+              onAIGenerate={(prompt) => aiGenerate.mutate(prompt)}
+              isAIGenerating={aiGenerate.isPending}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={80} minSize={50}>
+            <EditorCanvas
+              fields={fields}
+              formTitle={formTitle}
+              formDescription={formDescription}
+              onTitleChange={setFormTitle}
+              onDescriptionChange={setFormDescription}
+              onRemoveField={handleRemoveField}
+              onEditField={handleEditField}
+              onSave={handleSaveForm}
+              onUpdateTitle={handleSaveForm}
+              isSaving={updateForm.isPending}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      )}
       <FieldProperties
         field={editingField}
         open={!!editingField}

@@ -204,7 +204,7 @@ function ResponsesPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-6 bg-muted/5">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 bg-muted/5">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -232,7 +232,7 @@ function ResponsesPage() {
               <div className="flex gap-2">
                 <Input
                   type="date"
-                  className="h-10 w-[160px] border-none bg-muted/50 focus-visible:ring-1"
+                  className="h-10 w-full sm:w-[160px] border-none bg-muted/50 focus-visible:ring-1"
                   value={filterDate}
                   onChange={(e) => setFilterDate(e.target.value)}
                 />

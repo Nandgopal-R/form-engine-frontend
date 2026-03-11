@@ -30,7 +30,7 @@ interface FieldPreviewProps {
 export function FieldPreview({ field, onRemove, onEdit }: FieldPreviewProps) {
   return (
     <Card className="p-4 group relative border-dashed border-2 shadow-none">
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
+      <div className="absolute top-2 right-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
         <Button
           variant="ghost"
           size="icon"

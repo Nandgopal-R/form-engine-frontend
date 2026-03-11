@@ -5,8 +5,7 @@ import {
   Sparkles,
   TrendingUp,
 } from 'lucide-react'
-import { KeyTakeaways } from './KeyTakeaways'
-import { ResponseCharts } from './ResponseCharts'
+
 import type { AnalyticsReport } from '@/api/ai'
 import { Button } from '@/components/ui/button'
 import {
@@ -119,16 +118,7 @@ export function AIInsightsSection({
               </div>
             </div>
 
-            {/* 2. Key Takeaways Section (New Enhancement) */}
-            <div className="animate-in slide-in-from-bottom-3 duration-700 delay-100">
-              <KeyTakeaways takeaways={[
-                "Users overall seem very satisfied with the current platform speed.",
-                "Mobile responses are higher during evening hours (6 PM - 10 PM).",
-                "Pricing clarity is the most common feedback theme among non-subscribers."
-              ]} />
-            </div>
-
-            {/* 3. Quantitative Insights */}
+            {/* 2. Quantitative Insights */}
             {report.quantitativeInsights.length > 0 && (
               <div className="print-break-avoid space-y-4">
                 <h4 className="text-sm font-black uppercase tracking-widest flex items-center gap-2 text-muted-foreground/80">
@@ -158,12 +148,7 @@ export function AIInsightsSection({
               </div>
             )}
 
-            {/* 4. Response Visualizations Section (New Enhancement) */}
-            <div className="animate-in slide-in-from-bottom-3 duration-700 delay-200">
-              <ResponseCharts />
-            </div>
-
-            {/* 5. Qualitative Themes */}
+            {/* 3. Qualitative Themes */}
             {report.qualitativeThemes.length > 0 && (
               <div className="print-break-avoid space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">

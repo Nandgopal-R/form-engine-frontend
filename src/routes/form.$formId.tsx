@@ -36,6 +36,7 @@ import { fieldsApi, formsApi } from '@/api/forms'
 import { responsesApi } from '@/api/responses'
 import { validateField, validateForm } from '@/lib/validation-engine'
 import { useToast } from '@/hooks/use-toast'
+import { paymentsApi } from '@/api/payments'
 
 export const Route = createFileRoute('/form/$formId')({
   component: FormResponsePage,
@@ -357,6 +358,8 @@ function FormResponsePage() {
                       value={responses[field.id]}
                       onChange={(value) => updateResponse(field.id, value)}
                       hasError={!!fieldError}
+                      formId={formId}
+                      draftResponseId={draftResponseId}
                     />
                   </FieldContent>
                   {fieldError && (
@@ -427,6 +430,8 @@ interface FormFieldRendererProps {
   value: unknown
   onChange: (value: unknown) => void
   hasError?: boolean
+  formId: string
+  draftResponseId: string | null
 }
 
 function FormFieldRenderer({
@@ -434,6 +439,8 @@ function FormFieldRenderer({
   value,
   onChange,
   hasError,
+  formId,
+  draftResponseId,
 }: FormFieldRendererProps) {
   // Extract field type from API response and normalize to lowercase
   // The API returns inconsistent 'fieldType' and 'type' fields, so we handle both
@@ -451,8 +458,8 @@ function FormFieldRenderer({
     : ''
 
   // Fallback options for fields that need them but don't have them configured
-  const fieldOptions =
-    options && options.length > 0
+  const fieldOptions: Array<string> =
+    Array.isArray(options) && options.length > 0
       ? options
       : ['Option 1', 'Option 2', 'Option 3']
 
@@ -531,7 +538,7 @@ function FormFieldRenderer({
         />
       )
     case 'checkbox':
-      if (options && options.length > 0) {
+      if (Array.isArray(options) && options.length > 0) {
         // Checkbox Group - allow multiple selections
         // Value is stored as an array of strings
         const currentValues = Array.isArray(value) ? value : []
@@ -547,7 +554,7 @@ function FormFieldRenderer({
 
         return (
           <div className="flex flex-col gap-2">
-            {options.map((opt, idx) => (
+            {(options as string[]).map((opt: string, idx: number) => (
               <div
                 key={`${field.id}-checkbox-${idx}-${opt}`}
                 className="flex items-center gap-2"
@@ -731,6 +738,124 @@ function FormFieldRenderer({
           className={`cursor-pointer ${errorClass}`}
         />
       )
+    case 'payment': {
+      const paymentOpts = typeof options === 'object' && options !== null && 'amount' in options
+        ? options as { amount: number; currency?: string; description?: string }
+        : { amount: 0, currency: 'INR' }
+
+      const isPaid = value && typeof value === 'object' && value !== null && 'paid' in value && (value as { paid?: boolean }).paid === true
+      const [isProcessing, setIsProcessing] = useState(false)
+
+      const openRazorpayCheckout = async () => {
+        setIsProcessing(true)
+        try {
+          // 1. Create order on backend
+          const orderData = await paymentsApi.createOrder(
+            formId,
+            field.id,
+            {
+              amount: paymentOpts.amount,
+              currency: paymentOpts.currency,
+              responseId: draftResponseId || undefined,
+            },
+          )
+
+          // 2. Load Razorpay script if not loaded
+          if (!(window as any).Razorpay) {
+            await new Promise<void>((resolve, reject) => {
+              const script = document.createElement('script')
+              script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+              script.onload = () => resolve()
+              script.onerror = () => reject(new Error('Failed to load Razorpay'))
+              document.head.appendChild(script)
+            })
+          }
+
+          // 3. Open Razorpay modal
+          const rzp = new (window as any).Razorpay({
+            key: orderData.keyId,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            order_id: orderData.orderId,
+            name: paymentOpts.description || field.label || 'Payment',
+            description: `Payment for form`,
+            handler: async (response: {
+              razorpay_payment_id: string
+              razorpay_order_id: string
+              razorpay_signature: string
+            }) => {
+              try {
+                // 4. Verify payment on backend
+                await paymentsApi.verify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  formId,
+                  fieldId: field.id,
+                  responseId: draftResponseId || undefined,
+                })
+                // 5. Update field value to mark as paid
+                onChange({ paid: true, orderId: response.razorpay_order_id, paymentId: response.razorpay_payment_id })
+              } catch (err) {
+                console.error('Payment verification error:', err)
+                alert('Payment verification failed. Please contact support.')
+              }
+              setIsProcessing(false)
+            },
+            modal: {
+              ondismiss: () => {
+                setIsProcessing(false)
+              },
+            },
+            theme: {
+              color: '#6366f1',
+            },
+          })
+          rzp.open()
+        } catch (error) {
+          console.error('Payment error:', error)
+          alert(error instanceof Error ? error.message : 'Failed to initiate payment')
+          setIsProcessing(false)
+        }
+      }
+
+      return (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+            <div className="flex-1">
+              <p className="font-medium">
+                {paymentOpts.description || field.label || 'Payment'}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {paymentOpts.currency?.toUpperCase() || 'INR'} {paymentOpts.amount.toFixed(2)}
+              </p>
+            </div>
+            {isPaid ? (
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle className="h-5 w-5" />
+                <span className="text-sm font-medium">Paid</span>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                variant="default"
+                disabled={isProcessing}
+                onClick={openRazorpayCheckout}
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  'Pay Now'
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+      )
+    }
     default:
       // Fallback to text input for unknown field types
       return (

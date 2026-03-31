@@ -8,6 +8,20 @@ import { Button } from '@/components/ui/button'
 import { Field, FieldContent, FieldLabel } from '@/components/ui/field'
 import { Slider } from '@/components/ui/slider'
 
+export interface PaymentOptions {
+  amount: number
+  currency?: string
+  description?: string
+  businessName?: string
+  logoUrl?: string
+  themeColor?: string
+  prefillName?: string
+  prefillEmail?: string
+  prefillContact?: string
+  receiptPrefix?: string
+  notes?: string
+}
+
 export interface CanvasField {
   id: string
   type: string
@@ -17,7 +31,7 @@ export interface CanvasField {
   min?: number
   max?: number
   step?: number
-  options?: Array<string>
+  options?: Array<string> | PaymentOptions
   validation?: ValidationConfig
 }
 
@@ -71,7 +85,7 @@ export function renderFieldInput(field: CanvasField) {
 
   // Default options if none provided
   const defaultOptions = ['Option 1', 'Option 2', 'Option 3']
-  const fieldOptions = options && options.length > 0 ? options : defaultOptions
+  const fieldOptions = Array.isArray(options) && options.length > 0 ? options : defaultOptions
 
   switch (type) {
     case 'text':
@@ -106,10 +120,10 @@ export function renderFieldInput(field: CanvasField) {
         <Input type="tel" placeholder={placeholder || '+1 (555) 000-0000'} />
       )
     case 'checkbox':
-      if (options && options.length > 0) {
+      if (Array.isArray(options) && options.length > 0) {
         return (
           <div className="flex flex-col gap-2">
-            {options.map((opt) => (
+            {options.map((opt: string) => (
               <div key={`checkbox-${field.id}-${opt}`} className="flex items-center gap-2">
                 <Checkbox id={`checkbox-${field.id}-${opt}`} />
                 <Label
@@ -220,6 +234,18 @@ export function renderFieldInput(field: CanvasField) {
           max={10}
           step={0.01}
         />
+      )
+    case 'payment':
+      const paymentOpts = typeof options === 'object' && 'amount' in options
+        ? options as PaymentOptions
+        : { amount: 0, currency: 'INR' }
+      return (
+        <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
+          <span className="text-sm text-muted-foreground">Payment:</span>
+          <span className="font-semibold">
+            {paymentOpts.currency?.toUpperCase() || 'INR'} {paymentOpts.amount.toFixed(2)}
+          </span>
+        </div>
       )
     default:
       return <Input placeholder="Enter value..." />

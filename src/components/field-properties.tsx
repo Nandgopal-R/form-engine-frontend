@@ -67,6 +67,19 @@ export function FieldProperties({
   const [validation, setValidation] = useState<ValidationConfig>({})
   const [showValidation, setShowValidation] = useState(false)
 
+  // Payment-specific state
+  const [paymentAmount, setPaymentAmount] = useState<number>(0)
+  const [paymentCurrency, setPaymentCurrency] = useState('INR')
+  const [paymentDescription, setPaymentDescription] = useState('')
+  const [paymentBusinessName, setPaymentBusinessName] = useState('')
+  const [paymentLogoUrl, setPaymentLogoUrl] = useState('')
+  const [paymentThemeColor, setPaymentThemeColor] = useState('#6366f1')
+  const [paymentPrefillName, setPaymentPrefillName] = useState('')
+  const [paymentPrefillEmail, setPaymentPrefillEmail] = useState('')
+  const [paymentPrefillContact, setPaymentPrefillContact] = useState('')
+  const [paymentReceiptPrefix, setPaymentReceiptPrefix] = useState('receipt')
+  const [paymentNotes, setPaymentNotes] = useState('')
+
   // Initialize local state when field prop changes
   // This syncs dialog with the field being edited
   useEffect(() => {
@@ -78,9 +91,23 @@ export function FieldProperties({
       setMin(field.min)
       setMax(field.max)
       setStep(field.step)
-      setOptionsString(field.options ? field.options.join('\n') : '')
+      setOptionsString(Array.isArray(field.options) ? field.options.join('\n') : '')
       setValidation(field.validation || {})
       setShowValidation(false)
+
+      // Initialize payment-specific state
+      const fieldOptions = field.options as { amount?: number; currency?: string; description?: string; businessName?: string; logoUrl?: string; themeColor?: string; prefillName?: string; prefillEmail?: string; prefillContact?: string; receiptPrefix?: string; notes?: string } | null
+      setPaymentAmount(fieldOptions?.amount || 0)
+      setPaymentCurrency(fieldOptions?.currency || 'INR')
+      setPaymentDescription(fieldOptions?.description || '')
+      setPaymentBusinessName(fieldOptions?.businessName || '')
+      setPaymentLogoUrl(fieldOptions?.logoUrl || '')
+      setPaymentThemeColor(fieldOptions?.themeColor || '#6366f1')
+      setPaymentPrefillName(fieldOptions?.prefillName || '')
+      setPaymentPrefillEmail(fieldOptions?.prefillEmail || '')
+      setPaymentPrefillContact(fieldOptions?.prefillContact || '')
+      setPaymentReceiptPrefix(fieldOptions?.receiptPrefix || 'receipt')
+      setPaymentNotes(fieldOptions?.notes || '')
     }
   }, [field])
 
@@ -103,6 +130,27 @@ export function FieldProperties({
       }
     }
 
+    // Build options based on field type
+    let finalOptions: string[] | { amount: number; currency: string; description: string; businessName: string; logoUrl: string; themeColor: string; prefillName: string; prefillEmail: string; prefillContact: string; receiptPrefix: string; notes: string } | undefined
+
+    if (field.type === 'payment') {
+      finalOptions = {
+        amount: paymentAmount,
+        currency: paymentCurrency,
+        description: paymentDescription,
+        businessName: paymentBusinessName,
+        logoUrl: paymentLogoUrl,
+        themeColor: paymentThemeColor,
+        prefillName: paymentPrefillName,
+        prefillEmail: paymentPrefillEmail,
+        prefillContact: paymentPrefillContact,
+        receiptPrefix: paymentReceiptPrefix,
+        notes: paymentNotes,
+      }
+    } else if (optionsString) {
+      finalOptions = optionsString.split('\n').filter((s) => s.trim() !== '')
+    }
+
     onSave({
       ...field,
       label,
@@ -111,9 +159,7 @@ export function FieldProperties({
       min: min !== undefined && !isNaN(min) ? Number(min) : undefined,
       max: max !== undefined && !isNaN(max) ? Number(max) : undefined,
       step: step !== undefined && !isNaN(step) ? Number(step) : undefined,
-      options: optionsString
-        ? optionsString.split('\n').filter((s) => s.trim() !== '')
-        : undefined,
+      options: finalOptions,
       validation: finalValidation,
     })
     onOpenChange(false)
@@ -149,16 +195,16 @@ export function FieldProperties({
             {['text', 'textarea', 'email', 'url', 'phone', 'number'].includes(
               field.type,
             ) && (
-              <Field>
-                <FieldLabel htmlFor="placeholder">Placeholder</FieldLabel>
-                <Input
-                  id="placeholder"
-                  value={placeholder}
-                  onChange={(e) => setPlaceholder(e.target.value)}
-                  placeholder="Placeholder text"
-                />
-              </Field>
-            )}
+                <Field>
+                  <FieldLabel htmlFor="placeholder">Placeholder</FieldLabel>
+                  <Input
+                    id="placeholder"
+                    value={placeholder}
+                    onChange={(e) => setPlaceholder(e.target.value)}
+                    placeholder="Placeholder text"
+                  />
+                </Field>
+              )}
 
             {/* Min/Max/Step for number and slider */}
             {['number', 'slider'].includes(field.type) && (
@@ -227,6 +273,171 @@ export function FieldProperties({
               </Field>
             )}
 
+            {/* Payment-specific options */}
+            {field.type === 'payment' && (
+              <div className="space-y-4">
+                {/* ── Payment Details ── */}
+                <div className="rounded-lg border p-4 space-y-3">
+                  <p className="text-sm font-semibold text-foreground">Payment Details</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field>
+                      <FieldLabel htmlFor="paymentAmount">Amount</FieldLabel>
+                      <Input
+                        id="paymentAmount"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={paymentAmount || ''}
+                        onChange={(e) =>
+                          setPaymentAmount(
+                            e.target.value === '' ? 0 : Number(e.target.value),
+                          )
+                        }
+                        placeholder="0.00"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="paymentCurrency">Currency</FieldLabel>
+                      <select
+                        id="paymentCurrency"
+                        value={paymentCurrency}
+                        onChange={(e) => setPaymentCurrency(e.target.value)}
+                        className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                      >
+                        <option value="INR">INR — Indian Rupee ₹</option>
+                        <option value="USD">USD — US Dollar $</option>
+                        <option value="EUR">EUR — Euro €</option>
+                        <option value="GBP">GBP — British Pound £</option>
+                        <option value="SGD">SGD — Singapore Dollar</option>
+                        <option value="AED">AED — UAE Dirham</option>
+                        <option value="MYR">MYR — Malaysian Ringgit</option>
+                      </select>
+                    </Field>
+                  </div>
+                  <Field>
+                    <FieldLabel htmlFor="paymentDescription">Payment Description</FieldLabel>
+                    <Input
+                      id="paymentDescription"
+                      value={paymentDescription}
+                      onChange={(e) => setPaymentDescription(e.target.value)}
+                      placeholder="e.g. Application fee, Course enrollment"
+                    />
+                    <FieldDescription>Shown to the payer in the checkout modal.</FieldDescription>
+                  </Field>
+                </div>
+
+                {/* ── Merchant Branding ── */}
+                <div className="rounded-lg border p-4 space-y-3">
+                  <p className="text-sm font-semibold text-foreground">Merchant Branding</p>
+                  <Field>
+                    <FieldLabel htmlFor="paymentBusinessName">Business / Merchant Name</FieldLabel>
+                    <Input
+                      id="paymentBusinessName"
+                      value={paymentBusinessName}
+                      onChange={(e) => setPaymentBusinessName(e.target.value)}
+                      placeholder="e.g. Acme Corp"
+                    />
+                    <FieldDescription>Displayed at the top of the Razorpay checkout modal.</FieldDescription>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="paymentLogoUrl">Logo URL (optional)</FieldLabel>
+                    <Input
+                      id="paymentLogoUrl"
+                      type="url"
+                      value={paymentLogoUrl}
+                      onChange={(e) => setPaymentLogoUrl(e.target.value)}
+                      placeholder="https://yourdomain.com/logo.png"
+                    />
+                    <FieldDescription>Your brand logo shown in the payment modal.</FieldDescription>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="paymentThemeColor">Theme Color</FieldLabel>
+                    <div className="flex items-center gap-3">
+                      <input
+                        id="paymentThemeColor"
+                        type="color"
+                        value={paymentThemeColor}
+                        onChange={(e) => setPaymentThemeColor(e.target.value)}
+                        className="h-9 w-12 cursor-pointer rounded-md border border-input bg-background p-1"
+                      />
+                      <Input
+                        value={paymentThemeColor}
+                        onChange={(e) => setPaymentThemeColor(e.target.value)}
+                        placeholder="#6366f1"
+                        className="font-mono"
+                      />
+                    </div>
+                    <FieldDescription>Accent color for the Razorpay checkout UI.</FieldDescription>
+                  </Field>
+                </div>
+
+                {/* ── Prefill Respondent Info ── */}
+                <div className="rounded-lg border p-4 space-y-3">
+                  <p className="text-sm font-semibold text-foreground">Prefill Customer Info</p>
+                  <FieldDescription className="-mt-1">
+                    These values pre-populate Razorpay's checkout form fields. Leave blank to let the payer fill them.
+                  </FieldDescription>
+                  <Field>
+                    <FieldLabel htmlFor="paymentPrefillName">Name</FieldLabel>
+                    <Input
+                      id="paymentPrefillName"
+                      value={paymentPrefillName}
+                      onChange={(e) => setPaymentPrefillName(e.target.value)}
+                      placeholder="e.g. John Doe"
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="paymentPrefillEmail">Email</FieldLabel>
+                    <Input
+                      id="paymentPrefillEmail"
+                      type="email"
+                      value={paymentPrefillEmail}
+                      onChange={(e) => setPaymentPrefillEmail(e.target.value)}
+                      placeholder="e.g. john@example.com"
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="paymentPrefillContact">Phone / Contact</FieldLabel>
+                    <Input
+                      id="paymentPrefillContact"
+                      type="tel"
+                      value={paymentPrefillContact}
+                      onChange={(e) => setPaymentPrefillContact(e.target.value)}
+                      placeholder="e.g. +919876543210"
+                    />
+                  </Field>
+                </div>
+
+                {/* ── Receipt & Notes ── */}
+                <div className="rounded-lg border p-4 space-y-3">
+                  <p className="text-sm font-semibold text-foreground">Receipt &amp; Notes</p>
+                  <Field>
+                    <FieldLabel htmlFor="paymentReceiptPrefix">Receipt Prefix</FieldLabel>
+                    <Input
+                      id="paymentReceiptPrefix"
+                      value={paymentReceiptPrefix}
+                      onChange={(e) => setPaymentReceiptPrefix(e.target.value)}
+                      placeholder="e.g. invoice, order, reg"
+                    />
+                    <FieldDescription>
+                      Prefixed to the auto-generated receipt ID (e.g. <code className="text-xs font-mono bg-muted px-1 rounded">invoice_20240311_abc</code>).
+                    </FieldDescription>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="paymentNotes">Notes</FieldLabel>
+                    <textarea
+                      id="paymentNotes"
+                      value={paymentNotes}
+                      onChange={(e) => setPaymentNotes(e.target.value)}
+                      rows={2}
+                      placeholder="Internal notes visible on Razorpay dashboard"
+                      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    />
+                  </Field>
+                </div>
+              </div>
+            )}
+
             <Field className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
                 <FieldLabel className="text-base">Required</FieldLabel>
@@ -247,39 +458,38 @@ export function FieldProperties({
               'number',
               'input',
             ].includes(field.type.toLowerCase()) && (
-              <Collapsible
-                open={showValidation}
-                onOpenChange={setShowValidation}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-between p-4 h-auto border rounded-lg"
-                  >
-                    <div className="flex flex-col items-start">
-                      <span className="text-base font-medium">
-                        Validation Rules
-                      </span>
-                      <span className="text-xs text-muted-foreground font-normal">
-                        Add pattern and format validation
-                      </span>
-                    </div>
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${
-                        showValidation ? 'rotate-180' : ''
-                      }`}
+                <Collapsible
+                  open={showValidation}
+                  onOpenChange={setShowValidation}
+                >
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between p-4 h-auto border rounded-lg"
+                    >
+                      <div className="flex flex-col items-start">
+                        <span className="text-base font-medium">
+                          Validation Rules
+                        </span>
+                        <span className="text-xs text-muted-foreground font-normal">
+                          Add pattern and format validation
+                        </span>
+                      </div>
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${showValidation ? 'rotate-180' : ''
+                          }`}
+                      />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    <ValidationRuleBuilder
+                      fieldType={field.type}
+                      currentValidation={validation}
+                      onChange={setValidation}
                     />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="pt-4">
-                  <ValidationRuleBuilder
-                    fieldType={field.type}
-                    currentValidation={validation}
-                    onChange={setValidation}
-                  />
-                </CollapsibleContent>
-              </Collapsible>
-            )}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
           </FieldGroup>
         </div>
         <DialogFooter>

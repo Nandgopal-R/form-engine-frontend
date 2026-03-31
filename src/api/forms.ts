@@ -23,6 +23,23 @@ export interface FieldValidation {
 }
 
 // Individual form field definition with all possible properties
+export interface PaymentOptions {
+  amount: number
+  currency?: string
+  description?: string
+  // Merchant / branding
+  businessName?: string   // Shown as merchant name in Razorpay modal
+  logoUrl?: string        // Merchant logo URL (optional)
+  themeColor?: string     // Hex color for Razorpay modal (#rrggbb)
+  // Prefill respondent info
+  prefillName?: string
+  prefillEmail?: string
+  prefillContact?: string
+  // Receipt/notes
+  receiptPrefix?: string  // e.g. "invoice", "order" — prefixed to receipt ID
+  notes?: string          // Payment notes visible on Razorpay dashboard
+}
+
 export interface FormField {
   id: string // Unique field identifier
   fieldName: string // Internal field name (used in API)
@@ -37,7 +54,7 @@ export interface FormField {
   min?: number // Minimum value for numeric fields
   max?: number // Maximum value for numeric fields
   step?: number // Step increment for numeric fields
-  options?: Array<string> // Options for select/radio/checkbox fields
+  options?: Array<string> | PaymentOptions // Options for select/radio/checkbox/payment fields
 }
 
 // Form definition containing metadata and optional fields
@@ -85,20 +102,7 @@ export interface CreateFieldInput {
   min?: number
   max?: number
   step?: number
-  options?: Array<string>
-}
-
-export interface UpdateFieldInput {
-  fieldName?: string
-  label?: string
-  fieldValueType?: string
-  fieldType?: string
-  validation?: FieldValidation
-  placeholder?: string
-  min?: number
-  max?: number
-  step?: number
-  options?: Array<string>
+  options?: Array<string> | PaymentOptions
 }
 
 // Base URL for API endpoints
